@@ -85,7 +85,7 @@ const AdminProducts = () => {
 
   const { mutate: createProduct, isPending: isCreating } = useMutation({
     mutationFn: async (productData: ProductFormValues) => {
-      const { error } = await supabase.from('products').insert([productData]);
+      const { error } = await supabase.from('products').insert(productData);
       if (error) throw error;
     },
     onSuccess: () => {
