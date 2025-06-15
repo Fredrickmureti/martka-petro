@@ -1,9 +1,11 @@
 
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
+import { projects, getProjectsByCategory } from '@/data/projects';
 
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -16,78 +18,7 @@ const Projects = () => {
     { id: 'infrastructure', label: 'Infrastructure' },
   ];
 
-  const projects = [
-    {
-      id: 1,
-      title: 'Metro City Fuel Complex',
-      category: 'construction',
-      location: 'Houston, TX',
-      status: 'Completed',
-      year: '2024',
-      description: 'Complete fuel station construction with 12 dispensers and modern convenience store.',
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&h=400&fit=crop',
-      tags: ['Construction', 'POS Systems', 'Environmental Compliance']
-    },
-    {
-      id: 2,
-      title: 'Highway Express Station',
-      category: 'installation',
-      location: 'Dallas, TX',
-      status: 'Completed',
-      year: '2024',
-      description: 'Advanced dispenser installation with EMV payment systems and real-time monitoring.',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop',
-      tags: ['Installation', 'EMV Systems', 'Monitoring']
-    },
-    {
-      id: 3,
-      title: 'Green Valley Infrastructure',
-      category: 'infrastructure',
-      location: 'Austin, TX',
-      status: 'In Progress',
-      year: '2024',
-      description: 'Custom fuel infrastructure design for environmentally sensitive location.',
-      image: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=600&h=400&fit=crop',
-      tags: ['Infrastructure', 'Environmental', 'Custom Design']
-    },
-    {
-      id: 4,
-      title: 'Interstate Service Center',
-      category: 'construction',
-      location: 'San Antonio, TX',
-      status: 'Completed',
-      year: '2023',
-      description: 'Large-scale service center with multiple fuel islands and truck facilities.',
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&h=400&fit=crop',
-      tags: ['Construction', 'Commercial', 'Truck Facilities']
-    },
-    {
-      id: 5,
-      title: 'Urban Quick Stop',
-      category: 'maintenance',
-      location: 'Fort Worth, TX',
-      status: 'Ongoing',
-      year: '2024',
-      description: 'Complete maintenance overhaul and system upgrades for urban fuel station.',
-      image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&h=400&fit=crop',
-      tags: ['Maintenance', 'Upgrades', 'Urban']
-    },
-    {
-      id: 6,
-      title: 'Regional Distribution Hub',
-      category: 'infrastructure',
-      location: 'El Paso, TX',
-      status: 'Planning',
-      year: '2024',
-      description: 'Major fuel distribution infrastructure with advanced logistics systems.',
-      image: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=600&h=400&fit=crop',
-      tags: ['Infrastructure', 'Distribution', 'Logistics']
-    },
-  ];
-
-  const filteredProjects = activeFilter === 'all' 
-    ? projects 
-    : projects.filter(project => project.category === activeFilter);
+  const filteredProjects = getProjectsByCategory(activeFilter);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -139,47 +70,53 @@ const Projects = () => {
       <section className="py-16 bg-background">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project) => (
-              <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                <div className="relative">
-                  <img 
-                    src={project.image} 
-                    alt={project.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge className={getStatusColor(project.status)}>
-                      {project.status}
-                    </Badge>
-                  </div>
-                  <div className="absolute top-4 right-4">
-                    <Badge variant="secondary" className="bg-black/50 text-white border-none">
-                      {project.year}
-                    </Badge>
-                  </div>
-                </div>
-                
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                  <p className="text-sm text-blue-600 mb-2">{project.location}</p>
-                  <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                    {project.description}
-                  </p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tags.map((tag, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {tag}
+            {filteredProjects.map((project) => {
+              const heroImage = project.images.find(img => img.type === 'hero') || project.images[0];
+              
+              return (
+                <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="relative">
+                    <img 
+                      src={heroImage.url} 
+                      alt={project.title}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge className={getStatusColor(project.status)}>
+                        {project.status}
                       </Badge>
-                    ))}
+                    </div>
+                    <div className="absolute top-4 right-4">
+                      <Badge variant="secondary" className="bg-black/50 text-white border-none">
+                        {project.year}
+                      </Badge>
+                    </div>
                   </div>
                   
-                  <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
-                    View Details
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                    <p className="text-sm text-blue-600 mb-2">{project.location}</p>
+                    <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
+                      {project.description}
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.tags.map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    
+                    <Link to={`/projects/${project.slug}`}>
+                      <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
+                        View Details
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
