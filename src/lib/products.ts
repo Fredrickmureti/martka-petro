@@ -29,7 +29,7 @@ export const mapSupabaseProductToAppProduct = (p: SupabaseProduct): Product => (
     inStock: p.in_stock ?? true,
     manufacturer: p.manufacturer || 'Unknown',
     warranty: p.warranty || 'N/A',
-    documents: (p.documents as Document[]) || [],
+    documents: (p.documents as unknown as Document[]) || [],
 });
 
 export const fetchProducts = async (): Promise<Product[]> => {
@@ -56,7 +56,7 @@ export const fetchProductById = async (id: string): Promise<Product | null> => {
     const { data, error } = await supabase
         .from('products')
         .select('*, product_categories(*)')
-        .eq('id', id)
+        .eq('id', Number(id))
         .maybeSingle();
 
     if (error) throw new Error(error.message);
