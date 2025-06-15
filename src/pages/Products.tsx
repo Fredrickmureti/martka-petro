@@ -12,51 +12,13 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
 import { Skeleton } from '@/components/ui/skeleton';
-
-type SupabaseProduct = Tables<'products'> & {
-  product_categories: Tables<'product_categories'> | null;
-};
-
-const fetchProducts = async (): Promise<SupabaseProduct[]> => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*, product_categories(*)');
-  
-  if (error) throw new Error(error.message);
-  return (data as SupabaseProduct[]) || [];
-};
+import { fetchProducts } from '@/lib/products';
 
 const fetchCategories = async (): Promise<Tables<'product_categories'>[]> => {
     const { data, error } = await supabase.from('product_categories').select('*');
     if (error) throw new Error(error.message);
     return data || [];
 };
-
-// Mapper to convert DB types to application types
-const mapSupabaseProductToAppProduct = (p: SupabaseProduct): Product => ({
-    id: p.id.toString(),
-    name: p.name,
-    category: {
-        id: p.product_categories?.id.toString() || '',
-        name: p.product_categories?.name || 'Uncategorized',
-        slug: p.product_categories?.slug || 'uncategorized',
-        description: p.product_categories?.description || '',
-        icon: p.product_categories?.icon || '',
-        productCount: 0, // This would require another query to calculate, setting to 0 for now
-    },
-    price: p.price || 'Contact for price',
-    rating: Number(p.rating) || 0,
-    image: p.image_url || '/placeholder.svg',
-    gallery: (p.gallery as string[]) || [],
-    description: p.description || '',
-    features: (p.features as string[]) || [],
-    specifications: (p.specifications as Record<string, string>) || {},
-    popular: p.popular || false,
-    inStock: p.in_stock ?? true,
-    manufacturer: p.manufacturer || 'Unknown',
-    warranty: p.warranty || 'N/A',
-    documents: (p.documents as any[]) || [],
-});
 
 const mapSupabaseCategoryToAppCategory = (c: Tables<'product_categories'>): ProductCategory => ({
     id: c.id.toString(),
@@ -72,10 +34,9 @@ const Products = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [compareProducts, setCompareProducts] = useState<Product[]>([]);
 
-  const { data: rawProducts, isLoading: isLoadingProducts } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
+  const { data: products, isLoading: isLoadingProducts } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
   const { data: rawCategories, isLoading: isLoadingCategories } = useQuery({ queryKey: ['productCategories'], queryFn: fetchCategories });
 
-  const products = useMemo(() => (rawProducts || []).map(mapSupabaseProductToAppProduct), [rawProducts]);
   const categories = useMemo(() => (rawCategories || []).map(mapSupabaseCategoryToAppCategory), [rawCategories]);
   
   const {
@@ -86,9 +47,9 @@ const Products = () => {
     sortBy,
     setSortBy,
     filteredProducts,
-  } = useProductSearch(products);
+  } = useProductSearch(products || []);
 
-  const manufacturers = useMemo(() => Array.from(new Set(products.map(p => p.manufacturer).filter(Boolean))), [products]);
+  const manufacturers = useMemo(() => Array.from(new Set((products || []).map(p => p.manufacturer).filter(Boolean))), [products]);
 
   const handleCompareProduct = (product: Product) => {
     if (compareProducts.find(p => p.id === product.id)) {

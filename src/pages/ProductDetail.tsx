@@ -8,19 +8,64 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Layout from '@/components/layout/Layout';
 import WhatsAppButton from '@/components/common/WhatsAppButton';
-import { products } from '@/data/products';
+import { useQuery } from '@tanstack/react-query';
+import { fetchProductById, fetchProducts } from '@/lib/products';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [selectedImage, setSelectedImage] = useState(0);
   
-  const product = products.find(p => p.id === id);
+  const { data: product, isLoading: isLoadingProduct } = useQuery({
+    queryKey: ['product', id],
+    queryFn: () => fetchProductById(id!),
+    enabled: !!id,
+  });
+
+  const { data: allProducts } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+    enabled: !!product,
+  });
+
+  if (isLoadingProduct) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-6 py-12">
+          <Skeleton className="h-8 w-48 mb-6" />
+          <div className="grid lg:grid-cols-2 gap-12 mb-12">
+            <div className="space-y-4">
+              <Skeleton className="aspect-square rounded-lg" />
+              <div className="flex space-x-2">
+                <Skeleton className="w-20 h-20 rounded-lg" />
+                <Skeleton className="w-20 h-20 rounded-lg" />
+                <Skeleton className="w-20 h-20 rounded-lg" />
+              </div>
+            </div>
+            <div className="space-y-6">
+              <Skeleton className="h-6 w-1/4 mb-2" />
+              <Skeleton className="h-10 w-3/4 mb-2" />
+              <Skeleton className="h-6 w-1/2 mb-4" />
+              <Skeleton className="h-16 w-full mb-4" />
+              <Skeleton className="h-10 w-1/2 mb-6" />
+              <div className="flex space-x-4">
+                <Skeleton className="h-12 flex-1" />
+                <Skeleton className="h-12 w-12" />
+                <Skeleton className="h-12 w-12" />
+              </div>
+              <Skeleton className="h-24 w-full" />
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   if (!product) {
     return <Navigate to="/products" replace />;
   }
 
-  const relatedProducts = products
+  const relatedProducts = (allProducts || [])
     .filter(p => p.id !== product.id && p.category.id === product.category.id)
     .slice(0, 3);
 
@@ -31,7 +76,6 @@ const ProductDetail = () => {
       />
       
       <div className="container mx-auto px-6 py-12">
-        {/* Breadcrumb */}
         <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
           <Link to="/products" className="hover:text-foreground">Products</Link>
           <span>/</span>
@@ -42,7 +86,6 @@ const ProductDetail = () => {
           <span className="text-foreground">{product.name}</span>
         </div>
 
-        {/* Back Button */}
         <Link to="/products">
           <Button variant="outline" className="mb-6">
             <ArrowLeft className="mr-2" size={16} />
@@ -51,11 +94,10 @@ const ProductDetail = () => {
         </Link>
 
         <div className="grid lg:grid-cols-2 gap-12 mb-12">
-          {/* Product Images */}
           <div className="space-y-4">
             <div className="aspect-square rounded-lg overflow-hidden bg-slate-100">
               <img 
-                src={product.gallery[selectedImage]} 
+                src={product.gallery[selectedImage] || product.image} 
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -82,7 +124,6 @@ const ProductDetail = () => {
             )}
           </div>
 
-          {/* Product Info */}
           <div className="space-y-6">
             <div>
               <Badge variant="outline" className="mb-2">
@@ -105,7 +146,6 @@ const ProductDetail = () => {
               <div className="text-3xl font-bold text-blue-600 mb-6">{product.price}</div>
             </div>
 
-            {/* Actions */}
             <div className="flex space-x-4">
               <Button size="lg" className="flex-1">
                 <ShoppingCart className="mr-2" size={20} />
@@ -119,7 +159,6 @@ const ProductDetail = () => {
               </Button>
             </div>
 
-            {/* Quick Info */}
             <Card>
               <CardContent className="p-6">
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -137,7 +176,6 @@ const ProductDetail = () => {
           </div>
         </div>
 
-        {/* Product Details Tabs */}
         <Tabs defaultValue="features" className="mb-12">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="features">Features</TabsTrigger>
@@ -195,9 +233,11 @@ const ProductDetail = () => {
                         <div className="font-medium">{doc.name}</div>
                         <div className="text-sm text-muted-foreground capitalize">{doc.type}</div>
                       </div>
-                      <Button variant="outline" size="sm">
-                        <Download className="mr-2" size={16} />
-                        Download
+                      <Button variant="outline" size="sm" asChild>
+                        <a href={doc.url} target="_blank" rel="noopener noreferrer">
+                          <Download className="mr-2" size={16} />
+                          Download
+                        </a>
                       </Button>
                     </div>
                   ))}
@@ -226,7 +266,6 @@ const ProductDetail = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Related Products */}
         {relatedProducts.length > 0 && (
           <section>
             <h2 className="text-2xl font-bold mb-6">Related Products</h2>

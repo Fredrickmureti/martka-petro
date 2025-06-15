@@ -5,11 +5,48 @@ import { ArrowRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { products } from '@/data/products';
+import { useQuery } from '@tanstack/react-query';
+import { fetchPopularProducts } from '@/lib/products';
+import { Product } from '@/types/product';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const PopularProducts = () => {
-  // Get first 4 popular products
-  const featuredProducts = products.filter(product => product.popular).slice(0, 4);
+  const { data: featuredProducts, isLoading } = useQuery<Product[]>({
+    queryKey: ['popularProducts'],
+    queryFn: fetchPopularProducts,
+  });
+
+  if (isLoading) {
+    return (
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Popular Products</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Discover our most trusted petroleum equipment and systems chosen by industry professionals.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i}>
+                <Skeleton className="w-full h-48" />
+                <CardContent className="p-6 space-y-4">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-5 w-1/2" />
+                  <Skeleton className="h-10 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!featuredProducts || featuredProducts.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-24 bg-slate-50 dark:bg-slate-900">
