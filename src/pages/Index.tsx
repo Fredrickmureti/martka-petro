@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
 import AnimatedCounter from '@/components/ui/animated-counter';
+import ProjectsOverview from '@/components/sections/ProjectsOverview';
+import PopularProducts from '@/components/sections/PopularProducts';
+import WhatsAppButton from '@/components/common/WhatsAppButton';
 
 const Index = () => {
   const stats = [
@@ -44,6 +47,9 @@ const Index = () => {
 
   return (
     <Layout>
+      {/* WhatsApp Button */}
+      <WhatsAppButton />
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background Gradient */}
@@ -134,8 +140,14 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Projects Overview */}
+      <ProjectsOverview />
+
+      {/* Popular Products */}
+      <PopularProducts />
+
       {/* Why Choose Us */}
-      <section className="py-24 bg-slate-50">
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
