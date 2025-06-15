@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -92,10 +91,13 @@ const Contact = () => {
     );
   }
 
-  const headquarters = locations?.find(l => l.is_headquarters);
+  const headquartersList = locations?.filter(l => l.is_headquarters) || [];
   const locationsWithMap = locations?.filter(l => l.map_embed_url) || [];
-  const defaultMapLocation = headquarters && headquarters.map_embed_url 
-    ? headquarters 
+  
+  const defaultHqWithMap = headquartersList.find(l => l.map_embed_url);
+
+  const defaultMapLocation = defaultHqWithMap 
+    ? defaultHqWithMap 
     : (locationsWithMap.length > 0 ? locationsWithMap[0] : null);
 
   return (

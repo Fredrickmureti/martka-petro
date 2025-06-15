@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { useAdminLocations } from '@/hooks/useAdminLocations';
 import { LocationsTable } from './components/LocationsTable';
@@ -46,19 +45,6 @@ const AdminLocations = () => {
 
     const handleFormSubmit = async (values: LocationFormValues) => {
         try {
-            // If setting a new headquarters, unset the old one first.
-            if (values.is_headquarters) {
-                const currentHeadquarters = locations?.find(
-                    l => l.is_headquarters && l.id !== selectedLocation?.id
-                );
-                if (currentHeadquarters) {
-                    await updateLocation.mutateAsync({ 
-                        id: currentHeadquarters.id, 
-                        is_headquarters: false 
-                    });
-                }
-            }
-
             if (selectedLocation) {
                 await updateLocation.mutateAsync({ ...values, id: selectedLocation.id });
             } else {

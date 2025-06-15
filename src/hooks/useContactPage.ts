@@ -64,20 +64,19 @@ export const useLocations = () => {
     });
 };
 
-// Fetch headquarters location
+// Fetch headquarters locations
 const fetchHeadquarters = async () => {
     const { data, error } = await supabase
         .from('locations')
         .select('*')
-        .eq('is_headquarters', true)
-        .maybeSingle();
+        .eq('is_headquarters', true);
 
     if (error) throw new Error(error.message);
     return data;
 };
 
 export const useHeadquarters = () => {
-    return useQuery<Tables<'locations'> | null>({
+    return useQuery<Tables<'locations'>[]>({
         queryKey: ['headquarters'],
         queryFn: fetchHeadquarters,
     });
