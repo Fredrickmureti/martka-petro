@@ -1,0 +1,261 @@
+
+import React, { useState } from 'react';
+import { useParams, Link, Navigate } from 'react-router-dom';
+import { ArrowLeft, Star, ShoppingCart, Download, Share, Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Layout from '@/components/layout/Layout';
+import WhatsAppButton from '@/components/common/WhatsAppButton';
+import { products } from '@/data/products';
+
+const ProductDetail = () => {
+  const { id } = useParams<{ id: string }>();
+  const [selectedImage, setSelectedImage] = useState(0);
+  
+  const product = products.find(p => p.id === id);
+
+  if (!product) {
+    return <Navigate to="/products" replace />;
+  }
+
+  const relatedProducts = products
+    .filter(p => p.id !== product.id && p.category.id === product.category.id)
+    .slice(0, 3);
+
+  return (
+    <Layout>
+      <WhatsAppButton 
+        message={`Hello! I'm interested in the ${product.name}. Could you provide more information?`}
+      />
+      
+      <div className="container mx-auto px-6 py-12">
+        {/* Breadcrumb */}
+        <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
+          <Link to="/products" className="hover:text-foreground">Products</Link>
+          <span>/</span>
+          <Link to={`/products?category=${product.category.slug}`} className="hover:text-foreground">
+            {product.category.name}
+          </Link>
+          <span>/</span>
+          <span className="text-foreground">{product.name}</span>
+        </div>
+
+        {/* Back Button */}
+        <Link to="/products">
+          <Button variant="outline" className="mb-6">
+            <ArrowLeft className="mr-2" size={16} />
+            Back to Products
+          </Button>
+        </Link>
+
+        <div className="grid lg:grid-cols-2 gap-12 mb-12">
+          {/* Product Images */}
+          <div className="space-y-4">
+            <div className="aspect-square rounded-lg overflow-hidden bg-slate-100">
+              <img 
+                src={product.gallery[selectedImage]} 
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {product.gallery.length > 1 && (
+              <div className="flex space-x-2">
+                {product.gallery.map((image, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(index)}
+                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
+                      selectedImage === index ? 'border-blue-600' : 'border-transparent'
+                    }`}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`${product.name} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Product Info */}
+          <div className="space-y-6">
+            <div>
+              <Badge variant="outline" className="mb-2">
+                {product.category.name}
+              </Badge>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2">{product.name}</h1>
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="flex items-center">
+                  <Star size={20} className="text-yellow-500 fill-current mr-1" />
+                  <span className="text-lg font-medium">{product.rating}</span>
+                </div>
+                <Badge variant={product.inStock ? "default" : "destructive"}>
+                  {product.inStock ? 'In Stock' : 'Out of Stock'}
+                </Badge>
+                {product.popular && (
+                  <Badge className="bg-orange-500 text-white">Popular</Badge>
+                )}
+              </div>
+              <p className="text-xl text-muted-foreground mb-4">{product.description}</p>
+              <div className="text-3xl font-bold text-blue-600 mb-6">{product.price}</div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex space-x-4">
+              <Button size="lg" className="flex-1">
+                <ShoppingCart className="mr-2" size={20} />
+                Request Quote
+              </Button>
+              <Button variant="outline" size="lg">
+                <Heart size={20} />
+              </Button>
+              <Button variant="outline" size="lg">
+                <Share size={20} />
+              </Button>
+            </div>
+
+            {/* Quick Info */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Manufacturer:</span>
+                    <div className="font-medium">{product.manufacturer}</div>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Warranty:</span>
+                    <div className="font-medium">{product.warranty}</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Product Details Tabs */}
+        <Tabs defaultValue="features" className="mb-12">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="features">Features</TabsTrigger>
+            <TabsTrigger value="specifications">Specifications</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
+            <TabsTrigger value="support">Support</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="features" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Key Features</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {product.features.map((feature, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                      <span>{feature}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="specifications" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Technical Specifications</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {Object.entries(product.specifications).map(([key, value]) => (
+                    <div key={key} className="flex justify-between items-center py-2 border-b border-border">
+                      <span className="font-medium">{key}</span>
+                      <span className="text-muted-foreground">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="documents" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Documentation & Downloads</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {product.documents.map((doc, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 border border-border rounded-lg">
+                      <div>
+                        <div className="font-medium">{doc.name}</div>
+                        <div className="text-sm text-muted-foreground capitalize">{doc.type}</div>
+                      </div>
+                      <Button variant="outline" size="sm">
+                        <Download className="mr-2" size={16} />
+                        Download
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="support" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Support & Contact</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-muted-foreground">
+                    Need help with this product? Our technical support team is here to assist you.
+                  </p>
+                  <div className="flex space-x-4">
+                    <Button>Contact Support</Button>
+                    <Button variant="outline">Schedule Consultation</Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* Related Products */}
+        {relatedProducts.length > 0 && (
+          <section>
+            <h2 className="text-2xl font-bold mb-6">Related Products</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {relatedProducts.map(product => (
+                <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <CardContent className="p-4">
+                    <h3 className="font-bold mb-2 line-clamp-1">{product.name}</h3>
+                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{product.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-blue-600">{product.price}</span>
+                      <Link to={`/products/${product.id}`}>
+                        <Button variant="outline" size="sm">View</Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </Layout>
+  );
+};
+
+export default ProductDetail;

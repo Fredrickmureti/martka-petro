@@ -5,50 +5,11 @@ import { ArrowRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { products } from '@/data/products';
 
 const PopularProducts = () => {
-  const products = [
-    {
-      id: 1,
-      name: 'Advanced Fuel Dispenser System',
-      category: 'Dispensers',
-      price: 'Contact for Quote',
-      rating: 4.9,
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=400&h=300&fit=crop',
-      features: ['EMV Payment', 'Real-time Monitoring', 'Anti-theft Protection'],
-      popular: true,
-    },
-    {
-      id: 2,
-      name: 'Smart POS System',
-      category: 'POS Systems',
-      price: '$2,999',
-      rating: 4.8,
-      image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop',
-      features: ['Cloud Integration', 'Inventory Management', 'Multi-payment Support'],
-      popular: false,
-    },
-    {
-      id: 3,
-      name: 'Environmental Monitoring Kit',
-      category: 'Safety Equipment',
-      price: '$1,499',
-      rating: 4.7,
-      image: 'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=400&h=300&fit=crop',
-      features: ['24/7 Monitoring', 'Leak Detection', 'Compliance Reporting'],
-      popular: true,
-    },
-    {
-      id: 4,
-      name: 'Underground Storage Tank',
-      category: 'Storage Solutions',
-      price: 'Contact for Quote',
-      rating: 4.9,
-      image: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=400&h=300&fit=crop',
-      features: ['Corrosion Resistant', 'Double Wall Protection', 'Long-term Warranty'],
-      popular: false,
-    },
-  ];
+  // Get first 4 popular products
+  const featuredProducts = products.filter(product => product.popular).slice(0, 4);
 
   return (
     <section className="py-24 bg-slate-50 dark:bg-slate-900">
@@ -61,7 +22,7 @@ const PopularProducts = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {products.map((product) => (
+          {featuredProducts.map((product) => (
             <Card key={product.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
               <div className="relative">
                 <img 
@@ -87,7 +48,7 @@ const PopularProducts = () => {
               <CardContent className="p-6">
                 <div className="mb-2">
                   <Badge variant="outline" className="text-xs">
-                    {product.category}
+                    {product.category.name}
                   </Badge>
                 </div>
                 <h3 className="text-lg font-bold mb-2 line-clamp-2">{product.name}</h3>
@@ -101,19 +62,23 @@ const PopularProducts = () => {
                   ))}
                 </div>
                 
-                <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
-                  View Details
-                </Button>
+                <Link to={`/products/${product.id}`}>
+                  <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
+                    View Details
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}
         </div>
 
         <div className="text-center">
-          <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700">
-            Browse All Products
-            <ArrowRight className="ml-2" />
-          </Button>
+          <Link to="/products">
+            <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700">
+              Browse All Products
+              <ArrowRight className="ml-2" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
