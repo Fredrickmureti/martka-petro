@@ -42,35 +42,82 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_items: {
+        Row: {
+          created_at: string
+          details: Json | null
+          icon: string | null
+          id: string
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          icon?: string | null
+          id?: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          icon?: string | null
+          id?: string
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
+          company: string | null
           created_at: string
           email: string | null
           id: number
           is_read: boolean | null
           message: string | null
           name: string | null
+          phone: string | null
+          service_id: number | null
           subject: string | null
         }
         Insert: {
+          company?: string | null
           created_at?: string
           email?: string | null
           id?: number
           is_read?: boolean | null
           message?: string | null
           name?: string | null
+          phone?: string | null
+          service_id?: number | null
           subject?: string | null
         }
         Update: {
+          company?: string | null
           created_at?: string
           email?: string | null
           id?: number
           is_read?: boolean | null
           message?: string | null
           name?: string | null
+          phone?: string | null
+          service_id?: number | null
           subject?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "contact_messages_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       locations: {
         Row: {
@@ -79,7 +126,9 @@ export type Database = {
           country: string | null
           created_at: string
           email: string | null
+          gallery: Json | null
           id: number
+          is_headquarters: boolean
           latitude: number | null
           longitude: number | null
           map_embed_url: string | null
@@ -93,7 +142,9 @@ export type Database = {
           country?: string | null
           created_at?: string
           email?: string | null
+          gallery?: Json | null
           id?: number
+          is_headquarters?: boolean
           latitude?: number | null
           longitude?: number | null
           map_embed_url?: string | null
@@ -107,13 +158,42 @@ export type Database = {
           country?: string | null
           created_at?: string
           email?: string | null
+          gallery?: Json | null
           id?: number
+          is_headquarters?: boolean
           latitude?: number | null
           longitude?: number | null
           map_embed_url?: string | null
           map_image_url?: string | null
           name?: string
           phone?: string | null
+        }
+        Relationships: []
+      }
+      page_content: {
+        Row: {
+          content: Json | null
+          created_at: string
+          element_id: string
+          id: string
+          page: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          element_id: string
+          id?: string
+          page: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          element_id?: string
+          id?: string
+          page?: string
+          updated_at?: string
         }
         Relationships: []
       }
