@@ -1,5 +1,4 @@
 
-```typescript
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -122,4 +121,3 @@ const AdminProjects = () => {
 };
 
 export default AdminProjects;
-```

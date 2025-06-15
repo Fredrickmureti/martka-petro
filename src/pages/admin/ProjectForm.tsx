@@ -1,5 +1,4 @@
 
-```typescript
 import { useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -64,12 +63,18 @@ const AdminProjectForm = () => {
   useEffect(() => {
     if (project) {
       form.reset({
-        ...project,
-        year: project.year || undefined,
-        tags: (project.tags as string[] || []).map(t => ({ value: t })),
-        gallery_images: (project.gallery_images as { url: string; alt: string }[] || []),
-        specifications: (project.specifications as { name: string; value: string }[] || []),
-        timeline: (project.timeline as { date: string, description: string, status: 'completed' | 'in_progress' | 'planned' }[] || []),
+        title: project.title ?? '',
+        slug: project.slug ?? '',
+        description: project.description ?? undefined,
+        location: project.location ?? undefined,
+        year: project.year ?? undefined,
+        status: project.status as ProjectFormValues['status'] | undefined,
+        category: project.category as ProjectFormValues['category'] | undefined,
+        hero_image_url: project.hero_image_url ?? '',
+        tags: (project.tags || []).map((t: string) => ({ value: t })),
+        gallery_images: (project.gallery_images as ProjectFormValues['gallery_images']) || [],
+        specifications: (project.specifications as ProjectFormValues['specifications']) || [],
+        timeline: (project.timeline as ProjectFormValues['timeline']) || [],
       });
     }
   }, [project, form]);
@@ -109,34 +114,34 @@ const AdminProjectForm = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid md:grid-cols-2 gap-8">
               <FormField name="title" control={form.control} render={({ field }) => (
-                <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Title</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField name="slug" control={form.control} render={({ field }) => (
-                <FormItem><FormLabel>Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Slug</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
               )} />
             </div>
             
             <FormField name="description" control={form.control} render={({ field }) => (
-              <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl><FormMessage /></FormItem>
+              <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
             )} />
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <FormField name="location" control={form.control} render={({ field }) => (
-                    <FormItem><FormLabel>Location</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Location</FormLabel><FormControl><Input {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField name="year" control={form.control} render={({ field }) => (
-                    <FormItem><FormLabel>Year</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Year</FormLabel><FormControl><Input type="number" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField name="status" control={form.control} render={({ field }) => (
-                    <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Planning">Planning</SelectItem><SelectItem value="In Progress">In Progress</SelectItem><SelectItem value="Ongoing">Ongoing</SelectItem><SelectItem value="Completed">Completed</SelectItem></SelectContent></Select><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Planning">Planning</SelectItem><SelectItem value="In Progress">In Progress</SelectItem><SelectItem value="Ongoing">Ongoing</SelectItem><SelectItem value="Completed">Completed</SelectItem></SelectContent></Select><FormMessage /></FormItem>
                 )} />
                 <FormField name="category" control={form.control} render={({ field }) => (
-                    <FormItem><FormLabel>Category</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger></FormControl><SelectContent><SelectItem value="construction">Construction</SelectItem><SelectItem value="installation">Installation</SelectItem><SelectItem value="maintenance">Maintenance</SelectItem><SelectItem value="infrastructure">Infrastructure</SelectItem></SelectContent></Select><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Category</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger></FormControl><SelectContent><SelectItem value="construction">Construction</SelectItem><SelectItem value="installation">Installation</SelectItem><SelectItem value="maintenance">Maintenance</SelectItem><SelectItem value="infrastructure">Infrastructure</SelectItem></SelectContent></Select><FormMessage /></FormItem>
                 )} />
             </div>
 
             <FormField name="hero_image_url" control={form.control} render={({ field }) => (
-                <FormItem><FormLabel>Hero Image URL</FormLabel><FormControl><Input {...field} placeholder="https://example.com/image.png" /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Hero Image URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/image.png" /></FormControl><FormMessage /></FormItem>
             )} />
 
             {/* Field Arrays */}
@@ -186,7 +191,7 @@ const AdminProjectForm = () => {
                         </div>
                         <div className="grid md:grid-cols-2 gap-4">
                             <FormField name={`timeline.${index}.date`} control={form.control} render={({ field }) => <FormItem><FormLabel>Date</FormLabel><FormControl><Input {...field} placeholder="e.g., 2023-01-15" /></FormControl></FormItem>}/>
-                            <FormField name={`timeline.${index}.status`} control={form.control} render={({ field }) => <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="completed">Completed</SelectItem><SelectItem value="in_progress">In Progress</SelectItem><SelectItem value="planned">Planned</SelectItem></SelectContent></Select></FormItem>}/>
+                            <FormField name={`timeline.${index}.status`} control={form.control} render={({ field }) => <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="completed">Completed</SelectItem><SelectItem value="in_progress">In Progress</SelectItem><SelectItem value="planned">Planned</SelectItem></SelectContent></Select></FormItem>}/>
                         </div>
                         <FormField name={`timeline.${index}.description`} control={form.control} render={({ field }) => <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea {...field} /></FormControl></FormItem>}/>
                     </div>
@@ -210,4 +215,3 @@ const AdminProjectForm = () => {
 };
 
 export default AdminProjectForm;
-```
