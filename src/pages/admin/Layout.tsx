@@ -40,7 +40,7 @@ const AdminLayout = () => {
         });
 
         return () => {
-            authListener?.unsubscribe();
+            authListener?.subscription.unsubscribe();
         };
     }, [navigate]);
 
