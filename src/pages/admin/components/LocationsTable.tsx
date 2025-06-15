@@ -32,6 +32,7 @@ export const LocationsTable = ({ locations, onEdit, onDelete }: LocationsTablePr
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              <TableHead className="hidden sm:table-cell">Address</TableHead>
               <TableHead>City</TableHead>
               <TableHead className="hidden sm:table-cell">Country</TableHead>
               <TableHead className="hidden md:table-cell">Email</TableHead>
@@ -45,6 +46,7 @@ export const LocationsTable = ({ locations, onEdit, onDelete }: LocationsTablePr
             {locations.map((location) => (
               <TableRow key={location.id}>
                 <TableCell className="font-medium">{location.name}</TableCell>
+                <TableCell className="hidden sm:table-cell">{location.address}</TableCell>
                 <TableCell>
                   <Badge variant="outline">{location.city}</Badge>
                 </TableCell>

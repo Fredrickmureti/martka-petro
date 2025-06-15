@@ -80,6 +80,10 @@ export type Database = {
           created_at: string
           email: string | null
           id: number
+          latitude: number | null
+          longitude: number | null
+          map_embed_url: string | null
+          map_image_url: string | null
           name: string
           phone: string | null
         }
@@ -90,6 +94,10 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: number
+          latitude?: number | null
+          longitude?: number | null
+          map_embed_url?: string | null
+          map_image_url?: string | null
           name: string
           phone?: string | null
         }
@@ -100,6 +108,10 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: number
+          latitude?: number | null
+          longitude?: number | null
+          map_embed_url?: string | null
+          map_image_url?: string | null
           name?: string
           phone?: string | null
         }

@@ -25,6 +25,10 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
             country: '',
             email: '',
             phone: '',
+            map_embed_url: '',
+            latitude: null,
+            longitude: null,
+            map_image_url: '',
         },
     });
 
@@ -37,6 +41,10 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
                 country: location.country || '',
                 email: location.email || '',
                 phone: location.phone || '',
+                map_embed_url: location.map_embed_url || '',
+                latitude: location.latitude as number | null,
+                longitude: location.longitude as number | null,
+                map_image_url: location.map_image_url || '',
             });
         } else {
             form.reset({
@@ -46,6 +54,10 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
                 country: '',
                 email: '',
                 phone: '',
+                map_embed_url: '',
+                latitude: null,
+                longitude: null,
+                map_image_url: '',
             });
         }
     }, [location, form]);
@@ -79,53 +91,111 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
                         </FormItem>
                     )}
                 />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>City</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g. Nairobi" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="country"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Country</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g. Kenya" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input type="email" placeholder="e.g. nairobi@martka.com" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Phone</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g. +254 20 123 4567" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
                 <FormField
                     control={form.control}
-                    name="city"
+                    name="map_embed_url"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>City</FormLabel>
+                            <FormLabel>Map Embed URL</FormLabel>
                             <FormControl>
-                                <Input placeholder="e.g. Nairobi" {...field} value={field.value ?? ''} />
+                                <Input placeholder="Google Maps embed URL" {...field} value={field.value ?? ''} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                 <FormField
-                    control={form.control}
-                    name="country"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Country</FormLabel>
-                            <FormControl>
-                                <Input placeholder="e.g. Kenya" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <FormField
+                        control={form.control}
+                        name="latitude"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Latitude</FormLabel>
+                                <FormControl>
+                                    <Input type="number" step="any" placeholder="e.g. -1.286389" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="longitude"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Longitude</FormLabel>
+                                <FormControl>
+                                    <Input type="number" step="any" placeholder="e.g. 36.817223" {...field} value={field.value ?? ''} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
                 <FormField
                     control={form.control}
-                    name="email"
+                    name="map_image_url"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>Map Image URL</FormLabel>
                             <FormControl>
-                                <Input placeholder="e.g. nairobi@martka.com" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Phone</FormLabel>
-                            <FormControl>
-                                <Input placeholder="e.g. +254 20 123 4567" {...field} value={field.value ?? ''} />
+                                <Input placeholder="URL of an image of the map" {...field} value={field.value ?? ''} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
