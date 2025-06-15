@@ -5,37 +5,18 @@ import { ArrowRight, MapPin, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useQuery } from '@tanstack/react-query';
+import { fetchPublicProjects } from '@/lib/projects';
+import { Project } from '@/types/project';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ProjectsOverview = () => {
-  const featuredProjects = [
-    {
-      id: 1,
-      title: 'Metro City Fuel Complex',
-      location: 'Houston, TX',
-      year: '2024',
-      status: 'Completed',
-      image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&h=400&fit=crop',
-      description: 'Complete fuel station construction with 12 dispensers and modern convenience store.',
-    },
-    {
-      id: 2,
-      title: 'Highway Express Station',
-      location: 'Dallas, TX',
-      year: '2024',
-      status: 'Completed',
-      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop',
-      description: 'Advanced dispenser installation with EMV payment systems.',
-    },
-    {
-      id: 3,
-      title: 'Green Valley Infrastructure',
-      location: 'Austin, TX',
-      year: '2024',
-      status: 'In Progress',
-      image: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=600&h=400&fit=crop',
-      description: 'Custom fuel infrastructure design for environmentally sensitive location.',
-    },
-  ];
+  const { data: projects, isLoading } = useQuery<Project[]>({
+    queryKey: ['publicProjects'],
+    queryFn: fetchPublicProjects
+  });
+
+  const featuredProjects = projects?.slice(0, 3) || [];
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -44,6 +25,24 @@ const ProjectsOverview = () => {
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
+
+  const renderSkeletons = () => (
+    <div className="grid md:grid-cols-3 gap-8 mb-12">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Card key={i} className="group overflow-hidden">
+            <Skeleton className="w-full h-48" />
+            <CardContent className="p-6 space-y-4">
+              <Skeleton className="h-6 w-3/4" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-4 w-3/4" />
+              </div>
+              <Skeleton className="h-10 w-full" />
+            </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 
   return (
     <section className="py-24 bg-background">
@@ -55,41 +54,48 @@ const ProjectsOverview = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {featuredProjects.map((project) => (
-            <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-              <div className="relative">
-                <img 
-                  src={project.image} 
-                  alt={project.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-4 left-4">
-                  <Badge className={getStatusColor(project.status)}>
-                    {project.status}
-                  </Badge>
-                </div>
-              </div>
-              
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                <div className="flex items-center text-sm text-muted-foreground mb-2">
-                  <MapPin size={14} className="mr-1" />
-                  <span className="mr-4">{project.location}</span>
-                  <Calendar size={14} className="mr-1" />
-                  <span>{project.year}</span>
-                </div>
-                <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                  {project.description}
-                </p>
-                
-                <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
-                  View Details
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {isLoading ? renderSkeletons() : (
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {featuredProjects.map((project) => {
+              const heroImage = project.images.find(img => img.type === 'hero') || project.images[0];
+              return(
+                <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                  <div className="relative">
+                    <img 
+                      src={heroImage?.url || '/placeholder.svg'}
+                      alt={project.title}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <Badge className={getStatusColor(project.status)}>
+                        {project.status}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                    <div className="flex items-center text-sm text-muted-foreground mb-2">
+                      <MapPin size={14} className="mr-1" />
+                      <span className="mr-4">{project.location}</span>
+                      <Calendar size={14} className="mr-1" />
+                      <span>{project.year}</span>
+                    </div>
+                    <p className="text-muted-foreground mb-4 text-sm leading-relaxed line-clamp-3">
+                      {project.description}
+                    </p>
+                    
+                    <Link to={`/projects/${project.slug}`}>
+                      <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
+                        View Details
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        )}
 
         <div className="text-center">
           <Link to="/projects">

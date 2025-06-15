@@ -1,26 +1,44 @@
+
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, MapPin, Users, DollarSign, Square, CheckCircle, Clock, Target } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, DollarSign, Square, CheckCircle, Clock, Target, Loader2 } from 'lucide-react';
 import Layout from '@/components/layout/Layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { getProjectBySlug } from '@/data/projects';
+import { fetchPublicProjectBySlug } from '@/lib/projects';
 import ProjectGallery from '@/components/projects/ProjectGallery';
 import ProjectTimeline from '@/components/projects/ProjectTimeline';
 import ProjectSpecifications from '@/components/projects/ProjectSpecifications';
+import { useQuery } from '@tanstack/react-query';
+import { Project } from '@/types/project';
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const project = slug ? getProjectBySlug(slug) : undefined;
 
-  if (!project) {
+  const { data: project, isLoading, error } = useQuery<Project | null>({
+    queryKey: ['project', slug],
+    queryFn: () => (slug ? fetchPublicProjectBySlug(slug) : null),
+    enabled: !!slug,
+  });
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-6 py-32 flex justify-center items-center">
+          <Loader2 className="h-12 w-12 animate-spin" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error || !project) {
     return (
       <Layout>
         <div className="container mx-auto px-6 py-32 text-center">
           <h1 className="text-4xl font-bold mb-4">Project Not Found</h1>
-          <p className="text-muted-foreground mb-8">The project you're looking for doesn't exist.</p>
+          <p className="text-muted-foreground mb-8">The project you're looking for doesn't exist or there was an error loading it.</p>
           <Link to="/projects">
             <Button>Back to Projects</Button>
           </Link>
@@ -155,55 +173,57 @@ const ProjectDetail = () => {
               </div>
               
               {/* Case Study */}
-              <div className="grid md:grid-cols-3 gap-8">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-orange-600">
-                      <Target className="mr-2" size={20} />
-                      Challenges
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {project.challenges.map((challenge, index) => (
-                        <li key={index} className="text-sm">{challenge}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-blue-600">
-                      <Clock className="mr-2" size={20} />
-                      Solutions
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {project.solutions.map((solution, index) => (
-                        <li key={index} className="text-sm">{solution}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center text-green-600">
-                      <CheckCircle className="mr-2" size={20} />
-                      Results
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {project.results.map((result, index) => (
-                        <li key={index} className="text-sm">{result}</li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
+              {project.challenges && project.challenges.length > 0 && (
+                <div className="grid md:grid-cols-3 gap-8">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-orange-600">
+                        <Target className="mr-2" size={20} />
+                        Challenges
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {project.challenges.map((challenge, index) => (
+                          <li key={index} className="text-sm">{challenge}</li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-blue-600">
+                        <Clock className="mr-2" size={20} />
+                        Solutions
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {project.solutions.map((solution, index) => (
+                          <li key={index} className="text-sm">{solution}</li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center text-green-600">
+                        <CheckCircle className="mr-2" size={20} />
+                        Results
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {project.results.map((result, index) => (
+                          <li key={index} className="text-sm">{result}</li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </div>
             
             {/* Right Column */}
@@ -212,28 +232,30 @@ const ProjectDetail = () => {
               <ProjectSpecifications specifications={project.specifications} />
               
               {/* Team Members */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Project Team</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {project.teamMembers.map((member, index) => (
-                      <div key={index} className="flex items-center">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                          <span className="text-blue-600 font-semibold">
-                            {member.name.split(' ').map(n => n[0]).join('')}
-                          </span>
+              {project.teamMembers && project.teamMembers.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Project Team</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {project.teamMembers.map((member, index) => (
+                        <div key={index} className="flex items-center">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                            <span className="text-blue-600 font-semibold">
+                              {member.name.split(' ').map(n => n[0]).join('')}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="font-medium">{member.name}</div>
+                            <div className="text-sm text-muted-foreground">{member.role}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-medium">{member.name}</div>
-                          <div className="text-sm text-muted-foreground">{member.role}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
               
               {/* Testimonial */}
               {project.testimonial && (

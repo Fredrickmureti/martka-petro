@@ -220,7 +220,11 @@ export type Database = {
       }
       projects: {
         Row: {
+          area: string | null
+          budget: string | null
           category: string | null
+          challenges: Json | null
+          client: string | null
           created_at: string
           description: string | null
           end_date: string | null
@@ -228,17 +232,26 @@ export type Database = {
           hero_image_url: string | null
           id: number
           location: string | null
+          long_description: string | null
           name: string
+          results: Json | null
           slug: string
+          solutions: Json | null
           specifications: Json | null
           start_date: string | null
           status: string | null
           tags: Json | null
+          team_members: Json | null
+          testimonial: Json | null
           timeline: Json | null
           year: number | null
         }
         Insert: {
+          area?: string | null
+          budget?: string | null
           category?: string | null
+          challenges?: Json | null
+          client?: string | null
           created_at?: string
           description?: string | null
           end_date?: string | null
@@ -246,17 +259,26 @@ export type Database = {
           hero_image_url?: string | null
           id?: number
           location?: string | null
+          long_description?: string | null
           name: string
+          results?: Json | null
           slug: string
+          solutions?: Json | null
           specifications?: Json | null
           start_date?: string | null
           status?: string | null
           tags?: Json | null
+          team_members?: Json | null
+          testimonial?: Json | null
           timeline?: Json | null
           year?: number | null
         }
         Update: {
+          area?: string | null
+          budget?: string | null
           category?: string | null
+          challenges?: Json | null
+          client?: string | null
           created_at?: string
           description?: string | null
           end_date?: string | null
@@ -264,12 +286,17 @@ export type Database = {
           hero_image_url?: string | null
           id?: number
           location?: string | null
+          long_description?: string | null
           name?: string
+          results?: Json | null
           slug?: string
+          solutions?: Json | null
           specifications?: Json | null
           start_date?: string | null
           status?: string | null
           tags?: Json | null
+          team_members?: Json | null
+          testimonial?: Json | null
           timeline?: Json | null
           year?: number | null
         }

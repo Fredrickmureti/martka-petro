@@ -1,7 +1,6 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
-import { Project, ProjectImage, ProjectSpecification, ProjectTimeline } from '@/types/project';
+import { Project, ProjectImage, ProjectSpecification } from '@/types/project';
 
 export type SupabaseProject = Tables<'projects'>;
 
@@ -25,6 +24,15 @@ export const mapSupabaseProjectToAppProject = (p: any): Project => {
     images: images,
     specifications: (p.specifications as unknown as ProjectSpecification[]) || [],
     timeline: (p.timeline as unknown as Project['timeline']) || [],
+    longDescription: p.long_description || '',
+    client: p.client || '',
+    budget: p.budget || '',
+    area: p.area || '',
+    teamMembers: (p.team_members as Project['teamMembers']) || [],
+    challenges: (p.challenges as string[]) || [],
+    solutions: (p.solutions as string[]) || [],
+    results: (p.results as string[]) || [],
+    testimonial: p.testimonial || undefined,
   };
 };
 
@@ -38,6 +46,15 @@ export const fetchPublicProjects = async (): Promise<Project[]> => {
   const { data, error } = await supabase.from('projects').select('*').order('year', { ascending: false });
   if (error) throw new Error(error.message);
   return (data || []).map(mapSupabaseProjectToAppProject);
+};
+
+export const fetchPublicProjectBySlug = async (slug: string): Promise<Project | null> => {
+    const { data, error } = await supabase.from('projects').select('*').eq('slug', slug).maybeSingle();
+    if (error) {
+        console.error('Error fetching project by slug:', error);
+        return null;
+    }
+    return data ? mapSupabaseProjectToAppProject(data) : null;
 };
 
 export const fetchProjectById = async (id: number): Promise<SupabaseProject | null> => {
