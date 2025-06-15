@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,7 @@ import { Project } from '@/types/project';
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const { data: projects, isLoading } = useQuery({
+  const { data: projects, isLoading } = useQuery<Project[]>({
     queryKey: ['publicProjects'],
     queryFn: fetchPublicProjects
   });

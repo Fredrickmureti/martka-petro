@@ -1,58 +1,32 @@
 
 export interface ProjectImage {
-  id: string;
   url: string;
-  caption: string;
-  type: 'hero' | 'gallery' | 'technical' | 'progress';
+  alt: string;
+  type: 'hero' | 'gallery';
 }
 
 export interface ProjectSpecification {
-  category: string;
-  items: {
-    label: string;
-    value: string;
-  }[];
+  name: string;
+  value: string;
 }
 
 export interface ProjectTimeline {
-  phase: string;
+  date: string;
   description: string;
-  startDate: string;
-  endDate: string;
-  status: 'completed' | 'in-progress' | 'planned';
-}
-
-export interface ProjectTeamMember {
-  name: string;
-  role: string;
-  avatar?: string;
+  status: 'completed' | 'in_progress' | 'planned';
 }
 
 export interface Project {
-  id: string;
-  title: string;
+  id: number;
   slug: string;
-  category: 'construction' | 'installation' | 'maintenance' | 'infrastructure';
-  location: string;
-  status: 'Completed' | 'In Progress' | 'Ongoing' | 'Planning';
-  year: string;
+  title: string;
   description: string;
-  longDescription: string;
-  images: ProjectImage[];
+  location: string;
+  year: number;
+  status: 'Completed' | 'In Progress' | 'Ongoing' | 'Planning';
+  category: 'construction' | 'installation' | 'maintenance' | 'infrastructure';
   tags: string[];
+  images: ProjectImage[];
   specifications: ProjectSpecification[];
   timeline: ProjectTimeline[];
-  teamMembers: ProjectTeamMember[];
-  client: string;
-  budget?: string;
-  area?: string;
-  challenges: string[];
-  solutions: string[];
-  results: string[];
-  testimonial?: {
-    quote: string;
-    author: string;
-    position: string;
-    company: string;
-  };
 }

@@ -11,10 +11,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { fetchProjectById, createProject, updateProject } from '@/lib/projects';
+import { fetchProjectById, createProject, updateProject, SupabaseProject } from '@/lib/projects';
 import { Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { SupabaseProject } from '@/lib/projects';
 
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -63,7 +62,7 @@ const AdminProjectForm = () => {
   useEffect(() => {
     if (project) {
       form.reset({
-        title: project.title ?? '',
+        title: project.name ?? '',
         slug: project.slug ?? '',
         description: project.description ?? undefined,
         location: project.location ?? undefined,
@@ -81,8 +80,10 @@ const AdminProjectForm = () => {
   
   const mutation = useMutation({
     mutationFn: (data: ProjectFormValues) => {
-      const payload = {
-        ...data,
+      const { title, ...restData } = data;
+      const payload: Omit<SupabaseProject, 'id' | 'created_at'> & { tags: string[] | undefined } = {
+        ...restData,
+        name: title,
         tags: data.tags?.map(t => t.value),
       };
       return projectId ? updateProject(projectId, payload) : createProject(payload);

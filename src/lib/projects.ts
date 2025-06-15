@@ -1,22 +1,21 @@
 
-```typescript
 import { supabase } from '@/integrations/supabase/client';
 import { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
-import { Project } from '@/types/project';
+import { Project, ProjectImage, ProjectSpecification, ProjectTimeline } from '@/types/project';
 
 export type SupabaseProject = Tables<'projects'>;
 
 export const mapSupabaseProjectToAppProject = (p: SupabaseProject): Project => {
   const gallery = (p.gallery_images as { url: string; alt: string }[]) || [];
   
-  const images = p.hero_image_url 
-    ? [{ url: p.hero_image_url, type: 'hero' as const, alt: p.title || 'Project hero image' }, ...gallery.map(img => ({ ...img, type: 'gallery' as const }))]
+  const images: ProjectImage[] = p.hero_image_url 
+    ? [{ url: p.hero_image_url, type: 'hero' as const, alt: p.name || 'Project hero image' }, ...gallery.map(img => ({ ...img, type: 'gallery' as const }))]
     : gallery.map(img => ({ ...img, type: 'gallery' as const }));
 
   return {
     id: p.id,
     slug: p.slug,
-    title: p.title || '',
+    title: p.name || '',
     description: p.description || '',
     location: p.location || '',
     year: p.year || new Date().getFullYear(),
@@ -24,7 +23,7 @@ export const mapSupabaseProjectToAppProject = (p: SupabaseProject): Project => {
     category: (p.category as Project['category']) || 'construction',
     tags: (p.tags as string[]) || [],
     images: images,
-    specifications: (p.specifications as { name: string; value: string }[]) || [],
+    specifications: (p.specifications as ProjectSpecification[]) || [],
     timeline: (p.timeline as Project['timeline']) || [],
   };
 };
@@ -67,4 +66,3 @@ export const deleteProject = async (id: number) => {
     if (error) throw new Error(error.message);
     return true;
 }
-```

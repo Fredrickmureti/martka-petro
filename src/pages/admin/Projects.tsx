@@ -6,7 +6,7 @@ import { Loader2, PlusCircle, MoreHorizontal, Trash2, Edit } from 'lucide-react'
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { fetchAdminProjects, deleteProject } from '@/lib/projects';
+import { fetchAdminProjects, deleteProject, SupabaseProject } from '@/lib/projects';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -14,12 +14,12 @@ const AdminProjects = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   
-  const { data: projects, isLoading, error } = useQuery({
+  const { data: projects, isLoading, error } = useQuery<SupabaseProject[]>({
     queryKey: ['adminProjects'],
     queryFn: fetchAdminProjects,
   });
 
-  const mutation = useMutation({
+  const mutation = useMutation<boolean, Error, number>({
     mutationFn: deleteProject,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProjects'] });
@@ -58,7 +58,7 @@ const AdminProjects = () => {
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           )}
-          {error instanceof Error && <p className="text-red-500 text-center py-16">Error: {error.message}</p>}
+          {error && <p className="text-red-500 text-center py-16">Error: {error.message}</p>}
           {projects && (
             <div className="border rounded-md">
                 <Table>
@@ -82,7 +82,7 @@ const AdminProjects = () => {
                       ) : (
                       projects.map((project) => (
                           <TableRow key={project.id}>
-                          <TableCell className="font-medium">{project.title}</TableCell>
+                          <TableCell className="font-medium">{project.name}</TableCell>
                           <TableCell>{project.category || 'N/A'}</TableCell>
                           <TableCell>{project.location || 'N/A'}</TableCell>
                           <TableCell>{project.year || 'N/A'}</TableCell>

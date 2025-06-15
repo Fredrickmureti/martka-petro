@@ -1,5 +1,4 @@
 
-```typescript
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const AdminUsers = () => {
@@ -17,4 +16,3 @@ const AdminUsers = () => {
 };
 
 export default AdminUsers;
-```
