@@ -105,35 +105,97 @@ export type Database = {
         }
         Relationships: []
       }
-      products: {
+      product_categories: {
         Row: {
-          category: string | null
           created_at: string
           description: string | null
+          icon: string | null
           id: number
-          image_url: string | null
           name: string
-          specifications: Json | null
+          slug: string
         }
         Insert: {
-          category?: string | null
           created_at?: string
           description?: string | null
+          icon?: string | null
           id?: number
-          image_url?: string | null
           name: string
-          specifications?: Json | null
+          slug: string
         }
         Update: {
-          category?: string | null
           created_at?: string
           description?: string | null
+          icon?: string | null
           id?: number
-          image_url?: string | null
           name?: string
-          specifications?: Json | null
+          slug?: string
         }
         Relationships: []
+      }
+      products: {
+        Row: {
+          category_id: number | null
+          created_at: string
+          description: string | null
+          documents: Json | null
+          features: Json | null
+          gallery: Json | null
+          id: number
+          image_url: string | null
+          in_stock: boolean | null
+          manufacturer: string | null
+          name: string
+          popular: boolean | null
+          price: string | null
+          rating: number | null
+          specifications: Json | null
+          warranty: string | null
+        }
+        Insert: {
+          category_id?: number | null
+          created_at?: string
+          description?: string | null
+          documents?: Json | null
+          features?: Json | null
+          gallery?: Json | null
+          id?: number
+          image_url?: string | null
+          in_stock?: boolean | null
+          manufacturer?: string | null
+          name: string
+          popular?: boolean | null
+          price?: string | null
+          rating?: number | null
+          specifications?: Json | null
+          warranty?: string | null
+        }
+        Update: {
+          category_id?: number | null
+          created_at?: string
+          description?: string | null
+          documents?: Json | null
+          features?: Json | null
+          gallery?: Json | null
+          id?: number
+          image_url?: string | null
+          in_stock?: boolean | null
+          manufacturer?: string | null
+          name?: string
+          popular?: boolean | null
+          price?: string | null
+          rating?: number | null
+          specifications?: Json | null
+          warranty?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

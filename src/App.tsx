@@ -21,6 +21,7 @@ import AdminAuth from "./pages/admin/Auth";
 import AdminLayout from "./pages/admin/Layout";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminSupport from "./pages/admin/Support";
+import AdminProducts from "./pages/admin/Products";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
               <Route index element={<AdminDashboard />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="support" element={<AdminSupport />} />
+              <Route path="products" element={<AdminProducts />} />
               {/* Other admin routes will be nested here, they will show a blank page for now */}
             </Route>
 
