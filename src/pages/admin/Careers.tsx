@@ -7,7 +7,7 @@ const AdminCareers = () => {
       <CardHeader>
         <CardTitle>Careers</CardTitle>
         <CardDescription>Career postings management is under construction.</CardDescription>
-      </Header>
+      </CardHeader>
       <CardContent>
         <p>This page will allow you to manage job openings. Please check back later!</p>
       </CardContent>
