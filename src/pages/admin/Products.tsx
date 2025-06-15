@@ -65,6 +65,13 @@ const fetchCategories = async () => {
   return data || [];
 };
 
+type SubmittableProduct = Omit<ProductFormValues, 'features' | 'gallery' | 'specifications' | 'documents'> & {
+    features: any;
+    gallery: any;
+    specifications: any;
+    documents: any;
+}
+
 const AdminProducts = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -83,10 +90,31 @@ const AdminProducts = () => {
     queryFn: fetchCategories,
   });
 
+  const parseJson = (jsonString: string | null | undefined) => {
+    if (!jsonString || jsonString.trim() === '') return null;
+    try {
+        return JSON.parse(jsonString);
+    } catch {
+        // Return an empty object/array on parsing error to avoid DB errors
+        // though zod should prevent invalid JSON from reaching here.
+        return null;
+    }
+  };
+
   const { mutate: createProduct, isPending: isCreating } = useMutation({
     mutationFn: async (productData: ProductFormValues) => {
-      const { name, ...rest } = productData;
-      const { error } = await supabase.from('products').insert({ name: name || '', ...rest });
+      const { name, features, gallery, specifications, documents, ...rest } = productData;
+      
+      const payload = { 
+        name: name || '', 
+        ...rest,
+        features: parseJson(features),
+        gallery: parseJson(gallery),
+        specifications: parseJson(specifications),
+        documents: parseJson(documents),
+      };
+
+      const { error } = await supabase.from('products').insert(payload as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -101,7 +129,15 @@ const AdminProducts = () => {
 
   const { mutate: updateProduct, isPending: isUpdating } = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: ProductFormValues }) => {
-      const { error } = await supabase.from('products').update(data).eq('id', id);
+        const { features, gallery, specifications, documents, ...rest } = data;
+        const payload = {
+            ...rest,
+            features: parseJson(features),
+            gallery: parseJson(gallery),
+            specifications: parseJson(specifications),
+            documents: parseJson(documents),
+        };
+      const { error } = await supabase.from('products').update(payload as any).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
