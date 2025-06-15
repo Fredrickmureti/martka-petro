@@ -13,8 +13,8 @@ interface ProductFiltersProps {
   onSearchChange: (query: string) => void;
   filters: ProductFilter;
   onFiltersChange: (filters: ProductFilter) => void;
-  sortBy: string;
-  onSortChange: (sort: string) => void;
+  sortBy: 'name' | 'price' | 'rating' | 'popular';
+  onSortChange: (sort: 'name' | 'price' | 'rating' | 'popular') => void;
   categories: ProductCategory[];
   manufacturers: string[];
 }
