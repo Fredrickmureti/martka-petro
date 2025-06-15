@@ -6,7 +6,8 @@ import {
     DialogTitle,
     DialogDescription,
 } from '@/components/ui/dialog';
-import { ProductForm, ProductFormValues } from './ProductForm';
+import { ProductForm } from './ProductForm';
+import { ProductFormValues } from './form/productFormSchema';
 import { Tables } from '@/integrations/supabase/types';
 
 type ProductFormDialogProps = {

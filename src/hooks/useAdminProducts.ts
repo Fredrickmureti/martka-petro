@@ -2,7 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
-import { ProductFormValues } from '@/pages/admin/components/ProductForm';
+import { ProductFormValues } from '@/pages/admin/components/form/productFormSchema';
 import { useToast } from '@/components/ui/use-toast';
 
 export type ProductWithCategory = Tables<'products'> & {

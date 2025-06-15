@@ -6,7 +6,7 @@ import { ProductsHeader } from './components/ProductsHeader';
 import { ProductList } from './components/ProductList';
 import { ProductFormDialog } from './components/ProductFormDialog';
 import { DeleteProductDialog } from './components/DeleteProductDialog';
-import { ProductFormValues } from './components/ProductForm';
+import { ProductFormValues } from './components/form/productFormSchema';
 
 const AdminProducts = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
