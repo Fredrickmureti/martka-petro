@@ -44,7 +44,7 @@ const Products = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-6 pb-12">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Products & Equipment</h1>

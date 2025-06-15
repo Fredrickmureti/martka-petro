@@ -5,7 +5,7 @@ import Layout from '@/components/layout/Layout';
 const Terms = () => {
   return (
     <Layout>
-      <section className="pt-32 pb-16 bg-background">
+      <section className="pt-8 pb-16 bg-background">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
