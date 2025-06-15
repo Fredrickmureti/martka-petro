@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -28,16 +27,14 @@ const ProjectGallery = ({ images }: ProjectGalleryProps) => {
   const navigateImage = (direction: 'prev' | 'next') => {
     if (selectedImage === null) return;
     
-    const currentIndex = filteredImages.findIndex((_, index) => 
-      images.findIndex(img => img.id === filteredImages[index].id) === selectedImage
-    );
-    
+    const currentIndex = images.indexOf(filteredImages[selectedImage]);
+
     if (direction === 'prev') {
       const prevIndex = currentIndex > 0 ? currentIndex - 1 : filteredImages.length - 1;
-      setSelectedImage(images.findIndex(img => img.id === filteredImages[prevIndex].id));
+      setSelectedImage(images.indexOf(filteredImages[prevIndex]));
     } else {
       const nextIndex = currentIndex < filteredImages.length - 1 ? currentIndex + 1 : 0;
-      setSelectedImage(images.findIndex(img => img.id === filteredImages[nextIndex].id));
+      setSelectedImage(images.indexOf(filteredImages[nextIndex]));
     }
   };
 
@@ -63,22 +60,22 @@ const ProjectGallery = ({ images }: ProjectGalleryProps) => {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredImages.map((image, index) => {
-          const originalIndex = images.findIndex(img => img.id === image.id);
+          const originalIndex = images.indexOf(image);
           return (
             <Card 
-              key={image.id} 
+              key={index} 
               className="overflow-hidden cursor-pointer group hover:shadow-lg transition-all duration-300"
               onClick={() => setSelectedImage(originalIndex)}
             >
               <div className="relative">
                 <img 
                   src={image.url} 
-                  alt={image.caption}
+                  alt={image.alt}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                  <p className="text-white text-sm">{image.caption}</p>
+                  <p className="text-white text-sm">{image.alt}</p>
                 </div>
               </div>
             </Card>
@@ -89,7 +86,7 @@ const ProjectGallery = ({ images }: ProjectGalleryProps) => {
       {/* Lightbox Modal */}
       <Dialog open={selectedImage !== null} onOpenChange={() => setSelectedImage(null)}>
         <DialogContent className="max-w-4xl w-full h-full max-h-[90vh] p-0">
-          {selectedImage !== null && (
+          {selectedImage !== null && images[selectedImage] && (
             <div className="relative w-full h-full flex items-center justify-center bg-black">
               <Button
                 variant="ghost"
@@ -120,12 +117,12 @@ const ProjectGallery = ({ images }: ProjectGalleryProps) => {
               
               <img 
                 src={images[selectedImage].url}
-                alt={images[selectedImage].caption}
+                alt={images[selectedImage].alt}
                 className="max-w-full max-h-full object-contain"
               />
               
               <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-sm rounded-lg p-4">
-                <p className="text-white">{images[selectedImage].caption}</p>
+                <p className="text-white">{images[selectedImage].alt}</p>
               </div>
             </div>
           )}

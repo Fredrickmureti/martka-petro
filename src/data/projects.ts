@@ -3,13 +3,13 @@ import { Project } from '@/types/project';
 
 export const projects: Project[] = [
   {
-    id: '1',
+    id: 1,
     title: 'Metro City Fuel Complex',
     slug: 'metro-city-fuel-complex',
     category: 'construction',
     location: 'Houston, TX',
     status: 'Completed',
-    year: '2024',
+    year: 2024,
     description: 'Complete fuel station construction with 12 dispensers and modern convenience store.',
     longDescription: 'A comprehensive fuel complex project featuring state-of-the-art dispensing technology, environmental safety systems, and a modern convenience store. This project showcases our expertise in large-scale fuel infrastructure development with a focus on efficiency and environmental compliance.',
     client: 'Metro Energy Corp',
@@ -17,63 +17,44 @@ export const projects: Project[] = [
     area: '3.2 acres',
     images: [
       {
-        id: '1',
         url: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&h=600&fit=crop',
-        caption: 'Completed fuel complex with 12 dispensers',
+        alt: 'Completed fuel complex with 12 dispensers',
         type: 'hero'
       },
       {
-        id: '2',
         url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop',
-        caption: 'Modern convenience store interior',
+        alt: 'Modern convenience store interior',
         type: 'gallery'
       },
       {
-        id: '3',
         url: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=600&h=400&fit=crop',
-        caption: 'Underground storage tank installation',
+        alt: 'Underground storage tank installation',
         type: 'technical'
       }
     ],
     tags: ['Construction', 'POS Systems', 'Environmental Compliance'],
     specifications: [
-      {
-        category: 'Fuel Systems',
-        items: [
-          { label: 'Dispensers', value: '12 Multi-Product Dispensers' },
-          { label: 'Storage Capacity', value: '30,000 gallons' },
-          { label: 'Fuel Types', value: 'Regular, Premium, Diesel' }
-        ]
-      },
-      {
-        category: 'Technology',
-        items: [
-          { label: 'Payment Systems', value: 'EMV, NFC, Mobile Pay' },
-          { label: 'Monitoring', value: 'Real-time leak detection' },
-          { label: 'POS System', value: 'Cloud-based management' }
-        ]
-      }
+      { name: 'Dispensers', value: '12 Multi-Product Dispensers' },
+      { name: 'Storage Capacity', value: '30,000 gallons' },
+      { name: 'Fuel Types', value: 'Regular, Premium, Diesel' },
+      { name: 'Payment Systems', value: 'EMV, NFC, Mobile Pay' },
+      { name: 'Monitoring', value: 'Real-time leak detection' },
+      { name: 'POS System', value: 'Cloud-based management' }
     ],
     timeline: [
       {
-        phase: 'Planning & Design',
+        date: '2024-02-28',
         description: 'Site survey, permits, and detailed engineering',
-        startDate: '2024-01-15',
-        endDate: '2024-02-28',
         status: 'completed'
       },
       {
-        phase: 'Construction',
+        date: '2024-05-15',
         description: 'Site preparation and infrastructure installation',
-        startDate: '2024-03-01',
-        endDate: '2024-05-15',
         status: 'completed'
       },
       {
-        phase: 'Testing & Commissioning',
+        date: '2024-06-01',
         description: 'System testing and final inspection',
-        startDate: '2024-05-16',
-        endDate: '2024-06-01',
         status: 'completed'
       }
     ],
@@ -106,13 +87,13 @@ export const projects: Project[] = [
     }
   },
   {
-    id: '2',
+    id: 2,
     title: 'Highway Express Station',
     slug: 'highway-express-station',
     category: 'installation',
     location: 'Dallas, TX',
     status: 'Completed',
-    year: '2024',
+    year: 2024,
     description: 'Advanced dispenser installation with EMV payment systems and real-time monitoring.',
     longDescription: 'A high-tech fuel dispensing installation featuring the latest in payment technology and monitoring systems. This project demonstrates our capability to integrate cutting-edge technology with reliable fuel dispensing infrastructure.',
     client: 'Express Fuel Networks',
@@ -120,35 +101,26 @@ export const projects: Project[] = [
     area: '1.8 acres',
     images: [
       {
-        id: '1',
         url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
-        caption: 'Modern fuel dispensers with EMV technology',
+        alt: 'Modern fuel dispensers with EMV technology',
         type: 'hero'
       },
       {
-        id: '2',
         url: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600&h=400&fit=crop',
-        caption: 'Installation process documentation',
+        alt: 'Installation process documentation',
         type: 'gallery'
       }
     ],
     tags: ['Installation', 'EMV Systems', 'Monitoring'],
     specifications: [
-      {
-        category: 'Dispensers',
-        items: [
-          { label: 'Units', value: '8 High-Speed Dispensers' },
-          { label: 'Flow Rate', value: '10 GPM per nozzle' },
-          { label: 'Technology', value: 'EMV Level 3 Certified' }
-        ]
-      }
+      { name: 'Units', value: '8 High-Speed Dispensers' },
+      { name: 'Flow Rate', value: '10 GPM per nozzle' },
+      { name: 'Technology', value: 'EMV Level 3 Certified' }
     ],
     timeline: [
       {
-        phase: 'Installation',
+        date: '2024-03-15',
         description: 'Dispenser and system installation',
-        startDate: '2024-02-01',
-        endDate: '2024-03-15',
         status: 'completed'
       }
     ],
@@ -171,13 +143,13 @@ export const projects: Project[] = [
     ]
   },
   {
-    id: '3',
+    id: 3,
     title: 'Green Valley Infrastructure',
     slug: 'green-valley-infrastructure',
     category: 'infrastructure',
     location: 'Austin, TX',
     status: 'In Progress',
-    year: '2024',
+    year: 2024,
     description: 'Custom fuel infrastructure design for environmentally sensitive location.',
     longDescription: 'An innovative infrastructure project focused on environmental sustainability and protection. This project showcases our commitment to eco-friendly fuel infrastructure solutions.',
     client: 'Green Valley Development',
@@ -185,37 +157,27 @@ export const projects: Project[] = [
     area: '2.5 acres',
     images: [
       {
-        id: '1',
         url: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=800&h=600&fit=crop',
-        caption: 'Environmental protection systems installation',
+        alt: 'Environmental protection systems installation',
         type: 'hero'
       }
     ],
     tags: ['Infrastructure', 'Environmental', 'Custom Design'],
     specifications: [
-      {
-        category: 'Environmental Systems',
-        items: [
-          { label: 'Containment', value: 'Double-wall construction' },
-          { label: 'Monitoring', value: 'Continuous leak detection' },
-          { label: 'Compliance', value: 'EPA Tier 3 standards' }
-        ]
-      }
+      { name: 'Containment', value: 'Double-wall construction' },
+      { name: 'Monitoring', value: 'Continuous leak detection' },
+      { name: 'Compliance', value: 'EPA Tier 3 standards' }
     ],
     timeline: [
       {
-        phase: 'Design & Permits',
+        date: '2024-03-31',
         description: 'Environmental impact assessment and design',
-        startDate: '2024-01-01',
-        endDate: '2024-03-31',
         status: 'completed'
       },
       {
-        phase: 'Construction Phase 1',
+        date: '2024-06-30',
         description: 'Site preparation and foundation work',
-        startDate: '2024-04-01',
-        endDate: '2024-06-30',
-        status: 'in-progress'
+        status: 'in_progress'
       }
     ],
     teamMembers: [

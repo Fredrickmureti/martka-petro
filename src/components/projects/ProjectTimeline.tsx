@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CheckCircle, Clock, Circle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -38,27 +37,23 @@ const ProjectTimeline = ({ timeline }: ProjectTimelineProps) => {
 
   return (
     <div className="space-y-4">
-      {timeline.map((phase, index) => (
+      {timeline.map((event, index) => (
         <Card key={index} className="relative">
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0 mt-1">
-                {getStatusIcon(phase.status)}
+                {getStatusIcon(event.status)}
               </div>
               
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-semibold">{phase.phase}</h3>
-                  <Badge className={getStatusColor(phase.status)}>
-                    {phase.status.charAt(0).toUpperCase() + phase.status.slice(1).replace('-', ' ')}
+                  <h3 className="text-lg font-semibold">{formatDate(event.date)}</h3>
+                  <Badge className={getStatusColor(event.status)}>
+                    {event.status.charAt(0).toUpperCase() + event.status.slice(1).replace('_', ' ')}
                   </Badge>
                 </div>
                 
-                <p className="text-muted-foreground mb-3">{phase.description}</p>
-                
-                <div className="text-sm text-muted-foreground">
-                  <span className="font-medium">Duration:</span> {formatDate(phase.startDate)} - {formatDate(phase.endDate)}
-                </div>
+                <p className="text-muted-foreground mb-3">{event.description}</p>
               </div>
             </div>
           </CardContent>

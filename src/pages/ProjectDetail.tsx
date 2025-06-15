@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Calendar, MapPin, Users, DollarSign, Square, CheckCircle, Clock, Target } from 'lucide-react';
@@ -71,7 +70,7 @@ const ProjectDetail = () => {
               </div>
               
               <p className="text-xl text-slate-300 mb-8 leading-relaxed">
-                {project.longDescription}
+                {project.longDescription || project.description}
               </p>
               
               <div className="flex flex-wrap gap-2">
@@ -86,11 +85,11 @@ const ProjectDetail = () => {
             <div className="relative">
               <img 
                 src={heroImage.url} 
-                alt={heroImage.caption}
+                alt={heroImage.alt}
                 className="rounded-lg shadow-2xl w-full h-96 object-cover"
               />
               <div className="absolute bottom-4 left-4 right-4 bg-black/50 backdrop-blur-sm rounded-lg p-3">
-                <p className="text-white text-sm">{heroImage.caption}</p>
+                <p className="text-white text-sm">{heroImage.alt}</p>
               </div>
             </div>
           </div>
@@ -133,7 +132,7 @@ const ProjectDetail = () => {
               <Calendar className="text-blue-600 mr-3" size={24} />
               <div>
                 <div className="font-semibold">Year</div>
-                <div className="text-muted-foreground">{project.year}</div>
+                <div className="text-muted-foreground">{project.year.toString()}</div>
               </div>
             </div>
           </div>

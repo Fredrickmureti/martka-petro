@@ -2,7 +2,7 @@
 export interface ProjectImage {
   url: string;
   alt: string;
-  type: 'hero' | 'gallery';
+  type: 'hero' | 'gallery' | 'technical' | 'progress';
 }
 
 export interface ProjectSpecification {
@@ -29,4 +29,19 @@ export interface Project {
   images: ProjectImage[];
   specifications: ProjectSpecification[];
   timeline: ProjectTimeline[];
+  // Optional fields from mock data, not in Supabase
+  longDescription?: string;
+  client?: string;
+  budget?: string;
+  area?: string;
+  teamMembers?: { name: string; role: string; }[];
+  challenges?: string[];
+  solutions?: string[];
+  results?: string[];
+  testimonial?: {
+    quote: string;
+    author: string;
+    position: string;
+    company: string;
+  };
 }

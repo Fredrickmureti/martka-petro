@@ -61,19 +61,20 @@ const AdminProjectForm = () => {
 
   useEffect(() => {
     if (project) {
+      const p = project as any;
       form.reset({
-        title: project.name ?? '',
-        slug: project.slug ?? '',
-        description: project.description ?? undefined,
-        location: project.location ?? undefined,
-        year: project.year ?? undefined,
-        status: project.status as ProjectFormValues['status'] | undefined,
-        category: project.category as ProjectFormValues['category'] | undefined,
-        hero_image_url: project.hero_image_url ?? '',
-        tags: (project.tags || []).map((t: string) => ({ value: t })),
-        gallery_images: (project.gallery_images as ProjectFormValues['gallery_images']) || [],
-        specifications: (project.specifications as ProjectFormValues['specifications']) || [],
-        timeline: (project.timeline as ProjectFormValues['timeline']) || [],
+        title: p.name ?? '',
+        slug: p.slug ?? '',
+        description: p.description ?? undefined,
+        location: p.location ?? undefined,
+        year: p.year ?? undefined,
+        status: p.status as ProjectFormValues['status'] | undefined,
+        category: p.category as ProjectFormValues['category'] | undefined,
+        hero_image_url: p.hero_image_url ?? '',
+        tags: (p.tags || []).map((t: string) => ({ value: t })),
+        gallery_images: (p.gallery_images as ProjectFormValues['gallery_images']) || [],
+        specifications: (p.specifications as ProjectFormValues['specifications']) || [],
+        timeline: (p.timeline as ProjectFormValues['timeline']) || [],
       });
     }
   }, [project, form]);
@@ -81,12 +82,12 @@ const AdminProjectForm = () => {
   const mutation = useMutation({
     mutationFn: (data: ProjectFormValues) => {
       const { title, ...restData } = data;
-      const payload: Omit<SupabaseProject, 'id' | 'created_at'> & { tags: string[] | undefined } = {
+      const payload = {
         ...restData,
         name: title,
         tags: data.tags?.map(t => t.value),
       };
-      return projectId ? updateProject(projectId, payload) : createProject(payload);
+      return projectId ? updateProject(projectId, payload as any) : createProject(payload as any);
     },
     onSuccess: () => {
       toast.success(`Project ${projectId ? 'updated' : 'created'} successfully!`);

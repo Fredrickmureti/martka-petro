@@ -5,7 +5,7 @@ import { Project, ProjectImage, ProjectSpecification, ProjectTimeline } from '@/
 
 export type SupabaseProject = Tables<'projects'>;
 
-export const mapSupabaseProjectToAppProject = (p: SupabaseProject): Project => {
+export const mapSupabaseProjectToAppProject = (p: any): Project => {
   const gallery = (p.gallery_images as { url: string; alt: string }[]) || [];
   
   const images: ProjectImage[] = p.hero_image_url 
@@ -23,8 +23,8 @@ export const mapSupabaseProjectToAppProject = (p: SupabaseProject): Project => {
     category: (p.category as Project['category']) || 'construction',
     tags: (p.tags as string[]) || [],
     images: images,
-    specifications: (p.specifications as ProjectSpecification[]) || [],
-    timeline: (p.timeline as Project['timeline']) || [],
+    specifications: (p.specifications as unknown as ProjectSpecification[]) || [],
+    timeline: (p.timeline as unknown as Project['timeline']) || [],
   };
 };
 
