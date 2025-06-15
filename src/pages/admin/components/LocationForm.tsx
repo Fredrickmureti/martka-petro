@@ -2,13 +2,16 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { locationFormSchema, LocationFormValues } from './form/locationFormSchema';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/integrations/supabase/types';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
+import { LocationFormGeneral } from './form/location/LocationFormGeneral';
+import { LocationFormContact } from './form/location/LocationFormContact';
+import { LocationFormMapDetails } from './form/location/LocationFormMapDetails';
+import { LocationFormHeadquarters } from './form/location/LocationFormHeadquarters';
+
 
 type LocationFormProps = {
     onSubmit: (values: LocationFormValues) => void;
@@ -69,162 +72,11 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="e.g. Nairobi Headquarters" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="address"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Address</FormLabel>
-                            <FormControl>
-                                <Input placeholder="e.g. 123 Industrial Area Rd" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>City</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="e.g. Nairobi" {...field} value={field.value ?? ''} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="country"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Country</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="e.g. Kenya" {...field} value={field.value ?? ''} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input type="email" placeholder="e.g. nairobi@martka.com" {...field} value={field.value ?? ''} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Phone</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="e.g. +254 20 123 4567" {...field} value={field.value ?? ''} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <FormField
-                    control={form.control}
-                    name="map_embed_url"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Map Embed URL</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Google Maps embed URL" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                        control={form.control}
-                        name="latitude"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Latitude</FormLabel>
-                                <FormControl>
-                                    <Input type="number" step="any" placeholder="e.g. -1.286389" {...field} value={field.value ?? ''} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="longitude"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Longitude</FormLabel>
-                                <FormControl>
-                                    <Input type="number" step="any" placeholder="e.g. 36.817223" {...field} value={field.value ?? ''} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <FormField
-                    control={form.control}
-                    name="map_image_url"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Map Image URL</FormLabel>
-                            <FormControl>
-                                <Input placeholder="URL of an image of the map" {...field} value={field.value ?? ''} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="is_headquarters"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                                <FormLabel>Set as Headquarters</FormLabel>
-                                <FormDescription>
-                                    This will become the main location shown on the contact page.
-                                </FormDescription>
-                            </div>
-                            <FormControl>
-                                <Switch
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
+                <LocationFormGeneral control={form.control} />
+                <LocationFormContact control={form.control} />
+                <LocationFormMapDetails control={form.control} />
+                <LocationFormHeadquarters control={form.control} />
+                
                 <Button type="submit" disabled={isSubmitting} className="w-full">
                     {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {location ? 'Update Location' : 'Add Location'}
