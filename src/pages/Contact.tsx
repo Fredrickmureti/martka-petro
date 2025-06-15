@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -184,6 +185,12 @@ const Contact = () => {
                           </h3>
                           <p className="text-muted-foreground">{location.address}</p>
                           <p className="text-muted-foreground">{location.city}, {location.country}</p>
+                          {location.business_hours && (
+                            <div className="flex items-center text-sm text-muted-foreground mt-2">
+                                <Clock className="mr-2 h-4 w-4" />
+                                <span>{location.business_hours}</span>
+                            </div>
+                           )}
                         </div>
                       </div>
                     </CardContent>

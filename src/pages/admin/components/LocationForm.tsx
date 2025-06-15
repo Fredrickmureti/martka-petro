@@ -11,6 +11,7 @@ import { LocationFormGeneral } from './form/location/LocationFormGeneral';
 import { LocationFormContact } from './form/location/LocationFormContact';
 import { LocationFormMapDetails } from './form/location/LocationFormMapDetails';
 import { LocationFormHeadquarters } from './form/location/LocationFormHeadquarters';
+import { LocationFormBusinessHours } from './form/location/LocationFormBusinessHours';
 
 
 type LocationFormProps = {
@@ -29,6 +30,7 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
             country: '',
             email: '',
             phone: '',
+            business_hours: '',
             map_embed_url: '',
             latitude: null,
             longitude: null,
@@ -46,6 +48,7 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
                 country: location.country || '',
                 email: location.email || '',
                 phone: location.phone || '',
+                business_hours: location.business_hours || '',
                 map_embed_url: location.map_embed_url || '',
                 latitude: location.latitude as number | null,
                 longitude: location.longitude as number | null,
@@ -60,6 +63,7 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
                 country: '',
                 email: '',
                 phone: '',
+                business_hours: '',
                 map_embed_url: '',
                 latitude: null,
                 longitude: null,
@@ -74,6 +78,7 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <LocationFormGeneral control={form.control} />
                 <LocationFormContact control={form.control} />
+                <LocationFormBusinessHours control={form.control} />
                 <LocationFormMapDetails control={form.control} />
                 <LocationFormHeadquarters control={form.control} />
                 

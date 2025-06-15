@@ -122,6 +122,7 @@ export type Database = {
       locations: {
         Row: {
           address: string | null
+          business_hours: string | null
           city: string | null
           country: string | null
           created_at: string
@@ -138,6 +139,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          business_hours?: string | null
           city?: string | null
           country?: string | null
           created_at?: string
@@ -154,6 +156,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          business_hours?: string | null
           city?: string | null
           country?: string | null
           created_at?: string
