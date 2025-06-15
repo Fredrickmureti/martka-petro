@@ -107,14 +107,23 @@ export function ProductForm({ onSubmit, product, categories, isSubmitting }: Pro
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={(value) => field.onChange(value ? Number(value) : null)} value={field.value?.toString() ?? ''}>
+                <Select
+                  onValueChange={(value) => {
+                    if (value === 'no-category') {
+                      field.onChange(null);
+                    } else {
+                      field.onChange(value ? Number(value) : null);
+                    }
+                  }}
+                  value={field.value?.toString() ?? ''}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="">No Category</SelectItem>
+                    <SelectItem value="no-category">No Category</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id.toString()}>
                         {category.name}
