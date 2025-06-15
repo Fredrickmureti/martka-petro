@@ -1,0 +1,6 @@
+
+ALTER TABLE public.projects
+ADD COLUMN category TEXT,
+ADD COLUMN year INTEGER,
+ADD COLUMN tags JSONB,
+ADD COLUMN timeline JSONB;

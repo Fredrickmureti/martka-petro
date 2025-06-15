@@ -220,6 +220,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          category: string | null
           created_at: string
           description: string | null
           end_date: string | null
@@ -232,8 +233,12 @@ export type Database = {
           specifications: Json | null
           start_date: string | null
           status: string | null
+          tags: Json | null
+          timeline: Json | null
+          year: number | null
         }
         Insert: {
+          category?: string | null
           created_at?: string
           description?: string | null
           end_date?: string | null
@@ -246,8 +251,12 @@ export type Database = {
           specifications?: Json | null
           start_date?: string | null
           status?: string | null
+          tags?: Json | null
+          timeline?: Json | null
+          year?: number | null
         }
         Update: {
+          category?: string | null
           created_at?: string
           description?: string | null
           end_date?: string | null
@@ -260,6 +269,9 @@ export type Database = {
           specifications?: Json | null
           start_date?: string | null
           status?: string | null
+          tags?: Json | null
+          timeline?: Json | null
+          year?: number | null
         }
         Relationships: []
       }
