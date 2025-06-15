@@ -60,14 +60,14 @@ const ProductFilters = ({
 
             {/* Category Filter */}
             <Select
-              value={filters.category || ''}
-              onValueChange={(value) => onFiltersChange({ ...filters, category: value || undefined })}
+              value={filters.category || 'all'}
+              onValueChange={(value) => onFiltersChange({ ...filters, category: value === 'all' ? undefined : value })}
             >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.slug}>
                     {category.name}
@@ -78,14 +78,14 @@ const ProductFilters = ({
 
             {/* Manufacturer Filter */}
             <Select
-              value={filters.manufacturer || ''}
-              onValueChange={(value) => onFiltersChange({ ...filters, manufacturer: value || undefined })}
+              value={filters.manufacturer || 'all'}
+              onValueChange={(value) => onFiltersChange({ ...filters, manufacturer: value === 'all' ? undefined : value })}
             >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="All Manufacturers" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Manufacturers</SelectItem>
+                <SelectItem value="all">All Manufacturers</SelectItem>
                 {manufacturers.map((manufacturer) => (
                   <SelectItem key={manufacturer} value={manufacturer}>
                     {manufacturer}
@@ -96,17 +96,17 @@ const ProductFilters = ({
 
             {/* In Stock Filter */}
             <Select
-              value={filters.inStock?.toString() || ''}
+              value={filters.inStock === undefined ? 'all' : filters.inStock.toString()}
               onValueChange={(value) => onFiltersChange({ 
                 ...filters, 
-                inStock: value === '' ? undefined : value === 'true' 
+                inStock: value === 'all' ? undefined : value === 'true' 
               })}
             >
               <SelectTrigger className="w-40">
                 <SelectValue placeholder="Stock Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Products</SelectItem>
+                <SelectItem value="all">All Products</SelectItem>
                 <SelectItem value="true">In Stock</SelectItem>
                 <SelectItem value="false">Out of Stock</SelectItem>
               </SelectContent>
