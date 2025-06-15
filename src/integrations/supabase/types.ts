@@ -424,6 +424,147 @@ export type Database = {
         }
         Relationships: []
       }
+      support_downloads: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_size: string
+          file_type: string
+          file_url: string | null
+          id: number
+          is_active: boolean | null
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_size: string
+          file_type: string
+          file_url?: string | null
+          id?: number
+          is_active?: boolean | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_size?: string
+          file_type?: string
+          file_url?: string | null
+          id?: number
+          is_active?: boolean | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      support_faqs: {
+        Row: {
+          answer: string
+          created_at: string
+          id: number
+          is_active: boolean | null
+          question: string
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          id?: number
+          is_active?: boolean | null
+          question: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: number
+          is_active?: boolean | null
+          question?: string
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      support_options: {
+        Row: {
+          action_text: string | null
+          availability: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: number
+          is_active: boolean | null
+          sort_order: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          action_text?: string | null
+          availability?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          action_text?: string | null
+          availability?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      support_page_content: {
+        Row: {
+          content: Json | null
+          created_at: string
+          description: string | null
+          id: number
+          is_active: boolean | null
+          section_key: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean | null
+          section_key: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: number
+          is_active?: boolean | null
+          section_key?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       support_tickets: {
         Row: {
           created_at: string

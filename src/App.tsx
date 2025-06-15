@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,6 +30,7 @@ import AdminCareers from "./pages/admin/Careers";
 import AdminUsers from "./pages/admin/Users";
 import AdminMessages from "./pages/admin/Messages";
 import AdminLocations from "./pages/admin/Locations";
+import ManageSupport from "./pages/admin/ManageSupport";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +70,7 @@ const App = () => (
               <Route path="users" element={<AdminUsers />} />
               <Route path="messages" element={<AdminMessages />} />
               <Route path="locations" element={<AdminLocations />} />
+              <Route path="manage-support" element={<ManageSupport />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
