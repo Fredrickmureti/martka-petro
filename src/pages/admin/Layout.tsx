@@ -1,8 +1,7 @@
-
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import Sidebar from './components/Sidebar';
+import NewSidebar from './components/NewSidebar';
 import { Loader2 } from 'lucide-react';
 
 const AdminLayout = () => {
@@ -57,7 +56,7 @@ const AdminLayout = () => {
 
     return (
         <div className="flex min-h-screen bg-background text-foreground">
-            <Sidebar />
+            <NewSidebar />
             <main className="flex-1">
                 <div className="p-8">
                     <Outlet />

@@ -22,6 +22,13 @@ import AdminLayout from "./pages/admin/Layout";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminSupport from "./pages/admin/Support";
 import AdminProducts from "./pages/admin/Products";
+import AdminProjects from "./pages/admin/Projects";
+import AdminProjectForm from "./pages/admin/ProjectForm";
+import AdminServices from "./pages/admin/Services";
+import AdminCareers from "./pages/admin/Careers";
+import AdminUsers from "./pages/admin/Users";
+import AdminMessages from "./pages/admin/Messages";
+import AdminLocations from "./pages/admin/Locations";
 
 const queryClient = new QueryClient();
 
@@ -53,7 +60,14 @@ const App = () => (
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="support" element={<AdminSupport />} />
               <Route path="products" element={<AdminProducts />} />
-              {/* Other admin routes will be nested here, they will show a blank page for now */}
+              <Route path="projects" element={<AdminProjects />} />
+              <Route path="projects/form" element={<AdminProjectForm />} />
+              <Route path="projects/form/:id" element={<AdminProjectForm />} />
+              <Route path="services" element={<AdminServices />} />
+              <Route path="careers" element={<AdminCareers />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="messages" element={<AdminMessages />} />
+              <Route path="locations" element={<AdminLocations />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

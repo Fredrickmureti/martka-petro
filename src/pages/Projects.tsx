@@ -1,14 +1,21 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
-import { projects, getProjectsByCategory } from '@/data/projects';
+import { useQuery } from '@tanstack/react-query';
+import { fetchPublicProjects } from '@/lib/projects';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Project } from '@/types/project';
 
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
+
+  const { data: projects, isLoading } = useQuery({
+    queryKey: ['publicProjects'],
+    queryFn: fetchPublicProjects
+  });
 
   const filters = [
     { id: 'all', label: 'All Projects' },
@@ -18,7 +25,11 @@ const Projects = () => {
     { id: 'infrastructure', label: 'Infrastructure' },
   ];
 
-  const filteredProjects = getProjectsByCategory(activeFilter);
+  const filteredProjects = useMemo(() => {
+    if (!projects) return [];
+    if (activeFilter === 'all') return projects;
+    return projects.filter(p => p.category === activeFilter);
+  }, [projects, activeFilter]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -29,6 +40,21 @@ const Projects = () => {
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
+
+  const renderSkeletons = () => (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <Card key={i}>
+            <Skeleton className="w-full h-48" />
+            <CardContent className="p-6 space-y-4">
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-10 w-full" />
+            </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 
   return (
     <Layout>
@@ -69,55 +95,57 @@ const Projects = () => {
       {/* Projects Grid */}
       <section className="py-16 bg-background">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project) => {
-              const heroImage = project.images.find(img => img.type === 'hero') || project.images[0];
-              
-              return (
-                <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                  <div className="relative">
-                    <img 
-                      src={heroImage.url} 
-                      alt={project.title}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <Badge className={getStatusColor(project.status)}>
-                        {project.status}
-                      </Badge>
-                    </div>
-                    <div className="absolute top-4 right-4">
-                      <Badge variant="secondary" className="bg-black/50 text-white border-none">
-                        {project.year}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                    <p className="text-sm text-blue-600 mb-2">{project.location}</p>
-                    <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
-                      {project.description}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tags.map((tag, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {tag}
+          {isLoading ? renderSkeletons() : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredProjects.map((project: Project) => {
+                const heroImage = project.images.find(img => img.type === 'hero') || project.images[0];
+                
+                return (
+                  <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <div className="relative">
+                      <img 
+                        src={heroImage?.url || '/placeholder.svg'} 
+                        alt={project.title}
+                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <Badge className={getStatusColor(project.status)}>
+                          {project.status}
                         </Badge>
-                      ))}
+                      </div>
+                      <div className="absolute top-4 right-4">
+                        <Badge variant="secondary" className="bg-black/50 text-white border-none">
+                          {project.year}
+                        </Badge>
+                      </div>
                     </div>
                     
-                    <Link to={`/projects/${project.slug}`}>
-                      <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
-                        View Details
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                      <p className="text-sm text-blue-600 mb-2">{project.location}</p>
+                      <p className="text-muted-foreground mb-4 text-sm leading-relaxed line-clamp-3">
+                        {project.description}
+                      </p>
+                      
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.tags.map((tag, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                      
+                      <Link to={`/projects/${project.slug}`}>
+                        <Button variant="outline" className="w-full group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-colors">
+                          View Details
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
