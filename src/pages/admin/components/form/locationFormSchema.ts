@@ -12,6 +12,7 @@ export const locationFormSchema = z.object({
     latitude: z.preprocess((val) => (val === '' || val === null ? null : val), z.coerce.number().nullable()),
     longitude: z.preprocess((val) => (val === '' || val === null ? null : val), z.coerce.number().nullable()),
     map_image_url: z.string().url({ message: "Please enter a valid URL." }).nullable().or(z.literal('')),
+    is_headquarters: z.boolean().default(false),
 });
 
 export type LocationFormValues = z.infer<typeof locationFormSchema>;

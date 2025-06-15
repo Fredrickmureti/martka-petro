@@ -46,6 +46,19 @@ const AdminLocations = () => {
 
     const handleFormSubmit = async (values: LocationFormValues) => {
         try {
+            // If setting a new headquarters, unset the old one first.
+            if (values.is_headquarters) {
+                const currentHeadquarters = locations?.find(
+                    l => l.is_headquarters && l.id !== selectedLocation?.id
+                );
+                if (currentHeadquarters) {
+                    await updateLocation.mutateAsync({ 
+                        id: currentHeadquarters.id, 
+                        is_headquarters: false 
+                    });
+                }
+            }
+
             if (selectedLocation) {
                 await updateLocation.mutateAsync({ ...values, id: selectedLocation.id });
             } else {
@@ -60,6 +73,14 @@ const AdminLocations = () => {
 
     const handleDeleteConfirm = async () => {
         if (selectedLocation) {
+             if (selectedLocation.is_headquarters) {
+                toast({
+                    title: "Action Prohibited",
+                    description: "Cannot delete the headquarters. Please set another location as headquarters first.",
+                    variant: "destructive",
+                });
+                return;
+            }
             try {
                 await deleteLocation.mutateAsync(selectedLocation.id);
                 setIsDeleteOpen(false);

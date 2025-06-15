@@ -2,12 +2,13 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { locationFormSchema, LocationFormValues } from './form/locationFormSchema';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tables } from '@/integrations/supabase/types';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 
 type LocationFormProps = {
     onSubmit: (values: LocationFormValues) => void;
@@ -29,6 +30,7 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
             latitude: null,
             longitude: null,
             map_image_url: '',
+            is_headquarters: false,
         },
     });
 
@@ -45,6 +47,7 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
                 latitude: location.latitude as number | null,
                 longitude: location.longitude as number | null,
                 map_image_url: location.map_image_url || '',
+                is_headquarters: location.is_headquarters,
             });
         } else {
             form.reset({
@@ -58,6 +61,7 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
                 latitude: null,
                 longitude: null,
                 map_image_url: '',
+                is_headquarters: false,
             });
         }
     }, [location, form]);
@@ -198,6 +202,26 @@ export const LocationForm = ({ onSubmit, location, isSubmitting }: LocationFormP
                                 <Input placeholder="URL of an image of the map" {...field} value={field.value ?? ''} />
                             </FormControl>
                             <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                 <FormField
+                    control={form.control}
+                    name="is_headquarters"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                                <FormLabel>Set as Headquarters</FormLabel>
+                                <FormDescription>
+                                    This will become the main location shown on the contact page.
+                                </FormDescription>
+                            </div>
+                            <FormControl>
+                                <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
                         </FormItem>
                     )}
                 />

@@ -1,7 +1,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { TablesInsert } from '@/integrations/supabase/types';
+import { TablesInsert, Tables } from '@/integrations/supabase/types';
 import { toast } from '@/components/ui/use-toast';
 import { LocationFormValues } from '@/pages/admin/components/form/locationFormSchema';
 
@@ -38,8 +38,9 @@ export const useAdminLocations = () => {
 
     // Update location
     const useUpdateLocation = () => useMutation({
-        mutationFn: async ({ id, ...location }: { id: number } & LocationFormValues) => {
-            const { error } = await supabase.from('locations').update(location).eq('id', id);
+        mutationFn: async (location: Partial<Tables<'locations'>> & { id: number }) => {
+            const { id, ...updateData } = location;
+            const { error } = await supabase.from('locations').update(updateData).eq('id', id);
             if (error) throw new Error(error.message);
         },
         onSuccess: () => {
