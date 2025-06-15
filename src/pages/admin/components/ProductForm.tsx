@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,10 +27,10 @@ import { Loader2 } from 'lucide-react';
 
 export const productFormSchema = z.object({
   name: z.string().min(1, { message: 'Product name is required.' }),
-  description: z.string().nullable().optional(),
-  price: z.string().nullable().optional(),
-  category_id: z.coerce.number().nullable().optional(),
-  manufacturer: z.string().nullable().optional(),
+  description: z.string().nullable(),
+  price: z.string().nullable(),
+  category_id: z.coerce.number().nullable(),
+  manufacturer: z.string().nullable(),
   in_stock: z.boolean().default(true),
 });
 
@@ -49,10 +48,10 @@ export function ProductForm({ onSubmit, product, categories, isSubmitting }: Pro
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       name: product?.name || '',
-      description: product?.description || '',
-      price: product?.price || '',
-      category_id: product?.category_id || null,
-      manufacturer: product?.manufacturer || '',
+      description: product?.description ?? null,
+      price: product?.price ?? null,
+      category_id: product?.category_id ?? null,
+      manufacturer: product?.manufacturer ?? null,
       in_stock: product?.in_stock ?? true,
     },
   });
@@ -60,10 +59,10 @@ export function ProductForm({ onSubmit, product, categories, isSubmitting }: Pro
   React.useEffect(() => {
     form.reset({
       name: product?.name || '',
-      description: product?.description || '',
-      price: product?.price || '',
-      category_id: product?.category_id || null,
-      manufacturer: product?.manufacturer || '',
+      description: product?.description ?? null,
+      price: product?.price ?? null,
+      category_id: product?.category_id ?? null,
+      manufacturer: product?.manufacturer ?? null,
       in_stock: product?.in_stock ?? true,
     });
   }, [product, form]);
@@ -108,13 +107,14 @@ export function ProductForm({ onSubmit, product, categories, isSubmitting }: Pro
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
+                <Select onValueChange={(value) => field.onChange(value ? Number(value) : null)} value={field.value?.toString() ?? ''}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
+                    <SelectItem value="">No Category</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id.toString()}>
                         {category.name}
