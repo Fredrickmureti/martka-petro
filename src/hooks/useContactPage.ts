@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
@@ -43,6 +42,25 @@ export const useContactItems = () => {
     return useQuery({
         queryKey: ['contactItems'],
         queryFn: fetchContactItems,
+    });
+};
+
+// Fetch all locations
+const fetchLocations = async () => {
+    const { data, error } = await supabase
+        .from('locations')
+        .select('*')
+        .order('is_headquarters', { ascending: false })
+        .order('name', { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return data;
+};
+
+export const useLocations = () => {
+    return useQuery<Tables<'locations'>[]>({
+        queryKey: ['locations'],
+        queryFn: fetchLocations,
     });
 };
 

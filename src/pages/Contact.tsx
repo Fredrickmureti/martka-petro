@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { MapPin, Phone, Mail, Clock, Loader2 } from 'lucide-react';
@@ -9,10 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useContactPageContent, useContactItems, useHeadquarters, useServicesList, useSubmitContactMessage } from '@/hooks/useContactPage';
+import { useContactPageContent, useContactItems, useLocations, useServicesList, useSubmitContactMessage } from '@/hooks/useContactPage';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const formSchema = z.object({
   first_name: z.string().min(1, 'First name is required'),
@@ -35,7 +36,7 @@ const iconMap: { [key: string]: React.ElementType } = {
 const Contact = () => {
   const { data: content, isLoading: isLoadingContent } = useContactPageContent();
   const { data: contactItems, isLoading: isLoadingItems } = useContactItems();
-  const { data: headquarters, isLoading: isLoadingHq } = useHeadquarters();
+  const { data: locations, isLoading: isLoadingLocations } = useLocations();
   const { data: services, isLoading: isLoadingServices } = useServicesList();
   const { mutate: submitMessage, isPending: isSubmitting } = useSubmitContactMessage();
   
@@ -65,7 +66,7 @@ const Contact = () => {
     });
   };
 
-  const isLoading = isLoadingContent || isLoadingItems || isLoadingHq;
+  const isLoading = isLoadingContent || isLoadingItems || isLoadingLocations;
 
   const renderContactItem = (info: any, index: number) => {
     const IconComponent = info.icon ? iconMap[info.icon] || Mail : Mail;
@@ -89,6 +90,12 @@ const Contact = () => {
       </Card>
     );
   }
+
+  const headquarters = locations?.find(l => l.is_headquarters);
+  const locationsWithMap = locations?.filter(l => l.map_embed_url) || [];
+  const defaultMapLocation = headquarters && headquarters.map_embed_url 
+    ? headquarters 
+    : (locationsWithMap.length > 0 ? locationsWithMap[0] : null);
 
   return (
     <Layout>
@@ -161,23 +168,27 @@ const Contact = () => {
             <div className="space-y-8">
               <h2 className="text-3xl font-bold mb-8">{isLoading ? <Skeleton className="h-9 w-80" /> : content?.info_title?.text}</h2>
               <div className="space-y-6">
-                {isLoadingHq && <Card><CardContent className="p-6"><Skeleton className="h-12 w-full" /></CardContent></Card>}
-                {headquarters && (
-                   <Card className="hover:shadow-md transition-shadow">
+                {isLoadingLocations && Array.from({ length: 2 }).map((_, i) => <Card key={i}><CardContent className="p-6"><Skeleton className="h-24 w-full" /></CardContent></Card>)}
+                
+                {locations?.map(location => (
+                   <Card key={location.id} className="hover:shadow-md transition-shadow">
                     <CardContent className="p-6">
                       <div className="flex items-start space-x-4">
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center flex-shrink-0">
                           <MapPin size={24} className="text-white" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-lg mb-2">{headquarters.name}</h3>
-                          <p className="text-muted-foreground">{headquarters.address}</p>
-                          <p className="text-muted-foreground">{headquarters.city}, {headquarters.country}</p>
+                          <h3 className="font-bold text-lg mb-2 flex items-center">
+                            {location.name}
+                            {location.is_headquarters && <Badge variant="secondary" className="ml-2">Headquarters</Badge>}
+                          </h3>
+                          <p className="text-muted-foreground">{location.address}</p>
+                          <p className="text-muted-foreground">{location.city}, {location.country}</p>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
-                )}
+                ))}
 
                 {isLoadingItems ? Array.from({ length: 3 }).map((_, i) => <Card key={i}><CardContent className="p-6"><Skeleton className="h-12 w-full" /></CardContent></Card>) : contactItems?.map(renderContactItem)}
               </div>
@@ -204,12 +215,33 @@ const Contact = () => {
       <section className="py-16 bg-slate-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">{isLoadingContent ? <Skeleton className="h-9 w-96 mx-auto" /> : content?.map_title?.title}</h2>
-            <p className="text-muted-foreground">{isLoadingContent ? <Skeleton className="h-6 w-80 mx-auto" /> : content?.map_title?.description}</p>
+            <h2 className="text-3xl font-bold mb-4">{isLoadingContent ? <Skeleton className="h-9 w-96 mx-auto" /> : content?.map_title?.title || "Visit Our Locations"}</h2>
+            <p className="text-muted-foreground">{isLoadingContent ? <Skeleton className="h-6 w-80 mx-auto" /> : content?.map_title?.description || "Find us at any of our locations."}</p>
           </div>
-          <Card className="overflow-hidden">
-            {isLoadingHq ? <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center"><Loader2 className="h-12 w-12 animate-spin text-slate-400" /></div> : headquarters?.map_embed_url ? <div className="aspect-video"><iframe src={headquarters.map_embed_url} width="100%" height="100%" style={{ border: 0 }} allowFullScreen={true} loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe></div> : <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center"><div className="text-center"><MapPin size={48} className="text-slate-400 mx-auto mb-4" /><h3 className="text-xl font-bold text-slate-600 mb-2">Interactive Map</h3><p className="text-slate-500">{headquarters ? `${headquarters.address}, ${headquarters.city}` : "Map not available"}</p></div></div>}
-          </Card>
+            {isLoadingLocations ? (
+                <Card className="overflow-hidden">
+                    <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center"><Loader2 className="h-12 w-12 animate-spin text-slate-400" /></div>
+                </Card>
+            ) : locationsWithMap.length > 0 && defaultMapLocation ? (
+            <Tabs defaultValue={defaultMapLocation.id.toString()} className="w-full">
+              <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-4">
+                {locationsWithMap.map(location => (
+                  <TabsTrigger key={location.id} value={location.id.toString()}>{location.name}</TabsTrigger>
+                ))}
+              </TabsList>
+              {locationsWithMap.map(location => (
+                <TabsContent key={location.id} value={location.id.toString()}>
+                  <Card className="overflow-hidden">
+                    <div className="aspect-video"><iframe src={location.map_embed_url!} width="100%" height="100%" style={{ border: 0 }} allowFullScreen={true} loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe></div>
+                  </Card>
+                </TabsContent>
+              ))}
+            </Tabs>
+          ) : (
+             <Card className="overflow-hidden">
+                <div className="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center"><div className="text-center"><MapPin size={48} className="text-slate-400 mx-auto mb-4" /><h3 className="text-xl font-bold text-slate-600 mb-2">No Location Maps Available</h3><p className="text-slate-500">Map data has not been configured for our locations.</p></div></div>
+            </Card>
+          )}
         </div>
       </section>
     </Layout>
