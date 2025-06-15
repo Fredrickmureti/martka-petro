@@ -1,8 +1,10 @@
+
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import NewSidebar from './components/NewSidebar';
+import AppSidebar from './components/AppSidebar';
 import { Loader2 } from 'lucide-react';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
@@ -55,14 +57,19 @@ const AdminLayout = () => {
     }
 
     return (
-        <div className="flex min-h-screen bg-background text-foreground">
-            <NewSidebar />
-            <main className="flex-1">
-                <div className="p-8">
-                    <Outlet />
-                </div>
-            </main>
-        </div>
+        <SidebarProvider>
+            <div className="flex min-h-screen w-full bg-background text-foreground">
+                <AppSidebar />
+                <main className="flex-1">
+                    <div className="p-8">
+                       <header className="mb-4">
+                            <SidebarTrigger />
+                        </header>
+                        <Outlet />
+                    </div>
+                </main>
+            </div>
+        </SidebarProvider>
     );
 };
 
