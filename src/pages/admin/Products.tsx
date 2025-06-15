@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -86,7 +85,7 @@ const AdminProducts = () => {
 
   const { mutate: createProduct, isPending: isCreating } = useMutation({
     mutationFn: async (productData: ProductFormValues) => {
-      const { error } = await supabase.from('products').insert(productData);
+      const { error } = await supabase.from('products').insert([productData]);
       if (error) throw error;
     },
     onSuccess: () => {
