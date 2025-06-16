@@ -154,15 +154,7 @@ export type Database = {
           service_id?: number | null
           subject?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "contact_messages_service_id_fkey"
-            columns: ["service_id"]
-            isOneToOne: false
-            referencedRelation: "services"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       footer_content: {
         Row: {
@@ -501,28 +493,40 @@ export type Database = {
       }
       services: {
         Row: {
-          created_at: string
+          created_at: string | null
           description: string | null
+          features: Json | null
           icon: string | null
           id: number
           image_url: string | null
-          name: string
+          is_active: boolean | null
+          sort_order: number | null
+          title: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
+          features?: Json | null
           icon?: string | null
           id?: number
           image_url?: string | null
-          name: string
+          is_active?: boolean | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           description?: string | null
+          features?: Json | null
           icon?: string | null
           id?: number
           image_url?: string | null
-          name?: string
+          is_active?: boolean | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
