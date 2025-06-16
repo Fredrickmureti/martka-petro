@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
@@ -86,11 +87,11 @@ export const useHeadquarters = () => {
 const fetchServices = async () => {
     const { data, error } = await supabase
         .from('services')
-        .select('id, name')
-        .order('name');
+        .select('id, title')
+        .order('title');
     
     if (error) throw new Error(error.message);
-    return data;
+    return data.map(service => ({ id: service.id, name: service.title }));
 };
 
 export const useServicesList = () => {
