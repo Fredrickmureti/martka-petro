@@ -44,7 +44,7 @@ const AppSidebar = () => {
   ];
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-border/40">
         <div className="flex items-center gap-2 px-4 py-2">
           <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center flex-shrink-0">
