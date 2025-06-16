@@ -11,7 +11,7 @@ import { useState } from 'react';
 const AdminProjects = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [viewMode, setViewMode<'grid' | 'table'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   
   const { data: projects, isLoading, error } = useQuery<SupabaseProject[]>({
     queryKey: ['adminProjects'],
