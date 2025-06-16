@@ -362,7 +362,7 @@ const Index: React.FC = () => {
       <WhatsAppButton />
 
       {/* Custom Styles for 3D Effects */}
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;
