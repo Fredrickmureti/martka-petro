@@ -29,14 +29,16 @@ export const ProductFormDialog = ({
 }: ProductFormDialogProps) => {
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-7xl max-h-[90vh] overflow-hidden">
+            <DialogContent className="max-w-6xl max-h-[95vh] overflow-hidden">
                 <DialogHeader>
-                    <DialogTitle>{product ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+                    <DialogTitle className="text-2xl">
+                        {product ? 'Edit Product' : 'Add New Product'}
+                    </DialogTitle>
                     <DialogDescription>
-                    {product ? 'Update the details of this product.' : 'Fill in the details for the new product.'}
+                        {product ? 'Update the details of this product.' : 'Fill in the details for the new product.'}
                     </DialogDescription>
                 </DialogHeader>
-                <div className="py-4 overflow-y-auto max-h-[calc(90vh-120px)]">
+                <div className="py-4 overflow-y-auto max-h-[calc(95vh-120px)]">
                     <ProductForm
                         onSubmit={onSubmit}
                         product={product}

@@ -11,6 +11,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProductFormValues } from './productFormSchema';
+import { JsonEditor } from './JsonEditor';
 
 type ProductFormTabsProps = {
   control: Control<ProductFormValues>;
@@ -25,46 +26,79 @@ export const ProductFormTabs = ({ control }: ProductFormTabsProps) => {
         <TabsTrigger value="specifications">Specifications</TabsTrigger>
         <TabsTrigger value="documents">Documents</TabsTrigger>
       </TabsList>
-      <TabsContent value="features" className="mt-2">
+      
+      <TabsContent value="features" className="mt-4">
         <FormField control={control} name="features" render={({ field }) => (
-            <FormItem>
-                <FormLabel>Features (JSON Array)</FormLabel>
-                <FormControl><Textarea {...field} value={field.value ?? ''} rows={5} placeholder='[ "Feature 1", "Feature 2" ]' /></FormControl>
-                <FormDescription>A JSON array of strings.</FormDescription>
-                <FormMessage />
-            </FormItem>
+          <FormItem>
+            <FormControl>
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="array"
+                label="Product Features"
+                placeholder='["Feature 1", "Feature 2", "Feature 3"]'
+              />
+            </FormControl>
+            <FormDescription>Add key features and benefits of this product.</FormDescription>
+            <FormMessage />
+          </FormItem>
         )} />
       </TabsContent>
-      <TabsContent value="gallery" className="mt-2">
-         <FormField control={control} name="gallery" render={({ field }) => (
-            <FormItem>
-                <FormLabel>Gallery (JSON Array)</FormLabel>
-                <FormControl><Textarea {...field} value={field.value ?? ''} rows={5} placeholder='[ "url1.jpg", "url2.jpg" ]' /></FormControl>
-                <FormDescription>A JSON array of image URLs.</FormDescription>
-                <FormMessage />
-            </FormItem>
+      
+      <TabsContent value="gallery" className="mt-4">
+        <FormField control={control} name="gallery" render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="array"
+                label="Gallery Images"
+                placeholder='["https://example.com/image1.jpg", "https://example.com/image2.jpg"]'
+              />
+            </FormControl>
+            <FormDescription>Add URLs of product images for the gallery.</FormDescription>
+            <FormMessage />
+          </FormItem>
         )} />
       </TabsContent>
-      <TabsContent value="specifications" className="mt-2">
+      
+      <TabsContent value="specifications" className="mt-4">
         <FormField control={control} name="specifications" render={({ field }) => (
-            <FormItem>
-                <FormLabel>Specifications (JSON Object)</FormLabel>
-                <FormControl><Textarea {...field} value={field.value ?? ''} rows={5} placeholder='{ "Key 1": "Value 1", "Key 2": "Value 2" }' /></FormControl>
-                <FormDescription>A JSON object of key-value pairs.</FormDescription>
-                <FormMessage />
-            </FormItem>
+          <FormItem>
+            <FormLabel>Technical Specifications</FormLabel>
+            <FormControl>
+              <Textarea 
+                {...field} 
+                value={field.value ?? ''} 
+                rows={8} 
+                placeholder='{"Dimensions": "10 x 5 x 3 inches", "Weight": "2.5 kg", "Material": "Stainless Steel"}' 
+                className="font-mono text-sm"
+              />
+            </FormControl>
+            <FormDescription>Technical specifications as key-value pairs in JSON format.</FormDescription>
+            <FormMessage />
+          </FormItem>
         )} />
       </TabsContent>
-      <TabsContent value="documents" className="mt-2">
+      
+      <TabsContent value="documents" className="mt-4">
         <FormField control={control} name="documents" render={({ field }) => (
-            <FormItem>
-                <FormLabel>Documents (JSON Array)</FormLabel>
-                <FormControl><Textarea {...field} value={field.value ?? ''} rows={8} placeholder={'[\n  {\n    "name": "Datasheet",\n    "type": "datasheet",\n    "url": "https://example.com/doc.pdf"\n  }\n]'} /></FormControl>
-                <FormDescription>A JSON array of document objects.</FormDescription>
-                <FormMessage />
-            </FormItem>
+          <FormItem>
+            <FormControl>
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="documents"
+                label="Product Documents"
+                placeholder='[{"name": "Product Datasheet", "type": "datasheet", "url": "https://example.com/datasheet.pdf"}]'
+              />
+            </FormControl>
+            <FormDescription>Add product documentation, datasheets, and manuals.</FormDescription>
+            <FormMessage />
+          </FormItem>
         )} />
       </TabsContent>
     </Tabs>
-  )
-}
+  );
+};
