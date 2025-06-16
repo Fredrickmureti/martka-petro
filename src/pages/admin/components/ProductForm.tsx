@@ -10,6 +10,7 @@ import { productFormSchema, ProductFormValues } from './form/productFormSchema';
 import { ProductFormBasicInfo } from './form/ProductFormBasicInfo';
 import { ProductFormFlags } from './form/ProductFormFlags';
 import { ProductFormTabs } from './form/ProductFormTabs';
+import { ProductImagePreview } from './form/ProductImagePreview';
 
 type ProductFormProps = {
   onSubmit: (values: ProductFormValues) => void;
@@ -41,6 +42,9 @@ export function ProductForm({ onSubmit, product, categories, isSubmitting }: Pro
     },
   });
 
+  const watchedImageUrl = form.watch('image_url');
+  const watchedGallery = form.watch('gallery');
+
   React.useEffect(() => {
     form.reset({
       name: product?.name || '',
@@ -61,16 +65,27 @@ export function ProductForm({ onSubmit, product, categories, isSubmitting }: Pro
   }, [product, form]);
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-h-[70vh] overflow-y-auto pr-6">
-        <ProductFormBasicInfo control={form.control} categories={categories} />
-        <ProductFormFlags control={form.control} />
-        <ProductFormTabs control={form.control} />
-        <Button type="submit" disabled={isSubmitting} className="!mt-8">
-          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {product ? 'Update Product' : 'Create Product'}
-        </Button>
-      </form>
-    </Form>
+    <div className="grid lg:grid-cols-2 gap-6">
+      <div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <ProductFormBasicInfo control={form.control} categories={categories} />
+            <ProductFormFlags control={form.control} />
+            <ProductFormTabs control={form.control} />
+            <Button type="submit" disabled={isSubmitting} className="!mt-8 w-full">
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {product ? 'Update Product' : 'Create Product'}
+            </Button>
+          </form>
+        </Form>
+      </div>
+      
+      <div className="lg:sticky lg:top-4 lg:h-fit">
+        <ProductImagePreview
+          imageUrl={watchedImageUrl || ''}
+          galleryJson={watchedGallery || ''}
+        />
+      </div>
+    </div>
   );
 }
