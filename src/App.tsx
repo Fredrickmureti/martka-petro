@@ -31,6 +31,7 @@ import AdminMessages from "./pages/admin/Messages";
 import AdminLocations from "./pages/admin/Locations";
 import ManageSupport from "./pages/admin/ManageSupport";
 import ManageContent from "./pages/admin/ManageContent";
+import ManageStats from "./pages/admin/ManageStats";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ const App = () => (
               <Route path="locations" element={<AdminLocations />} />
               <Route path="manage-support" element={<ManageSupport />} />
               <Route path="manage-content" element={<ManageContent />} />
+              <Route path="manage-stats" element={<ManageStats />} />
             </Route>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
