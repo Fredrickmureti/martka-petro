@@ -1,9 +1,11 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Loader2, PlusCircle, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fetchAdminProjects, deleteProject, SupabaseProject } from '@/lib/projects';
 import { ProjectPreviewCard } from './components/PreviewCard';
+import { ProjectsTable } from './components/ProjectsTable';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -142,17 +144,13 @@ const AdminProjects = () => {
           ))}
         </div>
       ) : (
-        
         <Card>
-          <CardHeader>
-            <CardTitle>Project List</CardTitle>
-            <CardDescription>All company projects are listed here.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            
-            <div className="text-center py-8 text-muted-foreground">
-              Table view - implement original table here if needed
-            </div>
+          <CardContent className="p-0">
+            <ProjectsTable
+              projects={projects}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           </CardContent>
         </Card>
       )}

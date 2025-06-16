@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Tables } from '@/integrations/supabase/types';
 import { ProductFormValues } from './productFormSchema';
+import { ImageUploadField } from './ImageUploadField';
 
 type ProductFormBasicInfoProps = {
   control: Control<ProductFormValues>;
@@ -26,170 +27,110 @@ type ProductFormBasicInfoProps = {
 
 export const ProductFormBasicInfo = ({ control, categories }: ProductFormBasicInfoProps) => {
   return (
-    <>
-      <FormField
-        control={control}
-        name="name"
-        render={({ field }) => (
+    <div className="space-y-6">
+      <div className="grid md:grid-cols-2 gap-4">
+        <FormField control={control} name="name" render={({ field }) => (
           <FormItem>
-            <FormLabel>Product Name</FormLabel>
+            <FormLabel>Product Name *</FormLabel>
             <FormControl>
-              <Input placeholder="e.g. Fuel Dispenser" {...field} />
+              <Input {...field} value={field.value ?? ''} placeholder="Enter product name" />
             </FormControl>
             <FormMessage />
           </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name="description"
-        render={({ field }) => (
+        )} />
+        
+        <FormField control={control} name="manufacturer" render={({ field }) => (
           <FormItem>
-            <FormLabel>Description</FormLabel>
+            <FormLabel>Manufacturer</FormLabel>
             <FormControl>
-              <Textarea
-                placeholder="A brief description of the product."
-                {...field}
-                value={field.value ?? ''}
-              />
+              <Input {...field} value={field.value ?? ''} placeholder="Enter manufacturer" />
             </FormControl>
             <FormMessage />
           </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
-        name="image_url"
-        render={({ field }) => (
-            <FormItem>
-            <FormLabel>Image URL</FormLabel>
-            <FormControl>
-                <Input placeholder="https://example.com/image.png" {...field} value={field.value ?? ''} />
-            </FormControl>
-            <FormMessage />
-            </FormItem>
-        )}
-      />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField
-          control={control}
-          name="category_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  if (value === 'no-category') {
-                    field.onChange(null);
-                  } else {
-                    field.onChange(value ? Number(value) : null);
-                  }
-                }}
-                value={field.value?.toString() ?? ''}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="no-category">No Category</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id.toString()}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="manufacturer"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Manufacturer</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g. Wayne" {...field} value={field.value ?? ''} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField
-          control={control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price (KSh)</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground font-medium">
-                    KSh
-                  </span>
-                  <Input 
-                    placeholder="e.g. 150000 or 'Contact for price'" 
-                    {...field} 
-                    value={field.value ?? ''} 
-                    className="pl-12"
-                    onChange={(e) => {
-                      let value = e.target.value;
-                      // If it's a number, ensure it doesn't start with KSh
-                      if (!isNaN(Number(value)) && value !== '') {
-                        field.onChange(value);
-                      } else if (value.toLowerCase().includes('contact')) {
-                        field.onChange(value);
-                      } else {
-                        field.onChange(value);
-                      }
-                    }}
-                  />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="rating"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rating</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number" 
-                  min="0" max="5" 
-                  step="0.1" 
-                  placeholder="e.g. 4.8" 
-                  {...field}
-                  onChange={e => field.onChange(e.target.value === '' ? null : Number(e.target.value))}
-                  value={field.value ?? ''} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        )} />
       </div>
 
-      <FormField
-          control={control}
-          name="warranty"
-          render={({ field }) => (
-              <FormItem>
-              <FormLabel>Warranty</FormLabel>
+      <FormField control={control} name="description" render={({ field }) => (
+        <FormItem>
+          <FormLabel>Description</FormLabel>
+          <FormControl>
+            <Textarea {...field} value={field.value ?? ''} rows={3} placeholder="Enter product description" />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )} />
+
+      <div className="grid md:grid-cols-3 gap-4">
+        <FormField control={control} name="category_id" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Category</FormLabel>
+            <Select onValueChange={(value) => field.onChange(Number(value))} value={field.value?.toString()}>
               <FormControl>
-                  <Input placeholder="e.g. 1 Year" {...field} value={field.value ?? ''} />
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
               </FormControl>
-              <FormMessage />
-              </FormItem>
-          )}
-      />
-    </>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id.toString()}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )} />
+
+        <FormField control={control} name="price" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Price</FormLabel>
+            <FormControl>
+              <Input {...field} value={field.value ?? ''} placeholder="e.g., $299.99" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+
+        <FormField control={control} name="warranty" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Warranty</FormLabel>
+            <FormControl>
+              <Input {...field} value={field.value ?? ''} placeholder="e.g., 2 years" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+      </div>
+
+      <FormField control={control} name="image_url" render={({ field }) => (
+        <ImageUploadField
+          label="Main Product Image"
+          value={field.value || ''}
+          onChange={field.onChange}
+          description="Upload or provide URL for the main product image"
+          folder="products"
+        />
+      )} />
+
+      <FormField control={control} name="rating" render={({ field }) => (
+        <FormItem>
+          <FormLabel>Rating (1-5)</FormLabel>
+          <FormControl>
+            <Input 
+              type="number" 
+              min="1" 
+              max="5" 
+              step="0.1"
+              {...field} 
+              value={field.value ?? ''} 
+              onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+              placeholder="4.5" 
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )} />
+    </div>
   );
 };

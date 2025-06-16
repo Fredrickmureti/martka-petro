@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +14,7 @@ import { fetchProjectById, createProject, updateProject, SupabaseProject } from 
 import { Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ProjectImagePreview } from './components/ProjectImagePreview';
+import { ImageUploadField } from './components/form/ImageUploadField';
 
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -149,7 +149,13 @@ const AdminProjectForm = () => {
                 </div>
 
                 <FormField name="hero_image_url" control={form.control} render={({ field }) => (
-                    <FormItem><FormLabel>Hero Image URL</FormLabel><FormControl><Input {...field} value={field.value ?? ''} placeholder="https://example.com/image.png" /></FormControl><FormMessage /></FormItem>
+                  <ImageUploadField
+                    label="Hero Image"
+                    value={field.value || ''}
+                    onChange={field.onChange}
+                    description="Upload or provide URL for the project hero image"
+                    folder="projects"
+                  />
                 )} />
 
                 {/* Field Arrays */}
