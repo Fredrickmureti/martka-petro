@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Search, Download, MessageCircle, Phone, ChevronDown, ChevronRight } from 'lucide-react';
+import { Search, Download, MessageCircle, Phone, ChevronDown, ChevronRight, BookOpen, Users, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,6 +12,8 @@ const iconMap: { [key: string]: React.ElementType } = {
   Phone,
   MessageCircle,
   Download,
+  BookOpen,
+  Users,
 };
 
 const Support = () => {
@@ -29,7 +30,14 @@ const Support = () => {
   const faqContent = content?.faq_section;
   const downloadsContent = content?.downloads_section;
   const emergencyContent = content?.emergency_section;
+  const contactContent = content?.contact_section;
+  const resourcesContent = content?.resources_section;
+  const communityContent = content?.community_section;
+  
   const emergencyData = emergencyContent?.content as { phone?: string, email_text?: string, button_text?: string };
+  const contactData = contactContent?.content as { subtitle?: string, phone?: string, email?: string, hours?: string };
+  const resourcesData = resourcesContent?.content as { subtitle?: string, features?: string[] };
+  const communityData = communityContent?.content as { subtitle?: string, forum_url?: string, events_url?: string, newsletter_url?: string };
 
   const handleSupportAction = (option: any) => {
     if (option.action_type === 'phone' && option.action_url) {
@@ -49,8 +57,16 @@ const Support = () => {
 
   return (
     <Layout>
-      {/* Enhanced Hero Section with 3D Effects */}
-      <section className="pt-32 pb-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden perspective-1500">
+      {/* Enhanced Hero Section with Background Image */}
+      <section 
+        className="pt-32 pb-20 text-white overflow-hidden perspective-1500 relative"
+        style={{
+          backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.8), rgba(30, 64, 175, 0.8)), url("https://images.unsplash.com/photo-1498050108023-c5249f4df085")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
         {/* Floating geometric shapes */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-20 left-10 w-24 h-24 bg-blue-400/10 rounded-full blur-xl animate-float-gentle stagger-1"></div>
@@ -105,6 +121,9 @@ const Support = () => {
         </div>
       </section>
 
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+
       {/* Enhanced Support Options with 3D Cards */}
       <section className="py-20 bg-background perspective-1200">
         <div className="container mx-auto px-6">
@@ -146,6 +165,9 @@ const Support = () => {
           </div>
         </div>
       </section>
+
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
       {/* Enhanced FAQ Section */}
       <section className="py-20 bg-gradient-to-br from-slate-50 to-blue-50 perspective-1000">
@@ -196,6 +218,9 @@ const Support = () => {
           </div>
         </div>
       </section>
+
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
       {/* Enhanced Downloads Section */}
       <section className="py-20 bg-background perspective-1200">
@@ -275,6 +300,115 @@ const Support = () => {
           </div>
         </div>
       </section>
+
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+
+      {/* Additional Resources Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 to-slate-50 dark:from-blue-900/20 dark:to-slate-900 perspective-1000">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16 transform hover:scale-105 transition-all duration-500">
+            {isLoadingContent ? (
+              <>
+                <Skeleton className="h-9 w-96 mx-auto mb-4" />
+                <Skeleton className="h-6 w-full max-w-lg mx-auto" />
+              </>
+            ) : (
+              <>
+                <h2 className="text-4xl font-bold mb-6 animate-fade-in-up">{resourcesContent?.title || 'Additional Resources'}</h2>
+                <p className="text-xl text-muted-foreground animate-fade-in-up stagger-1">{resourcesData?.subtitle || 'Access technical guides, training materials, and industry insights'}</p>
+              </>
+            )}
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {isLoadingContent ? Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="hover-3d-gentle transform transition-all duration-500">
+                <CardContent className="p-6"><Skeleton className="h-24 w-full" /></CardContent>
+              </Card>
+            )) : (resourcesData?.features || ['Technical Documentation', 'Video Tutorials', 'Best Practices Guide', 'Industry Updates']).map((feature, index) => (
+              <Card key={index} 
+                    className="hover-3d-gentle group transform-gpu cursor-pointer"
+                    style={{ 
+                      animation: `fadeInUp 0.6s ease-out ${0.1 * index}s both`,
+                      transformStyle: 'preserve-3d'
+                    }}>
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:shadow-lg transition-all duration-300">
+                    <BookOpen size={24} className="text-white" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2 group-hover:text-blue-600 transition-colors duration-300">{feature}</h3>
+                  <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-800">
+                    Access Now <ExternalLink size={16} className="ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+
+      {/* Contact Support Section */}
+      <section className="py-20 bg-background perspective-1000">
+        <div className="container mx-auto px-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-16 transform hover:scale-105 transition-all duration-500">
+              {isLoadingContent ? (
+                <>
+                  <Skeleton className="h-9 w-80 mx-auto mb-4" />
+                  <Skeleton className="h-6 w-full max-w-lg mx-auto" />
+                </>
+              ) : (
+                <>
+                  <h2 className="text-4xl font-bold mb-6 animate-fade-in-up">{contactContent?.title || 'Need More Help?'}</h2>
+                  <p className="text-xl text-muted-foreground animate-fade-in-up stagger-1">{contactData?.subtitle || 'Contact our dedicated support team for personalized assistance'}</p>
+                </>
+              )}
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="hover-3d-gentle group transform-gpu" style={{ animation: 'fadeInLeft 0.6s ease-out 0.1s both' }}>
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Phone size={32} className="text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Phone Support</h3>
+                  <p className="text-muted-foreground mb-4">{contactData?.phone || '+1-800-SUPPORT'}</p>
+                  <p className="text-sm text-blue-600">{contactData?.hours || '24/7 Support Available'}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="hover-3d-gentle group transform-gpu" style={{ animation: 'fadeInUp 0.6s ease-out 0.2s both' }}>
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <MessageCircle size={32} className="text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Email Support</h3>
+                  <p className="text-muted-foreground mb-4">{contactData?.email || 'support@martkapetroleumcom'}</p>
+                  <Button className="w-full">Send Email</Button>
+                </CardContent>
+              </Card>
+
+              <Card className="hover-3d-gentle group transform-gpu" style={{ animation: 'fadeInRight 0.6s ease-out 0.3s both' }}>
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Users size={32} className="text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Community</h3>
+                  <p className="text-muted-foreground mb-4">{communityData?.subtitle || 'Connect with experts and peers'}</p>
+                  <Button variant="outline" className="w-full">Join Community</Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
       {/* Enhanced Emergency Support Section */}
       <section className="py-20 bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white perspective-1000 gradient-shift">

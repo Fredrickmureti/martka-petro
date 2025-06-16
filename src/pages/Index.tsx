@@ -74,17 +74,24 @@ const Index: React.FC = () => {
   const heroTitle = heroContent.title || "Advanced Petroleum Infrastructure Solutions";
   const heroSubtitle = heroContent.subtitle || "Leading provider of cutting-edge petroleum equipment and infrastructure solutions for the energy sector worldwide.";
 
+  // Background images
+  const heroBackground = pageContent?.hero_background || {};
+  const servicesBackground = pageContent?.services_background || {};
+  const projectsBackground = pageContent?.projects_background || {};
+  const aboutBackground = pageContent?.about_background || {};
+
   return (
     <Layout>
-      {/* Hero Section with 3D Effects */}
-      <section className="relative pt-32 pb-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden perspective-1000">
-        <div 
-          className="absolute inset-0 opacity-10 animate-pulse"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }}
-        ></div>
-        
+      {/* Hero Section with Background Image */}
+      <section 
+        className="relative pt-32 pb-20 text-white overflow-hidden perspective-1000"
+        style={{
+          backgroundImage: `linear-gradient(rgba(15, 23, 42, ${heroBackground.overlay_opacity || 0.7}), rgba(30, 64, 175, ${heroBackground.overlay_opacity || 0.7})), url("${heroBackground.image_url || 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81'}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
         {/* Floating geometric shapes */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-20 left-10 w-20 h-20 bg-blue-400/10 rounded-full blur-xl animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
@@ -129,7 +136,7 @@ const Index: React.FC = () => {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="border-2 border-white/20 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg"
+                  className="border-2 border-white/30 bg-white/10 text-white hover:bg-white hover:text-blue-900 backdrop-blur-sm px-8 py-4 text-lg font-semibold transition-all duration-300"
                   onClick={() => navigate('/services')}
                 >
                   Our Services
@@ -141,9 +148,13 @@ const Index: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section with 3D Cards */}
-      <section className="py-20 bg-background" style={{ perspective: '1000px' }}>
-        <div className="container mx-auto px-6">
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+
+      {/* Stats Section with Enhanced Background */}
+      <section className="py-20 bg-background relative" style={{ perspective: '1000px' }}>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 to-blue-50/30 dark:from-slate-900/50 dark:to-blue-900/30"></div>
+        <div className="container mx-auto px-6 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card className="border border-border bg-card text-card-foreground shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:rotate-y-6 hover:-translate-y-4 cursor-pointer group"
                   style={{ 
@@ -216,9 +227,22 @@ const Index: React.FC = () => {
         </div>
       </section>
 
-      {/* Services Section with 3D Effects */}
-      <section className="py-20 bg-muted/30" style={{ perspective: '1200px' }}>
-        <div className="container mx-auto px-6">
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+
+      {/* Services Section with Background */}
+      <section 
+        className="py-20 relative" 
+        style={{ 
+          perspective: '1200px',
+          backgroundImage: `linear-gradient(rgba(248, 250, 252, ${servicesBackground.overlay_opacity || 0.9}), rgba(241, 245, 249, ${servicesBackground.overlay_opacity || 0.9})), url("${servicesBackground.image_url || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b'}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="absolute inset-0 bg-muted/30 dark:bg-background/80"></div>
+        <div className="container mx-auto px-6 relative">
           <div className="text-center mb-16 transform hover:scale-105 transition-all duration-500">
             <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transform hover:scale-110 transition-transform duration-300">
               {servicesContent.badge || "Our Services"}
@@ -287,19 +311,47 @@ const Index: React.FC = () => {
         </div>
       </section>
 
-      {/* Products Section */}
-      <div className="transform hover:scale-[1.02] transition-transform duration-700">
-        <PopularProducts />
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+
+      {/* Products Section with Background */}
+      <div 
+        className="transform hover:scale-[1.02] transition-transform duration-700 relative"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, ${projectsBackground.overlay_opacity || 0.95}), rgba(255, 255, 255, ${projectsBackground.overlay_opacity || 0.95})), url("${projectsBackground.image_url || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c'}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <div className="absolute inset-0 bg-background/50 dark:bg-background/90"></div>
+        <div className="relative">
+          <PopularProducts />
+        </div>
       </div>
+
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
       {/* Projects Section */}
       <div className="transform hover:scale-[1.02] transition-transform duration-700">
         <ProjectsOverview />
       </div>
 
-      {/* About Section with 3D Effects */}
-      <section className="py-20 bg-gradient-to-br from-slate-900 to-blue-900 text-white" style={{ perspective: '1000px' }}>
-        <div className="container mx-auto px-6">
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+
+      {/* About Section with Background Image */}
+      <section 
+        className="py-20 text-white relative" 
+        style={{ 
+          perspective: '1000px',
+          backgroundImage: `linear-gradient(rgba(15, 23, 42, ${aboutBackground.overlay_opacity || 0.8}), rgba(30, 64, 175, ${aboutBackground.overlay_opacity || 0.8})), url("${aboutBackground.image_url || 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05'}")`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        <div className="container mx-auto px-6 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="transform hover:scale-105 hover:rotate-y-3 transition-all duration-700" 
                  style={{ transformStyle: 'preserve-3d' }}>
@@ -332,9 +384,13 @@ const Index: React.FC = () => {
         </div>
       </section>
 
-      {/* CTA Section with 3D Effects */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white" style={{ perspective: '1000px' }}>
-        <div className="container mx-auto px-6 text-center">
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+
+      {/* CTA Section with Enhanced Styling */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white relative overflow-hidden" style={{ perspective: '1000px' }}>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-10"></div>
+        <div className="container mx-auto px-6 text-center relative">
           <h2 className="text-4xl font-bold mb-6 transform hover:scale-110 hover:rotate-y-3 transition-all duration-500" 
               style={{ transformStyle: 'preserve-3d' }}>
             Ready to Start Your Project?
