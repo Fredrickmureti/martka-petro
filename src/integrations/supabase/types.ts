@@ -87,6 +87,84 @@ export type Database = {
         }
         Relationships: []
       }
+      careers_cards: {
+        Row: {
+          card_type: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: number
+          is_active: boolean | null
+          sort_order: number | null
+          title: string
+          unit: string | null
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          card_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean | null
+          sort_order?: number | null
+          title: string
+          unit?: string | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          card_type?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean | null
+          sort_order?: number | null
+          title?: string
+          unit?: string | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Relationships: []
+      }
+      careers_content: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          description: string | null
+          id: number
+          is_active: boolean | null
+          section_key: string
+          sort_order: number | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          is_active?: boolean | null
+          section_key: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          is_active?: boolean | null
+          section_key?: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       contact_items: {
         Row: {
           created_at: string
@@ -153,6 +231,54 @@ export type Database = {
           phone?: string | null
           service_id?: number | null
           subject?: string | null
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          file_name: string
+          file_size: string | null
+          file_type: string
+          file_url: string
+          id: number
+          is_active: boolean | null
+          is_public: boolean | null
+          sort_order: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          file_name: string
+          file_size?: string | null
+          file_type: string
+          file_url: string
+          id?: number
+          is_active?: boolean | null
+          is_public?: boolean | null
+          sort_order?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          file_name?: string
+          file_size?: string | null
+          file_type?: string
+          file_url?: string
+          id?: number
+          is_active?: boolean | null
+          is_public?: boolean | null
+          sort_order?: number | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -602,7 +728,10 @@ export type Database = {
       support_options: {
         Row: {
           action_text: string | null
+          action_type: string | null
+          action_url: string | null
           availability: string | null
+          contact_info: Json | null
           created_at: string
           description: string | null
           icon: string | null
@@ -614,7 +743,10 @@ export type Database = {
         }
         Insert: {
           action_text?: string | null
+          action_type?: string | null
+          action_url?: string | null
           availability?: string | null
+          contact_info?: Json | null
           created_at?: string
           description?: string | null
           icon?: string | null
@@ -626,7 +758,10 @@ export type Database = {
         }
         Update: {
           action_text?: string | null
+          action_type?: string | null
+          action_url?: string | null
           availability?: string | null
+          contact_info?: Json | null
           created_at?: string
           description?: string | null
           icon?: string | null

@@ -123,7 +123,7 @@ export const useDeleteSupportDownload = () => {
   });
 };
 
-// Support Options mutations
+// Support Options mutations with enhanced contact info
 export const useCreateSupportOption = () => {
   const queryClient = useQueryClient();
   

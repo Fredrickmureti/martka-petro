@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
 import { useSupportPageContent, useSupportFaqs, useSupportDownloads, useSupportOptions } from '@/hooks/useSupportPage';
+import { useDocuments } from '@/hooks/useDocuments';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const iconMap: { [key: string]: React.ElementType } = {
@@ -21,6 +22,7 @@ const Support = () => {
   const { data: faqs, isLoading: isLoadingFaqs } = useSupportFaqs();
   const { data: downloads, isLoading: isLoadingDownloads } = useSupportDownloads();
   const { data: supportOptions, isLoading: isLoadingSupportOptions } = useSupportOptions();
+  const { data: documents, isLoading: isLoadingDocuments } = useDocuments();
   
   const heroContent = content?.hero;
   const helpContent = content?.help_section;
@@ -28,6 +30,22 @@ const Support = () => {
   const downloadsContent = content?.downloads_section;
   const emergencyContent = content?.emergency_section;
   const emergencyData = emergencyContent?.content as { phone?: string, email_text?: string, button_text?: string };
+
+  const handleSupportAction = (option: any) => {
+    if (option.action_type === 'phone' && option.action_url) {
+      window.location.href = option.action_url;
+    } else if (option.action_type === 'whatsapp' && option.action_url) {
+      window.open(option.action_url, '_blank');
+    } else if (option.action_type === 'email' && option.action_url) {
+      window.location.href = option.action_url;
+    } else if (option.action_url) {
+      if (option.action_url.startsWith('/')) {
+        window.location.href = option.action_url;
+      } else {
+        window.open(option.action_url, '_blank');
+      }
+    }
+  };
 
   return (
     <Layout>
@@ -86,7 +104,10 @@ const Support = () => {
                   <h3 className="text-xl font-bold mb-2">{option.title}</h3>
                   <p className="text-muted-foreground mb-4">{option.description}</p>
                   <p className="text-sm text-blue-600 mb-4">{option.availability}</p>
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700"
+                    onClick={() => handleSupportAction(option)}
+                  >
                     {option.action_text}
                   </Button>
                 </CardContent>
@@ -142,8 +163,9 @@ const Support = () => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {isLoadingDownloads ? Array.from({ length: 4 }).map((_, i) => <Card key={i}><CardContent className="p-6"><Skeleton className="h-20 w-full" /></CardContent></Card>) : (downloads || []).map((download, index) => (
-              <Card key={index} className="hover:shadow-md transition-shadow">
+            {/* Database downloads */}
+            {isLoadingDownloads ? Array.from({ length: 2 }).map((_, i) => <Card key={i}><CardContent className="p-6"><Skeleton className="h-20 w-full" /></CardContent></Card>) : (downloads || []).map((download, index) => (
+              <Card key={`download-${index}`} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -154,7 +176,30 @@ const Support = () => {
                         <span>{download.file_size}</span>
                       </div>
                     </div>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" onClick={() => window.open(download.file_url || '#', '_blank')}>
+                      <Download size={16} className="mr-2" />
+                      Download
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {/* Document management downloads */}
+            {isLoadingDocuments ? Array.from({ length: 2 }).map((_, i) => <Card key={i}><CardContent className="p-6"><Skeleton className="h-20 w-full" /></CardContent></Card>) : (documents || []).map((document, index) => (
+              <Card key={`doc-${index}`} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg mb-2">{document.title}</h3>
+                      <p className="text-muted-foreground text-sm mb-3">{document.description}</p>
+                      <div className="flex items-center space-x-4 text-xs text-slate-500">
+                        <span>{document.file_type}</span>
+                        <span>{document.file_size}</span>
+                        <span className="capitalize">{document.category}</span>
+                      </div>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={() => window.open(document.file_url, '_blank')}>
                       <Download size={16} className="mr-2" />
                       Download
                     </Button>

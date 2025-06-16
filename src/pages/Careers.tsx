@@ -6,43 +6,33 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
 import { useCareers } from '@/hooks/useCareers';
+import { useCareersContent, useCareersCards } from '@/hooks/useCareersManagement';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const iconMap: { [key: string]: React.ElementType } = {
+  DollarSign,
+  Award,
+  Clock,
+  Users,
+  Briefcase,
+};
 
 const Careers = () => {
-  const { data: jobs = [], isLoading } = useCareers();
+  const { data: jobs = [], isLoading: isLoadingJobs } = useCareers();
+  const { data: content, isLoading: isLoadingContent } = useCareersContent();
+  const { data: cards, isLoading: isLoadingCards } = useCareersCards();
 
-  const benefits = [
-    {
-      icon: DollarSign,
-      title: 'Competitive Compensation',
-      description: 'Market-leading salaries with performance bonuses and profit sharing opportunities.',
-    },
-    {
-      icon: Award,
-      title: 'Comprehensive Benefits',
-      description: 'Full health, dental, vision insurance plus 401(k) matching and life insurance.',
-    },
-    {
-      icon: Clock,
-      title: 'Work-Life Balance',
-      description: 'Flexible schedules, remote work options, and generous PTO policy.',
-    },
-    {
-      icon: Users,
-      title: 'Professional Development',
-      description: 'Ongoing training, certification support, and career advancement opportunities.',
-    },
-  ];
+  const heroContent = content?.hero;
+  const whyWorkContent = content?.why_work;
+  const cultureContent = content?.culture;
+  const ctaContent = content?.cta;
 
-  const culture = [
-    'Innovation-driven environment with cutting-edge technology',
-    'Collaborative team culture with open communication',
-    'Commitment to safety and environmental responsibility',
-    'Opportunities to work on industry-leading projects',
-    'Diverse and inclusive workplace',
-    'Strong community involvement and volunteer programs',
-  ];
+  const benefitCards = cards?.filter(card => card.card_type === 'benefit') || [];
+  const statCards = cards?.filter(card => card.card_type === 'stat') || [];
+  const cultureValues = (cultureContent?.content as any)?.values || [];
+  const ctaButtons = (ctaContent?.content as any)?.buttons || [];
 
-  if (isLoading) {
+  if (isLoadingJobs && isLoadingContent) {
     return (
       <Layout>
         <div className="pt-32 pb-16 text-center">
@@ -58,14 +48,22 @@ const Careers = () => {
       <section className="pt-32 pb-16 bg-gradient-to-br from-slate-900 to-blue-900 text-white">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Join Our
-              <span className="block text-blue-400">Team</span>
-            </h1>
-            <p className="text-xl text-slate-300 mb-8">
-              Build your career with the industry leader in petroleum infrastructure. 
-              We're looking for passionate professionals to join our growing team.
-            </p>
+            {isLoadingContent ? (
+              <>
+                <Skeleton className="h-16 w-3/4 mx-auto mb-6 bg-slate-700" />
+                <Skeleton className="h-6 w-full mx-auto bg-slate-700" />
+              </>
+            ) : (
+              <>
+                <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                  {heroContent?.title?.split(' ').slice(0, -1).join(' ')}
+                  <span className="block text-blue-400">{heroContent?.title?.split(' ').slice(-1)[0]}</span>
+                </h1>
+                <p className="text-xl text-slate-300 mb-8">
+                  {heroContent?.description}
+                </p>
+              </>
+            )}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
                 View Open Positions
@@ -82,22 +80,40 @@ const Careers = () => {
       <section className="py-16 bg-background">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Work With Us?</h2>
-            <p className="text-muted-foreground">Competitive benefits and a culture that values your growth</p>
+            {isLoadingContent ? (
+              <>
+                <Skeleton className="h-9 w-80 mx-auto mb-4" />
+                <Skeleton className="h-6 w-96 mx-auto" />
+              </>
+            ) : (
+              <>
+                <h2 className="text-3xl font-bold mb-4">{whyWorkContent?.title}</h2>
+                <p className="text-muted-foreground">{whyWorkContent?.description}</p>
+              </>
+            )}
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {benefits.map((benefit, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+            {isLoadingCards ? Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="text-center">
                 <CardContent className="p-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <benefit.icon size={32} className="text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
-                  <p className="text-muted-foreground text-sm">{benefit.description}</p>
+                  <Skeleton className="h-48 w-full" />
                 </CardContent>
               </Card>
-            ))}
+            )) : benefitCards.map((benefit, index) => {
+              const IconComponent = benefit.icon ? iconMap[benefit.icon] || Users : Users;
+              return (
+                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <IconComponent size={32} className="text-white" />
+                    </div>
+                    <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
+                    <p className="text-muted-foreground text-sm">{benefit.description}</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -111,7 +127,13 @@ const Careers = () => {
           </div>
           
           <div className="space-y-6 max-w-5xl mx-auto">
-            {jobs.map((job) => (
+            {isLoadingJobs ? Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i}>
+                <CardContent className="p-6">
+                  <Skeleton className="h-32 w-full" />
+                </CardContent>
+              </Card>
+            )) : jobs.map((job) => (
               <Card key={job.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -178,43 +200,65 @@ const Careers = () => {
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-6">Our Culture & Values</h2>
-              <p className="text-muted-foreground mb-8 leading-relaxed">
-                At Martka Petroleum, we believe our people are our greatest asset. We foster 
-                an environment where innovation thrives, collaboration is valued, and every 
-                team member has the opportunity to grow and succeed.
-              </p>
-              
-              <div className="space-y-3">
-                {culture.map((item, index) => (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                    <span>{item}</span>
+              {isLoadingContent ? (
+                <>
+                  <Skeleton className="h-9 w-80 mb-6" />
+                  <Skeleton className="h-24 w-full mb-8" />
+                  <div className="space-y-3">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <Skeleton key={i} className="h-6 w-full" />
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-3xl font-bold mb-6">{cultureContent?.title}</h2>
+                  <p className="text-muted-foreground mb-8 leading-relaxed">
+                    {cultureContent?.description}
+                  </p>
+                  
+                  <div className="space-y-3">
+                    {cultureValues.map((item: string, index: number) => (
+                      <div key={index} className="flex items-start space-x-3">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-4">
-                <div className="aspect-square bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 text-white flex flex-col justify-center text-center">
-                  <div className="text-3xl font-bold mb-2">25+</div>
-                  <div className="text-blue-100 text-sm">Years in Business</div>
-                </div>
-                <div className="aspect-square bg-gradient-to-br from-green-600 to-green-800 rounded-2xl p-6 text-white flex flex-col justify-center text-center">
-                  <div className="text-3xl font-bold mb-2">150+</div>
-                  <div className="text-green-100 text-sm">Team Members</div>
-                </div>
+                {isLoadingCards ? Array.from({ length: 2 }).map((_, i) => (
+                  <Skeleton key={i} className="aspect-square" />
+                )) : statCards.slice(0, 2).map((stat, index) => (
+                  <div key={index} className="aspect-square bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 text-white flex flex-col justify-center text-center">
+                    <div className="text-3xl font-bold mb-2">{stat.value}</div>
+                    <div className="text-blue-100 text-sm">{stat.unit}</div>
+                  </div>
+                ))}
               </div>
               <div className="space-y-4 pt-8">
-                <div className="aspect-square bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 text-white flex flex-col justify-center text-center">
-                  <div className="text-3xl font-bold mb-2">95%</div>
-                  <div className="text-purple-100 text-sm">Employee Satisfaction</div>
-                </div>
-                <div className="aspect-square bg-gradient-to-br from-orange-600 to-orange-800 rounded-2xl p-6 text-white flex flex-col justify-center text-center">
-                  <div className="text-3xl font-bold mb-2">4.8</div>
-                  <div className="text-orange-100 text-sm">Glassdoor Rating</div>
-                </div>
+                {isLoadingCards ? Array.from({ length: 2 }).map((_, i) => (
+                  <Skeleton key={i} className="aspect-square" />
+                )) : statCards.slice(2, 4).map((stat, index) => {
+                  const colors = [
+                    'from-purple-600 to-purple-800',
+                    'from-orange-600 to-orange-800'
+                  ];
+                  const textColors = [
+                    'text-purple-100',
+                    'text-orange-100'
+                  ];
+                  return (
+                    <div key={index} className={`aspect-square bg-gradient-to-br ${colors[index]} rounded-2xl p-6 text-white flex flex-col justify-center text-center`}>
+                      <div className="text-3xl font-bold mb-2">{stat.value}</div>
+                      <div className={`${textColors[index]} text-sm`}>{stat.unit}</div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -224,19 +268,38 @@ const Careers = () => {
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Your Career?</h2>
-          <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-            Don't see the perfect position? We're always looking for talented individuals 
-            to join our team. Send us your resume and let's talk.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">
-              Submit General Application
-            </Button>
-            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-              Contact HR Team
-            </Button>
-          </div>
+          {isLoadingContent ? (
+            <>
+              <Skeleton className="h-9 w-80 mx-auto mb-4 bg-blue-500" />
+              <Skeleton className="h-12 w-full max-w-2xl mx-auto mb-8 bg-blue-500" />
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Skeleton className="h-12 w-64 bg-blue-500" />
+                <Skeleton className="h-12 w-48 bg-blue-500" />
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-3xl font-bold mb-4">{ctaContent?.title}</h2>
+              <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
+                {ctaContent?.description}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                {ctaButtons.map((button: any, index: number) => (
+                  <Button 
+                    key={index}
+                    size="lg" 
+                    className={button.type === 'primary' ? 
+                      "bg-white text-blue-600 hover:bg-blue-50" : 
+                      "border-white text-white hover:bg-white hover:text-blue-600"
+                    }
+                    variant={button.type === 'primary' ? 'default' : 'outline'}
+                  >
+                    {button.text}
+                  </Button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
     </Layout>

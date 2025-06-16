@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Phone, MessageCircle } from 'lucide-react';
 import { 
   useSupportFaqs, 
   useSupportDownloads, 
@@ -27,13 +26,21 @@ import {
   useDeleteSupportOption
 } from '@/hooks/useSupportManagement';
 import { Tables } from '@/integrations/supabase/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+const actionTypeOptions = [
+  { value: 'phone', label: 'Phone Call' },
+  { value: 'whatsapp', label: 'WhatsApp' },
+  { value: 'email', label: 'Email' },
+  { value: 'link', label: 'Website Link' },
+];
 
 const ManageSupport = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('faqs');
+  const [activeTab, setActiveTab] = useState('options');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [dialogType, setDialogType] = useState<'faq' | 'download' | 'option'>('faq');
+  const [dialogType, setDialogType] = useState<'faq' | 'download' | 'option'>('option');
 
   // Data queries
   const { data: faqs = [], isLoading: isLoadingFaqs } = useSupportFaqs();
@@ -92,12 +99,34 @@ const ManageSupport = () => {
           toast({ title: 'Success', description: 'Download created successfully' });
         }
       } else if (dialogType === 'option') {
+        // Handle contact info based on action type
+        const actionType = formData.get('action_type') as string;
+        let contactInfo = {};
+        let actionUrl = formData.get('action_url') as string;
+
+        if (actionType === 'phone') {
+          const phone = formData.get('contact_phone') as string;
+          contactInfo = { phone };
+          actionUrl = `tel:${phone.replace(/\D/g, '')}`;
+        } else if (actionType === 'whatsapp') {
+          const whatsapp = formData.get('contact_whatsapp') as string;
+          contactInfo = { whatsapp };
+          actionUrl = `https://wa.me/${whatsapp.replace(/\D/g, '')}`;
+        } else if (actionType === 'email') {
+          const email = formData.get('contact_email') as string;
+          contactInfo = { email };
+          actionUrl = `mailto:${email}`;
+        }
+
         const optionData = {
           title: formData.get('title') as string,
           description: formData.get('description') as string,
           icon: formData.get('icon') as string,
           action_text: formData.get('action_text') as string,
           availability: formData.get('availability') as string,
+          action_type: actionType,
+          action_url: actionUrl,
+          contact_info: Object.keys(contactInfo).length > 0 ? contactInfo : null,
           is_active: true,
           sort_order: parseInt(formData.get('sort_order') as string) || 0,
         };
@@ -155,21 +184,105 @@ const ManageSupport = () => {
     setIsDialogOpen(true);
   };
 
+  const getActionTypeDisplay = (option: any) => {
+    const contactInfo = option.contact_info as any;
+    if (option.action_type === 'phone' && contactInfo?.phone) {
+      return `Phone: ${contactInfo.phone}`;
+    } else if (option.action_type === 'whatsapp' && contactInfo?.whatsapp) {
+      return `WhatsApp: ${contactInfo.whatsapp}`;
+    } else if (option.action_type === 'email' && contactInfo?.email) {
+      return `Email: ${contactInfo.email}`;
+    } else if (option.action_url) {
+      return `Link: ${option.action_url}`;
+    }
+    return option.action_type || 'link';
+  };
+
   return (
     <>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-3xl font-bold">Manage Support Content</h1>
-          <p className="text-muted-foreground">Manage FAQs, downloads, and support options.</p>
+          <p className="text-muted-foreground">Manage support options, FAQs, and downloads with contact functionality.</p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList>
+          <TabsTrigger value="options">Support Options</TabsTrigger>
           <TabsTrigger value="faqs">FAQs</TabsTrigger>
           <TabsTrigger value="downloads">Downloads</TabsTrigger>
-          <TabsTrigger value="options">Support Options</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="options">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Support Contact Options</CardTitle>
+                  <CardDescription>Manage support contact methods with phone, WhatsApp, email, and links.</CardDescription>
+                </div>
+                <Button onClick={() => openCreateDialog('option')}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Support Option
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoadingOptions ? (
+                <div className="text-center py-8">Loading support options...</div>
+              ) : (
+                <div className="space-y-4">
+                  {options.map((option) => (
+                    <div key={option.id} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                            {option.action_type === 'phone' ? (
+                              <Phone size={20} className="text-blue-600" />
+                            ) : (
+                              <MessageCircle size={20} className="text-blue-600" />
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="font-semibold">{option.title}</h3>
+                            <p className="text-sm text-muted-foreground">{getActionTypeDisplay(option)}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Badge variant={option.is_active ? "default" : "secondary"}>
+                            {option.is_active ? 'Active' : 'Inactive'}
+                          </Badge>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => openEditDialog(option, 'option')}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(option.id, 'option')}
+                            className="text-red-600"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      {option.description && (
+                        <p className="text-muted-foreground mb-2">{option.description}</p>
+                      )}
+                      {option.availability && (
+                        <p className="text-sm text-blue-600">{option.availability}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="faqs">
           <Card>
@@ -283,66 +396,6 @@ const ManageSupport = () => {
             </CardContent>
           </Card>
         </TabsContent>
-
-        <TabsContent value="options">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <div>
-                  <CardTitle>Support Options</CardTitle>
-                  <CardDescription>Manage support contact options.</CardDescription>
-                </div>
-                <Button onClick={() => openCreateDialog('option')}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Support Option
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {isLoadingOptions ? (
-                <div className="text-center py-8">Loading support options...</div>
-              ) : (
-                <div className="space-y-4">
-                  {options.map((option) => (
-                    <div key={option.id} className="border rounded-lg p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h3 className="font-semibold">{option.title}</h3>
-                          {option.availability && (
-                            <p className="text-sm text-muted-foreground">{option.availability}</p>
-                          )}
-                        </div>
-                        <div className="flex gap-2">
-                          <Badge variant={option.is_active ? "default" : "secondary"}>
-                            {option.is_active ? 'Active' : 'Inactive'}
-                          </Badge>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openEditDialog(option, 'option')}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDelete(option.id, 'option')}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      {option.description && (
-                        <p className="text-muted-foreground">{option.description}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -354,6 +407,122 @@ const ManageSupport = () => {
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-4">
+            {dialogType === 'option' && (
+              <>
+                <div>
+                  <Label htmlFor="title">Title</Label>
+                  <Input
+                    id="title"
+                    name="title"
+                    defaultValue={editingItem?.title || ''}
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    name="description"
+                    defaultValue={editingItem?.description || ''}
+                    rows={3}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="action_type">Action Type</Label>
+                    <Select name="action_type" defaultValue={editingItem?.action_type || 'link'}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {actionTypeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="icon">Icon</Label>
+                    <Input
+                      id="icon"
+                      name="icon"
+                      defaultValue={editingItem?.icon || ''}
+                      placeholder="e.g., Phone, MessageCircle"
+                    />
+                  </div>
+                </div>
+                
+                {/* Contact Information Fields */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="contact_phone">Phone Number</Label>
+                    <Input
+                      id="contact_phone"
+                      name="contact_phone"
+                      type="tel"
+                      defaultValue={(editingItem?.contact_info as any)?.phone || ''}
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="contact_whatsapp">WhatsApp Number</Label>
+                    <Input
+                      id="contact_whatsapp"
+                      name="contact_whatsapp"
+                      type="tel"
+                      defaultValue={(editingItem?.contact_info as any)?.whatsapp || ''}
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="contact_email">Email Address</Label>
+                  <Input
+                    id="contact_email"
+                    name="contact_email"
+                    type="email"
+                    defaultValue={(editingItem?.contact_info as any)?.email || ''}
+                    placeholder="support@example.com"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="action_url">Custom Action URL (optional)</Label>
+                  <Input
+                    id="action_url"
+                    name="action_url"
+                    type="url"
+                    defaultValue={editingItem?.action_url || ''}
+                    placeholder="https://example.com/page"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="action_text">Action Button Text</Label>
+                    <Input
+                      id="action_text"
+                      name="action_text"
+                      defaultValue={editingItem?.action_text || ''}
+                      placeholder="e.g., Call Now, Send Message"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="availability">Availability</Label>
+                    <Input
+                      id="availability"
+                      name="availability"
+                      defaultValue={editingItem?.availability || ''}
+                      placeholder="e.g., 24/7, Mon-Fri 9AM-5PM"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
             {dialogType === 'faq' && (
               <>
                 <div>
@@ -428,58 +597,6 @@ const ManageSupport = () => {
                     type="url"
                     defaultValue={editingItem?.file_url || ''}
                     placeholder="https://example.com/file.pdf"
-                  />
-                </div>
-              </>
-            )}
-
-            {dialogType === 'option' && (
-              <>
-                <div>
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    name="title"
-                    defaultValue={editingItem?.title || ''}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    defaultValue={editingItem?.description || ''}
-                    rows={3}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="icon">Icon</Label>
-                    <Input
-                      id="icon"
-                      name="icon"
-                      defaultValue={editingItem?.icon || ''}
-                      placeholder="e.g., phone, mail, chat"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="action_text">Action Text</Label>
-                    <Input
-                      id="action_text"
-                      name="action_text"
-                      defaultValue={editingItem?.action_text || ''}
-                      placeholder="e.g., Call Now, Send Email"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="availability">Availability</Label>
-                  <Input
-                    id="availability"
-                    name="availability"
-                    defaultValue={editingItem?.availability || ''}
-                    placeholder="e.g., 24/7, Mon-Fri 9AM-5PM"
                   />
                 </div>
               </>
