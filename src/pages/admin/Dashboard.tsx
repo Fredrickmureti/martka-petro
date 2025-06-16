@@ -5,8 +5,10 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
+    const navigate = useNavigate();
     const [adminName, setAdminName] = useState<string>('Admin');
 
     // Fetch admin profile
@@ -188,11 +190,17 @@ const AdminDashboard = () => {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
-                            <button className="p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow text-left">
+                            <button 
+                                onClick={() => navigate('/admin/products')}
+                                className="p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow text-left hover:bg-slate-50 dark:hover:bg-slate-700"
+                            >
                                 <div className="font-medium text-sm">Add Product</div>
                                 <div className="text-xs text-muted-foreground">Create new product</div>
                             </button>
-                            <button className="p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow text-left">
+                            <button 
+                                onClick={() => navigate('/admin/projects/form')}
+                                className="p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow text-left hover:bg-slate-50 dark:hover:bg-slate-700"
+                            >
                                 <div className="font-medium text-sm">New Project</div>
                                 <div className="text-xs text-muted-foreground">Add project showcase</div>
                             </button>

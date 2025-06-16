@@ -10,8 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Layout from '@/components/layout/Layout';
-import { useContactPageContent, useContactItems, useHeadquarters, useServicesList, useSubmitContactMessage } from '@/hooks/useContactPage';
+import { useContactPageContent, useContactItems, useLocations, useServicesList, useSubmitContactMessage } from '@/hooks/useContactPage';
 import { Skeleton } from '@/components/ui/skeleton';
+import LocationSelector from '@/components/contact/LocationSelector';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -26,10 +27,11 @@ type FormData = z.infer<typeof formSchema>;
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<any>(null);
 
   const { data: pageContent, isLoading: isLoadingPageContent } = useContactPageContent();
   const { data: contactItems, isLoading: isLoadingContactItems } = useContactItems();
-  const { data: headquarters, isLoading: isLoadingHeadquarters } = useHeadquarters();
+  const { data: locations, isLoading: isLoadingLocations } = useLocations();
   const { data: services, isLoading: isLoadingServices } = useServicesList();
   const submitContactMessage = useSubmitContactMessage();
 
@@ -67,9 +69,17 @@ const Contact = () => {
     }
   };
 
+  // Set default location when locations are loaded
+  React.useEffect(() => {
+    if (locations && locations.length > 0 && !selectedLocation) {
+      // Try to select headquarters first, or the first location
+      const headquarters = locations.find(loc => loc.is_headquarters);
+      setSelectedLocation(headquarters || locations[0]);
+    }
+  }, [locations, selectedLocation]);
+
   const heroContent = pageContent?.hero || {};
   const formContent = pageContent?.form || {};
-  const headquartersContent = pageContent?.headquarters || {};
 
   return (
     <Layout>
@@ -120,7 +130,7 @@ const Contact = () => {
               <Card key={i} className="hover-3d-gentle">
                 <CardContent className="p-6"><Skeleton className="h-24 w-full" /></CardContent>
               </Card>
-            )) : (contactItems || []).map((item, index) => (
+            )) : (contactItems || []).map((item) => (
               <Card key={item.id} className="hover-3d-gentle group transform-gpu cursor-pointer">
                 <CardContent className="p-6 text-center">
                   <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -287,67 +297,33 @@ const Contact = () => {
       {/* Section Separator */}
       <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
-      {/* Headquarters Section with Enhanced Styling */}
-      <section 
-        className="py-20 relative"
-        style={{
-          backgroundImage: `linear-gradient(rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.95)), url("https://images.unsplash.com/photo-1488972685288-c3fd157d7c7a")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      >
-        <div className="absolute inset-0 bg-background/80 dark:bg-background/90"></div>
-        <div className="container mx-auto px-6 relative">
+      {/* Interactive Locations Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-6 text-foreground">
-              {headquartersContent.title || 'Visit Our Headquarters'}
-            </h2>
+            <h2 className="text-4xl font-bold mb-6">Visit Our Offices</h2>
             <p className="text-xl text-muted-foreground">
-              {headquartersContent.subtitle || 'Our main offices and facilities around the world'}
+              Choose a location to view specific contact details and directions
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {isLoadingHeadquarters ? Array.from({ length: 3 }).map((_, i) => (
-              <Card key={i} className="hover-3d-gentle">
-                <CardContent className="p-6"><Skeleton className="h-40 w-full" /></CardContent>
-              </Card>
-            )) : (headquarters || []).map((location) => (
-              <Card key={location.id} className="hover-3d-gentle group transform-gpu border-2 border-blue-200 dark:border-blue-800">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl font-bold text-foreground group-hover:text-blue-600 transition-colors duration-300">
-                    {location.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <MapPin className="text-blue-600 mt-1 flex-shrink-0" size={16} />
-                    <p className="text-sm text-muted-foreground">
-                      {location.address}, {location.city}, {location.country}
-                    </p>
-                  </div>
-                  {location.phone && (
-                    <div className="flex items-center space-x-3">
-                      <Phone className="text-blue-600 flex-shrink-0" size={16} />
-                      <p className="text-sm text-muted-foreground">{location.phone}</p>
-                    </div>
-                  )}
-                  {location.email && (
-                    <div className="flex items-center space-x-3">
-                      <Mail className="text-blue-600 flex-shrink-0" size={16} />
-                      <p className="text-sm text-muted-foreground">{location.email}</p>
-                    </div>
-                  )}
-                  {location.business_hours && (
-                    <div className="flex items-start space-x-3">
-                      <Clock className="text-blue-600 mt-1 flex-shrink-0" size={16} />
-                      <p className="text-sm text-muted-foreground">{location.business_hours}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {isLoadingLocations ? (
+            <div className="text-center py-8">
+              <Skeleton className="h-32 w-full max-w-4xl mx-auto" />
+            </div>
+          ) : locations && locations.length > 0 ? (
+            <div className="max-w-6xl mx-auto">
+              <LocationSelector
+                locations={locations}
+                selectedLocation={selectedLocation}
+                onLocationSelect={setSelectedLocation}
+              />
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No locations available at the moment.</p>
+            </div>
+          )}
         </div>
       </section>
     </Layout>

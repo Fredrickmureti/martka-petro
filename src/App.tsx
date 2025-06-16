@@ -1,5 +1,6 @@
+
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -29,6 +30,7 @@ import AdminCareers from "./pages/admin/Careers";
 import AdminUsers from "./pages/admin/Users";
 import AdminMessages from "./pages/admin/Messages";
 import AdminLocations from "./pages/admin/Locations";
+import AdminDocuments from "./pages/admin/Documents";
 import ManageSupport from "./pages/admin/ManageSupport";
 import ManageContent from "./pages/admin/ManageContent";
 import ManageStats from "./pages/admin/ManageStats";
@@ -71,6 +73,7 @@ const App = () => (
               <Route path="users" element={<AdminUsers />} />
               <Route path="messages" element={<AdminMessages />} />
               <Route path="locations" element={<AdminLocations />} />
+              <Route path="documents" element={<AdminDocuments />} />
               <Route path="manage-support" element={<ManageSupport />} />
               <Route path="manage-content" element={<ManageContent />} />
               <Route path="manage-stats" element={<ManageStats />} />
