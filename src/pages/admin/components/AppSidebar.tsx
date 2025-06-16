@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, ShoppingBag, FolderKanban, Wrench, Briefcase, MessageSquare, Ticket, Building, FileText, LogOut } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,10 +13,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import ThemeToggle from '@/components/theme/ThemeToggle';
 
 const AppSidebar = () => {
     const navigate = useNavigate();
