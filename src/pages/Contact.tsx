@@ -22,6 +22,8 @@ const formSchema = z.object({
   message: z.string().min(10, 'Message must be at least 10 characters'),
 });
 
+type FormData = z.infer<typeof formSchema>;
+
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,7 +33,7 @@ const Contact = () => {
   const { data: services, isLoading: isLoadingServices } = useServicesList();
   const submitContactMessage = useSubmitContactMessage();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
@@ -43,13 +45,20 @@ const Contact = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormData) => {
     setIsSubmitting(true);
     try {
-      await submitContactMessage.mutateAsync({
-        ...values,
+      // Properly construct the payload with required fields
+      const payload = {
+        name: values.name,
+        email: values.email,
+        phone: values.phone,
+        message: values.message,
+        company: values.company,
         service_id: values.service_id ? parseInt(values.service_id) : null,
-      });
+      };
+      
+      await submitContactMessage.mutateAsync(payload);
       form.reset();
     } catch (error) {
       console.error('Error submitting form:', error);
