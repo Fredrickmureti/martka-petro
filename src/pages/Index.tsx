@@ -85,7 +85,7 @@ const Index: React.FC = () => {
     <Layout>
       {/* Hero Section with Background Image */}
       <section 
-        className="relative pt-32 pb-20 text-white overflow-hidden perspective-1000"
+        className="relative pt-32 pb-20 text-white overflow-hidden"
         style={{
           backgroundImage: `linear-gradient(rgba(15, 23, 42, ${heroBackground.overlay_opacity || 0.7}), rgba(30, 64, 175, ${heroBackground.overlay_opacity || 0.7})), url("${heroBackground.image_url || 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81'}")`,
           backgroundSize: 'cover',
@@ -101,27 +101,27 @@ const Index: React.FC = () => {
         </div>
         
         <div className="container mx-auto px-6 relative">
-          <div className="max-w-4xl mx-auto text-center transform-gpu">
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight transform hover:scale-105 transition-all duration-700 animate-fade-in">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight transition-all duration-700">
               {heroTitle.split(' ').slice(0, -2).join(' ')} 
-              <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent transform hover:scale-110 transition-transform duration-500">
+              <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 {heroTitle.split(' ').slice(-2).join(' ')}
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed transform hover:scale-105 transition-all duration-500">
+            <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed">
               {heroSubtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <div className="transform hover:scale-110 hover:rotate-1 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/50">
+              <div className="transform hover:scale-110 transition-all duration-300">
                 <WhatsAppButton 
                   messageType="quote"
                   variant="inline"
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-blue-500/25 transition-all duration-300"
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg font-semibold shadow-2xl transition-all duration-300"
                 />
               </div>
-              <div className="transform hover:scale-110 hover:-rotate-1 transition-all duration-300 hover:shadow-2xl">
+              <div className="transform hover:scale-110 transition-all duration-300">
                 <Button 
                   size="lg" 
                   variant="outline" 
@@ -215,14 +215,14 @@ const Index: React.FC = () => {
       >
         <div className="absolute inset-0 bg-muted/30 dark:bg-background/80"></div>
         <div className="container mx-auto px-6 relative">
-          <div className="text-center mb-16 transform hover:scale-105 transition-all duration-500">
-            <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold transform hover:scale-110 transition-transform duration-300">
+          <div className="text-center mb-16">
+            <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold">
               {servicesContent.badge || "Our Services"}
             </Badge>
-            <h2 className="text-4xl font-bold mt-4 text-foreground transform hover:scale-105 transition-all duration-500">
+            <h2 className="text-4xl font-bold mt-4 text-foreground">
               {servicesContent.title || "Comprehensive Petroleum Solutions"}
             </h2>
-            <p className="text-muted-foreground mt-3 transform hover:scale-105 transition-all duration-300">
+            <p className="text-muted-foreground mt-3">
               {servicesContent.subtitle || "End-to-end petroleum infrastructure services for your business needs"}
             </p>
           </div>
@@ -275,7 +275,7 @@ const Index: React.FC = () => {
 
       {/* Products Section with Background */}
       <div 
-        className="transform hover:scale-[1.02] transition-transform duration-700 relative"
+        className="relative"
         style={{
           backgroundImage: `linear-gradient(rgba(255, 255, 255, ${projectsBackground.overlay_opacity || 0.95}), rgba(255, 255, 255, ${projectsBackground.overlay_opacity || 0.95})), url("${projectsBackground.image_url || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c'}")`,
           backgroundSize: 'cover',
@@ -292,7 +292,7 @@ const Index: React.FC = () => {
       <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
       {/* Projects Section */}
-      <div className="transform hover:scale-[1.02] transition-transform duration-700">
+      <div>
         <ProjectsOverview />
       </div>
 
@@ -311,7 +311,7 @@ const Index: React.FC = () => {
       >
         <div className="container mx-auto px-6 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="transform hover:scale-105 transition-all duration-700">
+            <div>
               <h2 className="text-4xl font-bold mb-6">
                 {aboutContent.title || "About Martka Petroleum"}
               </h2>
@@ -319,21 +319,21 @@ const Index: React.FC = () => {
                 {aboutContent.description || "We are a leading provider of petroleum infrastructure solutions with years of experience in the industry. Our commitment to quality and innovation drives us to deliver exceptional results for our clients worldwide."}
               </p>
               <div className="space-y-2">
-                <div className="flex items-center gap-4 transform hover:translateX-4 transition-transform duration-300">
-                  <MapPin className="text-blue-400 transform hover:scale-125 transition-transform duration-300" size={20} />
+                <div className="flex items-center gap-4">
+                  <MapPin className="text-blue-400" size={20} />
                   <span className="text-slate-300">{aboutContent.location || "Global Operations"}</span>
                 </div>
-                <div className="flex items-center gap-4 transform hover:translateX-4 transition-transform duration-300">
-                  <Users className="text-blue-400 transform hover:scale-125 transition-transform duration-300" size={20} />
+                <div className="flex items-center gap-4">
+                  <Users className="text-blue-400" size={20} />
                   <span className="text-slate-300">{aboutContent.employees || "Expert Team"}</span>
                 </div>
               </div>
             </div>
-            <div className="transform hover:scale-105 transition-all duration-700 hover:shadow-2xl">
+            <div>
               <img
                 src={aboutContent.image || "/placeholder.svg"}
                 alt="About Our Company"
-                className="rounded-2xl shadow-2xl transform hover:scale-110 transition-transform duration-500"
+                className="rounded-2xl shadow-2xl"
               />
             </div>
           </div>
@@ -347,21 +347,21 @@ const Index: React.FC = () => {
       <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-800 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.03\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-10"></div>
         <div className="container mx-auto px-6 text-center relative">
-          <h2 className="text-4xl font-bold mb-6 transform hover:scale-110 transition-all duration-500">
+          <h2 className="text-4xl font-bold mb-6">
             Ready to Start Your Project?
           </h2>
-          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto transform hover:scale-105 transition-transform duration-500">
-            Get in touch with our experts today and let's discuss how we can help you achieve your petroleum infrastructure goals.
+          <p className="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+            Get in touch with our experts today and let us discuss how we can help you achieve your petroleum infrastructure goals.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <div className="transform hover:scale-110 hover:rotate-3 transition-all duration-300 hover:shadow-2xl">
+            <div>
               <WhatsAppButton 
                 messageType="quote"
                 variant="inline"
                 className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 text-lg font-semibold"
               />
             </div>
-            <div className="transform hover:scale-110 hover:-rotate-3 transition-all duration-300">
+            <div>
               <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10 px-8 py-4 text-lg">
                 View Our Portfolio
               </Button>
