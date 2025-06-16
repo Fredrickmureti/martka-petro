@@ -4,11 +4,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/theme/ThemeToggle';
+import { useHeaderContent } from '@/hooks/useContentManagement';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { data: headerContent } = useHeaderContent();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,6 +30,10 @@ const Header = () => {
     { name: 'Contact', href: '/contact' },
   ];
 
+  // Use database content or fallback to default
+  const companyName = headerContent?.company_name || 'Martka Petroleum';
+  const logoUrl = headerContent?.logo_url;
+
   return (
     <header
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -40,11 +46,15 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">M</span>
-            </div>
+            {logoUrl ? (
+              <img src={logoUrl} alt={companyName} className="w-10 h-10 rounded-lg" />
+            ) : (
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">{companyName.charAt(0)}</span>
+              </div>
+            )}
             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Martka Petroleum
+              {companyName}
             </span>
           </Link>
 

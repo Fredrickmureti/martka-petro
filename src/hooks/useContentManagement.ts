@@ -114,3 +114,41 @@ export const useUpdateAboutContent = () => {
     }
   });
 };
+
+// Add new footer section mutation
+export const useAddFooterSection = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (section: Omit<Tables<'footer_content'>, 'id' | 'created_at' | 'updated_at'>) => {
+      const { error } = await supabase
+        .from('footer_content')
+        .insert(section);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['footerContent'] });
+      queryClient.refetchQueries({ queryKey: ['footerContent'] });
+    }
+  });
+};
+
+// Add new about section mutation
+export const useAddAboutSection = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (section: Omit<Tables<'about_content'>, 'id' | 'created_at' | 'updated_at'>) => {
+      const { error } = await supabase
+        .from('about_content')
+        .insert(section);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['aboutContent'] });
+      queryClient.refetchQueries({ queryKey: ['aboutContent'] });
+    }
+  });
+};
