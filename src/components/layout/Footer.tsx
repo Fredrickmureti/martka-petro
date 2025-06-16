@@ -41,10 +41,10 @@ const Footer = () => {
               <span className="text-xl font-bold">{companyName}</span>
             </div>
             <p className="text-slate-300 text-sm leading-relaxed">
-              {companyInfo?.content?.description || 'World-class fuel solutions including construction of fuel stations, installation of dispensers, and petroleum infrastructure consulting.'}
+              {(companyInfo?.content as any)?.description || 'World-class fuel solutions including construction of fuel stations, installation of dispensers, and petroleum infrastructure consulting.'}
             </p>
             <div className="flex space-x-4">
-              {companyInfo?.content?.social_links?.map((link: any, index: number) => (
+              {(companyInfo?.content as any)?.social_links?.map((link: any, index: number) => (
                 <a key={index} href={link.url} className="text-slate-300 hover:text-blue-400 transition-colors">
                   {link.platform === 'facebook' && <Facebook size={20} />}
                   {link.platform === 'twitter' && <Twitter size={20} />}
@@ -70,7 +70,7 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">{quickLinks?.title || 'Quick Links'}</h3>
             <ul className="space-y-2 text-sm">
-              {quickLinks?.content?.links?.map((link: any, index: number) => (
+              {(quickLinks?.content as any)?.links?.map((link: any, index: number) => (
                 <li key={index}>
                   <Link to={link.url} className="text-slate-300 hover:text-blue-400 transition-colors">
                     {link.label}
@@ -92,7 +92,7 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">{services?.title || 'Services'}</h3>
             <ul className="space-y-2 text-sm">
-              {services?.content?.items?.map((item: string, index: number) => (
+              {(services?.content as any)?.items?.map((item: string, index: number) => (
                 <li key={index} className="text-slate-300">{item}</li>
               )) || (
                 <>
@@ -113,19 +113,19 @@ const Footer = () => {
               <div className="flex items-start space-x-2">
                 <MapPin size={16} className="text-blue-400 mt-0.5 flex-shrink-0" />
                 <span className="text-slate-300">
-                  {contactInfo?.content?.address || '123 Petroleum Plaza, Energy District, Houston, TX 77002'}
+                  {(contactInfo?.content as any)?.address || '123 Petroleum Plaza, Energy District, Houston, TX 77002'}
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone size={16} className="text-blue-400" />
                 <span className="text-slate-300">
-                  {contactInfo?.content?.phone || '+1 (555) 123-4567'}
+                  {(contactInfo?.content as any)?.phone || '+1 (555) 123-4567'}
                 </span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail size={16} className="text-blue-400" />
                 <span className="text-slate-300">
-                  {contactInfo?.content?.email || 'info@martkapetroleum.com'}
+                  {(contactInfo?.content as any)?.email || 'info@martkapetroleum.com'}
                 </span>
               </div>
             </div>
@@ -139,7 +139,7 @@ const Footer = () => {
               © {currentYear} {companyName}. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm">
-              {legalLinks?.content?.links?.map((link: any, index: number) => (
+              {(legalLinks?.content as any)?.links?.map((link: any, index: number) => (
                 <Link key={index} to={link.url} className="text-slate-400 hover:text-blue-400 transition-colors">
                   {link.label}
                 </Link>
