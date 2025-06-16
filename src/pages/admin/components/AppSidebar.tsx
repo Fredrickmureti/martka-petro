@@ -1,3 +1,4 @@
+
 import {
   Sidebar,
   SidebarContent,
@@ -83,7 +84,7 @@ const contentItems = [
   },
 ]
 
-export function AppSidebar() {
+export default function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
