@@ -125,9 +125,30 @@ export const ProductFormBasicInfo = ({ control, categories }: ProductFormBasicIn
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Price</FormLabel>
+              <FormLabel>Price (KSh)</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. 1500.00 or 'Contact for price'" {...field} value={field.value ?? ''} />
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground font-medium">
+                    KSh
+                  </span>
+                  <Input 
+                    placeholder="e.g. 150000 or 'Contact for price'" 
+                    {...field} 
+                    value={field.value ?? ''} 
+                    className="pl-12"
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      // If it's a number, ensure it doesn't start with KSh
+                      if (!isNaN(Number(value)) && value !== '') {
+                        field.onChange(value);
+                      } else if (value.toLowerCase().includes('contact')) {
+                        field.onChange(value);
+                      } else {
+                        field.onChange(value);
+                      }
+                    }}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
