@@ -12,7 +12,8 @@ import { Plus, Edit, Trash2, Save } from 'lucide-react';
 import { useSupportPageContent } from '@/hooks/useSupportPage';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
+import PageContentManager from './components/PageContentManager';
 
 const ManageSupport = () => {
   const [editingSection, setEditingSection] = useState<string | null>(null);
@@ -318,10 +319,10 @@ const ManageSupport = () => {
         <TabsContent value="settings">
           <Card>
             <CardHeader>
-              <CardTitle>Support Page Settings</CardTitle>
+              <CardTitle>Page Content & Background Management</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">General settings for the support page will be available here.</p>
+              <PageContentManager />
             </CardContent>
           </Card>
         </TabsContent>

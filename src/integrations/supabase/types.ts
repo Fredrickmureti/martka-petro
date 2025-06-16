@@ -393,6 +393,39 @@ export type Database = {
         }
         Relationships: []
       }
+      page_backgrounds: {
+        Row: {
+          created_at: string | null
+          id: number
+          image_url: string | null
+          is_active: boolean | null
+          overlay_opacity: number | null
+          page_name: string
+          section_key: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          image_url?: string | null
+          is_active?: boolean | null
+          overlay_opacity?: number | null
+          page_name: string
+          section_key: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          image_url?: string | null
+          is_active?: boolean | null
+          overlay_opacity?: number | null
+          page_name?: string
+          section_key?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       page_content: {
         Row: {
           content: Json | null
@@ -417,6 +450,51 @@ export type Database = {
           id?: string
           page?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      page_sections: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          description: string | null
+          id: number
+          image_url: string | null
+          is_active: boolean | null
+          page_name: string
+          section_key: string
+          sort_order: number | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          image_url?: string | null
+          is_active?: boolean | null
+          page_name: string
+          section_key: string
+          sort_order?: number | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          image_url?: string | null
+          is_active?: boolean | null
+          page_name?: string
+          section_key?: string
+          sort_order?: number | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
