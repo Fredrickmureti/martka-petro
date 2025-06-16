@@ -60,12 +60,14 @@ const AdminLayout = () => {
         <SidebarProvider>
             <div className="flex min-h-screen w-full bg-background text-foreground">
                 <AppSidebar />
-                <main className="flex-1">
-                    <div className="p-8">
-                       <header className="mb-4">
-                            <SidebarTrigger />
+                <main className="flex-1 overflow-hidden">
+                    <div className="h-full overflow-auto">
+                        <header className="sticky top-0 z-10 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 py-3">
+                            <SidebarTrigger className="-ml-1" />
                         </header>
-                        <Outlet />
+                        <div className="p-6">
+                            <Outlet />
+                        </div>
                     </div>
                 </main>
             </div>
