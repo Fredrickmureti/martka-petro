@@ -1,4 +1,3 @@
-
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, ShoppingBag, FolderKanban, Wrench, Briefcase, MessageSquare, Ticket, LogOut, Building, FileText, Settings, BarChart3, HeadphonesIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,6 +15,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import ThemeToggle from '@/components/theme/ThemeToggle';
 
 const AppSidebar = () => {
   const navigate = useNavigate();
@@ -55,6 +55,9 @@ const AppSidebar = () => {
               <span className="font-bold text-sm truncate">Martka Admin</span>
             </div>
           )}
+          <div className="ml-auto">
+            <ThemeToggle />
+          </div>
         </div>
       </SidebarHeader>
 
