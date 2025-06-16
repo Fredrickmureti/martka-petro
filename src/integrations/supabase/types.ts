@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      about_content: {
+        Row: {
+          content: Json | null
+          created_at: string
+          id: number
+          is_active: boolean | null
+          section_key: string
+          sort_order: number | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          id?: number
+          is_active?: boolean | null
+          section_key: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          id?: number
+          is_active?: boolean | null
+          section_key?: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       careers: {
         Row: {
           created_at: string
@@ -118,6 +151,63 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      footer_content: {
+        Row: {
+          content: Json | null
+          created_at: string
+          id: number
+          is_active: boolean | null
+          section_key: string
+          sort_order: number | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string
+          id?: number
+          is_active?: boolean | null
+          section_key: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string
+          id?: number
+          is_active?: boolean | null
+          section_key?: string
+          sort_order?: number | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      header_content: {
+        Row: {
+          company_name: string
+          created_at: string
+          id: number
+          logo_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_name?: string
+          created_at?: string
+          id?: number
+          logo_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          id?: number
+          logo_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       locations: {
         Row: {
