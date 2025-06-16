@@ -26,7 +26,7 @@ export const useSupportPageContent = () => {
     });
 };
 
-// Fetch FAQs
+// Fetch all FAQs (including inactive ones for admin interface)
 export const useSupportFaqs = () => {
     return useQuery({
         queryKey: ['supportFaqs'],
@@ -34,7 +34,6 @@ export const useSupportFaqs = () => {
             const { data, error } = await supabase
                 .from('support_faqs')
                 .select('*')
-                .eq('is_active', true)
                 .order('sort_order', { ascending: true });
 
             if (error) throw new Error(error.message);
@@ -43,7 +42,7 @@ export const useSupportFaqs = () => {
     });
 };
 
-// Fetch Downloads
+// Fetch all Downloads (including inactive ones for admin interface)
 export const useSupportDownloads = () => {
     return useQuery({
         queryKey: ['supportDownloads'],
@@ -51,7 +50,6 @@ export const useSupportDownloads = () => {
             const { data, error } = await supabase
                 .from('support_downloads')
                 .select('*')
-                .eq('is_active', true)
                 .order('sort_order', { ascending: true });
 
             if (error) throw new Error(error.message);
@@ -60,7 +58,7 @@ export const useSupportDownloads = () => {
     });
 };
 
-// Fetch Support Options
+// Fetch all Support Options (including inactive ones for admin interface)
 export const useSupportOptions = () => {
     return useQuery({
         queryKey: ['supportOptions'],
@@ -68,7 +66,6 @@ export const useSupportOptions = () => {
             const { data, error } = await supabase
                 .from('support_options')
                 .select('*')
-                .eq('is_active', true)
                 .order('sort_order', { ascending: true });
 
             if (error) throw new Error(error.message);

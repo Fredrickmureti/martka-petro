@@ -21,7 +21,7 @@ const ManageSupport = () => {
 
   // Toggle active status mutation
   const toggleActiveMutation = useMutation({
-    mutationFn: async ({ table, id, isActive }: { table: string; id: number; isActive: boolean }) => {
+    mutationFn: async ({ table, id, isActive }: { table: 'support_faqs' | 'support_downloads' | 'support_options'; id: number; isActive: boolean }) => {
       const { error } = await supabase
         .from(table)
         .update({ is_active: !isActive })
@@ -47,7 +47,7 @@ const ManageSupport = () => {
     },
   });
 
-  const handleToggleActive = (table: string, id: number, isActive: boolean) => {
+  const handleToggleActive = (table: 'support_faqs' | 'support_downloads' | 'support_options', id: number, isActive: boolean) => {
     toggleActiveMutation.mutate({ table, id, isActive });
   };
 
