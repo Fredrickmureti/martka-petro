@@ -101,13 +101,12 @@ export const useServicesList = () => {
     });
 };
 
-
-// Mutation for submitting the contact form
+// Updated mutation payload type to match form validation
 type ContactMessagePayload = {
     name: string;
     email: string;
     phone: string;
-    company: string;
+    company?: string;
     service_id: number | null;
     message: string;
 };
@@ -118,7 +117,7 @@ const submitContactMessage = async (newMessage: ContactMessagePayload) => {
             name: newMessage.name,
             email: newMessage.email,
             phone: newMessage.phone,
-            company: newMessage.company,
+            company: newMessage.company || null,
             service_id: newMessage.service_id,
             message: newMessage.message,
         },
