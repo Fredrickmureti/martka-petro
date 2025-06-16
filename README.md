@@ -19,6 +19,88 @@
 
 ---
 
+## 🔧 Supabase Configuration & Credentials
+
+### 📍 Main Configuration Files
+
+The following files contain Supabase project credentials that need to be updated when transferring to a new Supabase account:
+
+#### **Primary Configuration**
+- **`src/integrations/supabase/client.ts`** - Main Supabase client configuration
+  - Contains: `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`
+  - **Critical**: Update these values first when switching projects
+
+- **`supabase/config.toml`** - Supabase CLI configuration
+  - Contains: `project_id`
+  - Used for local development and migrations
+
+### 📋 Files Using Supabase Credentials
+
+#### **Hook Files (Data Layer)**
+All these files import and use the Supabase client:
+
+- `src/hooks/useFileUpload.ts` - File upload functionality
+- `src/hooks/useCompanyContact.ts` - Company contact information
+- `src/hooks/useStatsManagement.ts` - Statistics content management
+- `src/hooks/useAdminMessages.ts` - Admin message handling
+- `src/hooks/useCareers.ts` - Career management
+- `src/hooks/useSupportPage.ts` - Support page content
+- `src/hooks/useServices.ts` - Services management
+- `src/hooks/useDocuments.ts` - Document management
+- `src/hooks/useAdminLocations.ts` - Location management
+- `src/hooks/usePageContent.ts` - Page content management
+- `src/hooks/useContactPage.ts` - Contact page functionality
+- `src/hooks/useCareersManagement.ts` - Career content management
+- `src/hooks/useContentManagement.ts` - General content management
+- `src/hooks/useAdminProducts.ts` - Product management
+- `src/hooks/useSupportManagement.ts` - Support content management
+
+#### **Library Files (Business Logic)**
+- `src/lib/products.ts` - Product data operations
+- `src/lib/projects.ts` - Project data operations
+
+#### **Admin Components**
+- `src/pages/admin/components/AppSidebar.tsx` - Admin sidebar (logout functionality)
+
+### 🔄 Migration Checklist
+
+When transferring to a new Supabase project, update credentials in this order:
+
+1. **Update Main Configuration**
+   ```typescript
+   // src/integrations/supabase/client.ts
+   const SUPABASE_URL = "YOUR_NEW_SUPABASE_URL";
+   const SUPABASE_PUBLISHABLE_KEY = "YOUR_NEW_SUPABASE_ANON_KEY";
+   ```
+
+2. **Update Project Configuration**
+   ```toml
+   # supabase/config.toml
+   project_id = "your_new_project_id"
+   ```
+
+3. **Verify All Hook Files** (No changes needed - they import from client.ts)
+4. **Verify All Library Files** (No changes needed - they import from client.ts)
+5. **Run Database Migrations** to set up the new database schema
+6. **Test All Functionality** to ensure proper connection
+
+### 🔐 Security Notes
+
+- **SUPABASE_URL**: Public URL, safe to expose in frontend
+- **SUPABASE_PUBLISHABLE_KEY**: Public anon key, designed for frontend use
+- **Security**: Handled by Row Level Security (RLS) policies in database
+- **Secret Operations**: Use Supabase Edge Functions with Supabase Secrets
+
+### 🛠️ Database Dependencies
+
+The application uses these main Supabase features:
+- **Authentication**: User login/logout via Supabase Auth
+- **Database**: PostgreSQL with Row Level Security
+- **Storage**: File uploads via Supabase Storage
+- **Real-time**: Live data updates (if configured)
+
+---
+
 ## 📖 Table of Contents
 
 - [✨ Overview](#-overview)
