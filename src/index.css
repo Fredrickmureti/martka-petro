@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -100,4 +101,131 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* 3D Effects and Animations */
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+  
+  .transform-style-preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .rotate-y-3 {
+    transform: rotateY(3deg);
+  }
+  
+  .rotate-y-6 {
+    transform: rotateY(6deg);
+  }
+  
+  .rotate-x-6 {
+    transform: rotateX(6deg);
+  }
+  
+  .translateZ-5 {
+    transform: translateZ(5px);
+  }
+  
+  .translateZ-10 {
+    transform: translateZ(10px);
+  }
+  
+  .translateZ-20 {
+    transform: translateZ(20px);
+  }
+  
+  .translateZ-30 {
+    transform: translateZ(30px);
+  }
+  
+  .translateZ-40 {
+    transform: translateZ(40px);
+  }
+  
+  .translateZ-50 {
+    transform: translateZ(50px);
+  }
+  
+  .translateZ-80 {
+    transform: translateZ(80px);
+  }
+}
+
+/* Custom Keyframe Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotateX(2deg);
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.02);
+  }
+}
+
+/* Animation Classes */
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: floatSlow 8s ease-in-out infinite;
+}
+
+/* Hover Effects */
+.hover-3d {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-3d:hover {
+  transform: translateY(-8px) rotateX(15deg) rotateY(5deg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Interactive Elements */
+.interactive-card {
+  transform-style: preserve-3d;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.interactive-card:hover {
+  transform: scale(1.05) rotateY(6deg) translateY(-8px);
+}
+
+.interactive-card:hover .card-content {
+  transform: translateZ(20px);
+}
+
+.interactive-card:hover .card-icon {
+  transform: translateZ(30px) scale(1.2);
 }
