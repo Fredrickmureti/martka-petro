@@ -1,6 +1,6 @@
 
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, ShoppingBag, FolderKanban, Wrench, Briefcase, MessageSquare, Ticket, LogOut, Building } from 'lucide-react';
+import { LayoutDashboard, Users, ShoppingBag, FolderKanban, Wrench, Briefcase, MessageSquare, Ticket, LogOut, Building, FileText, Settings, BarChart3, HeadphonesIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -37,6 +37,10 @@ const AppSidebar = () => {
     { href: '/admin/messages', icon: MessageSquare, label: 'Messages' },
     { href: '/admin/support', icon: Ticket, label: 'Support' },
     { href: '/admin/locations', icon: Building, label: 'Locations' },
+    { href: '/admin/documents', icon: FileText, label: 'Documents' },
+    { href: '/admin/manage-support', icon: HeadphonesIcon, label: 'Manage Support' },
+    { href: '/admin/manage-content', icon: Settings, label: 'Manage Content' },
+    { href: '/admin/manage-stats', icon: BarChart3, label: 'Manage Stats' },
   ];
 
   return (
