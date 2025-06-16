@@ -50,8 +50,10 @@ export const useFileUpload = () => {
     }
   };
 
-  const uploadMultipleFiles = async (files: FileList, folder: string = ''): Promise<UploadedFile[]> => {
-    const uploadPromises = Array.from(files).map(async (file) => {
+  const uploadMultipleFiles = async (files: FileList | File[], folder: string = ''): Promise<UploadedFile[]> => {
+    const fileArray = Array.isArray(files) ? files : Array.from(files);
+    
+    const uploadPromises = fileArray.map(async (file) => {
       const url = await uploadFile(file, folder);
       return url ? { url, name: file.name, size: file.size } : null;
     });

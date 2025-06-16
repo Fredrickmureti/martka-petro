@@ -32,7 +32,18 @@ export const FileUpload = ({
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
 
-    const results = await uploadMultipleFiles(acceptedFiles, folder);
+    // Convert File[] to FileList-like object
+    const fileList = {
+      length: acceptedFiles.length,
+      item: (index: number) => acceptedFiles[index] || null,
+      [Symbol.iterator]: function* () {
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          yield acceptedFiles[i];
+        }
+      }
+    } as FileList;
+
+    const results = await uploadMultipleFiles(fileList, folder);
     const urls = results.map(result => result.url);
     
     const newUrls = multiple ? [...uploadedUrls, ...urls] : urls;
