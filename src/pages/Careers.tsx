@@ -1,10 +1,10 @@
-
-import React from 'react';
+import React, { useRef } from 'react';
 import { MapPin, Clock, DollarSign, Users, Award, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
+import WhatsAppButton from '@/components/common/WhatsAppButton';
 import { useCareers } from '@/hooks/useCareers';
 import { useCareersContent, useCareersCards } from '@/hooks/useCareersManagement';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -21,6 +21,7 @@ const Careers = () => {
   const { data: jobs = [], isLoading: isLoadingJobs } = useCareers();
   const { data: content, isLoading: isLoadingContent } = useCareersContent();
   const { data: cards, isLoading: isLoadingCards } = useCareersCards();
+  const openPositionsRef = useRef<HTMLElement>(null);
 
   const heroContent = content?.hero;
   const whyWorkContent = content?.why_work;
@@ -31,6 +32,21 @@ const Careers = () => {
   const statCards = cards?.filter(card => card.card_type === 'stat') || [];
   const cultureValues = (cultureContent?.content as any)?.values || [];
   const ctaButtons = (ctaContent?.content as any)?.buttons || [];
+
+  const scrollToOpenPositions = () => {
+    openPositionsRef.current?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+  };
+
+  const scrollToCompanyCulture = () => {
+    const cultureSection = document.getElementById('company-culture');
+    cultureSection?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+  };
 
   if (isLoadingJobs && isLoadingContent) {
     return (
@@ -65,10 +81,19 @@ const Careers = () => {
               </>
             )}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button 
+                size="lg" 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={scrollToOpenPositions}
+              >
                 View Open Positions
               </Button>
-              <Button size="lg" variant="outline" className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white">
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white"
+                onClick={scrollToCompanyCulture}
+              >
                 Learn About Culture
               </Button>
             </div>
@@ -119,7 +144,7 @@ const Careers = () => {
       </section>
 
       {/* Open Positions */}
-      <section className="py-16 bg-slate-50">
+      <section ref={openPositionsRef} className="py-16 bg-slate-50" id="open-positions">
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Open Positions</h2>
@@ -133,7 +158,7 @@ const Careers = () => {
                   <Skeleton className="h-32 w-full" />
                 </CardContent>
               </Card>
-            )) : jobs.map((job) => (
+            )) : jobs.length > 0 ? jobs.map((job) => (
               <Card key={job.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -165,9 +190,11 @@ const Careers = () => {
                       {job.salary_range && (
                         <div className="text-lg font-bold text-blue-600 mb-2">{job.salary_range}</div>
                       )}
-                      <Button className="bg-gradient-to-r from-blue-600 to-blue-700">
-                        Apply Now
-                      </Button>
+                      <WhatsAppButton 
+                        messageType="careers"
+                        variant="inline"
+                        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                      />
                     </div>
                   </div>
                 </CardHeader>
@@ -190,13 +217,38 @@ const Careers = () => {
                   )}
                 </CardContent>
               </Card>
-            ))}
+            )) : (
+              <Card className="text-center py-16">
+                <CardContent>
+                  <div className="max-w-md mx-auto">
+                    <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Briefcase className="w-12 h-12 text-blue-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">No Open Positions Right Now</h3>
+                    <p className="text-gray-600 mb-6">
+                      We're not actively hiring at the moment, but we're always interested in connecting with talented professionals. 
+                      Feel free to reach out and introduce yourself!
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <WhatsAppButton 
+                        messageType="careers"
+                        variant="inline"
+                        className="bg-green-500 hover:bg-green-600"
+                      />
+                      <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+                        Email Your Resume
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </section>
 
       {/* Company Culture */}
-      <section className="py-16 bg-background">
+      <section id="company-culture" className="py-16 bg-background">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -284,24 +336,36 @@ const Careers = () => {
                 {ctaContent?.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                {ctaButtons.map((button: any, index: number) => (
-                  <Button 
-                    key={index}
-                    size="lg" 
-                    className={button.type === 'primary' ? 
-                      "bg-white text-blue-600 hover:bg-blue-50" : 
-                      "border-white text-white hover:bg-white hover:text-blue-600"
-                    }
-                    variant={button.type === 'primary' ? 'default' : 'outline'}
-                  >
-                    {button.text}
-                  </Button>
-                ))}
+                {ctaButtons.map((button: any, index: number) => {
+                  if (button.type === 'primary') {
+                    return (
+                      <WhatsAppButton 
+                        key={index}
+                        messageType="quote"
+                        variant="inline"
+                        className="bg-white text-blue-600 hover:bg-blue-50 px-8 h-11 rounded-md text-sm font-medium"
+                      />
+                    );
+                  }
+                  return (
+                    <Button 
+                      key={index}
+                      size="lg" 
+                      className="border-white text-white hover:bg-white hover:text-blue-600"
+                      variant="outline"
+                      onClick={scrollToOpenPositions}
+                    >
+                      {button.text}
+                    </Button>
+                  );
+                })}
               </div>
             </>
           )}
         </div>
       </section>
+
+      <WhatsAppButton />
     </Layout>
   );
 };
