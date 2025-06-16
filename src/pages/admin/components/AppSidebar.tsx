@@ -1,5 +1,6 @@
+
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, FolderKanban, Wrench, Briefcase, MessageSquare, Ticket, Building, FileText, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, FolderKanban, Wrench, Briefcase, MessageSquare, Ticket, Building, FileText, LogOut, Settings, BarChart3 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -38,6 +39,12 @@ const AppSidebar = () => {
         { href: '/admin/documents', icon: FileText, label: 'Documents' },
     ];
 
+    const managementItems = [
+        { href: '/admin/manage-content', icon: Settings, label: 'Manage Content' },
+        { href: '/admin/manage-support', icon: Ticket, label: 'Manage Support' },
+        { href: '/admin/manage-stats', icon: BarChart3, label: 'Manage Stats' },
+    ];
+
     const isActive = (href: string) => location.pathname === href || location.pathname.startsWith(href + '/');
 
     return (
@@ -57,11 +64,35 @@ const AppSidebar = () => {
             <SidebarContent className="px-2 py-4">
                 <SidebarGroup>
                     <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden px-2 text-xs font-medium text-sidebar-foreground/60 uppercase tracking-wider">
-                        Navigation
+                        Main Navigation
                     </SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu className="space-y-1">
                             {menuItems.map((item) => (
+                                <SidebarMenuItem key={item.href}>
+                                    <SidebarMenuButton 
+                                        asChild 
+                                        isActive={isActive(item.href)}
+                                        className="w-full justify-start gap-3 px-3 py-2.5 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                                    >
+                                        <Link to={item.href}>
+                                            <item.icon className="h-5 w-5 shrink-0" />
+                                            <span className="group-data-[collapsible=icon]:hidden">{item.label}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+
+                <SidebarGroup>
+                    <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden px-2 text-xs font-medium text-sidebar-foreground/60 uppercase tracking-wider">
+                        Content Management
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                        <SidebarMenu className="space-y-1">
+                            {managementItems.map((item) => (
                                 <SidebarMenuItem key={item.href}>
                                     <SidebarMenuButton 
                                         asChild 
