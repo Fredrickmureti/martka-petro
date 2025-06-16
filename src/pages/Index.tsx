@@ -33,25 +33,32 @@ const Index: React.FC = () => {
   const aboutContent = pageContent?.about || {};
   const statsContent = pageContent?.stats || {};
 
+  // Fallback content
+  const heroTitle = heroContent.title || "Advanced Petroleum Infrastructure Solutions";
+  const heroSubtitle = heroContent.subtitle || "Leading provider of cutting-edge petroleum equipment and infrastructure solutions for the energy sector worldwide.";
+
   return (
     <Layout>
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
+        <div 
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          }}
+        ></div>
         
         <div className="container mx-auto px-6 relative">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
-              {heroContent.title?.split(' ').slice(0, -2).join(' ')} 
+              {heroTitle.split(' ').slice(0, -2).join(' ')} 
               <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                {heroContent.title?.split(' ').slice(-2).join(' ')}
+                {heroTitle.split(' ').slice(-2).join(' ')}
               </span>
             </h1>
             
             <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed">
-              {heroContent.subtitle}
+              {heroSubtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -81,12 +88,12 @@ const Index: React.FC = () => {
               <CardHeader className="space-y-2">
                 <CardTitle className="text-2xl font-bold flex items-center gap-2">
                   <TrendingUp className="text-green-500" size={24} />
-                  {statsContent.clientsTitle}
+                  {statsContent.clientsTitle || "Happy Clients"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-bold text-blue-600">{statsContent.clientsValue}</div>
-                <p className="text-muted-foreground">{statsContent.clientsDescription}</p>
+                <div className="text-4xl font-bold text-blue-600">{statsContent.clientsValue || "500+"}</div>
+                <p className="text-muted-foreground">{statsContent.clientsDescription || "Satisfied customers worldwide"}</p>
               </CardContent>
             </Card>
 
@@ -94,12 +101,12 @@ const Index: React.FC = () => {
               <CardHeader className="space-y-2">
                 <CardTitle className="text-2xl font-bold flex items-center gap-2">
                   <CheckCircle className="text-green-500" size={24} />
-                  {statsContent.projectsTitle}
+                  {statsContent.projectsTitle || "Projects Completed"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-bold text-blue-600">{statsContent.projectsValue}</div>
-                <p className="text-muted-foreground">{statsContent.projectsDescription}</p>
+                <div className="text-4xl font-bold text-blue-600">{statsContent.projectsValue || "1000+"}</div>
+                <p className="text-muted-foreground">{statsContent.projectsDescription || "Successfully delivered projects"}</p>
               </CardContent>
             </Card>
 
@@ -107,12 +114,12 @@ const Index: React.FC = () => {
               <CardHeader className="space-y-2">
                 <CardTitle className="text-2xl font-bold flex items-center gap-2">
                   <Award className="text-green-500" size={24} />
-                  {statsContent.experienceTitle}
+                  {statsContent.experienceTitle || "Years of Experience"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-bold text-blue-600">{statsContent.experienceValue}</div>
-                <p className="text-muted-foreground">{statsContent.experienceDescription}</p>
+                <div className="text-4xl font-bold text-blue-600">{statsContent.experienceValue || "15+"}</div>
+                <p className="text-muted-foreground">{statsContent.experienceDescription || "Industry experience and expertise"}</p>
               </CardContent>
             </Card>
 
@@ -120,12 +127,12 @@ const Index: React.FC = () => {
               <CardHeader className="space-y-2">
                 <CardTitle className="text-2xl font-bold flex items-center gap-2">
                   <Star className="text-green-500" size={24} />
-                  {statsContent.ratingTitle}
+                  {statsContent.ratingTitle || "Customer Rating"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-bold text-blue-600">{statsContent.ratingValue}</div>
-                <p className="text-muted-foreground">{statsContent.ratingDescription}</p>
+                <div className="text-4xl font-bold text-blue-600">{statsContent.ratingValue || "4.9/5"}</div>
+                <p className="text-muted-foreground">{statsContent.ratingDescription || "Average customer satisfaction rating"}</p>
               </CardContent>
             </Card>
           </div>
@@ -137,37 +144,37 @@ const Index: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="bg-blue-100 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold">
-              {servicesContent.badge}
+              {servicesContent.badge || "Our Services"}
             </Badge>
-            <h2 className="text-4xl font-bold mt-4">{servicesContent.title}</h2>
-            <p className="text-muted-foreground mt-3">{servicesContent.subtitle}</p>
+            <h2 className="text-4xl font-bold mt-4">{servicesContent.title || "Comprehensive Petroleum Solutions"}</h2>
+            <p className="text-muted-foreground mt-3">{servicesContent.subtitle || "End-to-end petroleum infrastructure services for your business needs"}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <Card className="bg-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">{servicesContent.service1Title}</CardTitle>
+                <CardTitle className="text-xl font-semibold">{servicesContent.service1Title || "Equipment Installation"}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">{servicesContent.service1Description}</p>
+                <p className="text-muted-foreground">{servicesContent.service1Description || "Professional installation of petroleum equipment and infrastructure"}</p>
               </CardContent>
             </Card>
 
             <Card className="bg-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">{servicesContent.service2Title}</CardTitle>
+                <CardTitle className="text-xl font-semibold">{servicesContent.service2Title || "Maintenance & Support"}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">{servicesContent.service2Description}</p>
+                <p className="text-muted-foreground">{servicesContent.service2Description || "Ongoing maintenance and technical support for optimal performance"}</p>
               </CardContent>
             </Card>
 
             <Card className="bg-white shadow-xl hover:shadow-2xl transition-shadow duration-300">
               <CardHeader>
-                <CardTitle className="text-xl font-semibold">{servicesContent.service3Title}</CardTitle>
+                <CardTitle className="text-xl font-semibold">{servicesContent.service3Title || "Consulting Services"}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">{servicesContent.service3Description}</p>
+                <p className="text-muted-foreground">{servicesContent.service3Description || "Expert consulting for petroleum infrastructure projects"}</p>
               </CardContent>
             </Card>
           </div>
@@ -185,22 +192,22 @@ const Index: React.FC = () => {
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-6">{aboutContent.title}</h2>
+              <h2 className="text-4xl font-bold mb-6">{aboutContent.title || "About Martka Petroleum"}</h2>
               <p className="text-slate-300 text-lg leading-relaxed mb-8">
-                {aboutContent.description}
+                {aboutContent.description || "We are a leading provider of petroleum infrastructure solutions with years of experience in the industry. Our commitment to quality and innovation drives us to deliver exceptional results for our clients worldwide."}
               </p>
               <div className="flex items-center gap-4">
                 <MapPin className="text-blue-400" size={20} />
-                <span className="text-slate-300">{aboutContent.location}</span>
+                <span className="text-slate-300">{aboutContent.location || "Global Operations"}</span>
               </div>
               <div className="flex items-center gap-4 mt-2">
                 <Users className="text-blue-400" size={20} />
-                <span className="text-slate-300">{aboutContent.employees}</span>
+                <span className="text-slate-300">{aboutContent.employees || "Expert Team"}</span>
               </div>
             </div>
             <div>
               <img
-                src={aboutContent.image}
+                src={aboutContent.image || "/placeholder.svg"}
                 alt="About Our Company"
                 className="rounded-2xl shadow-2xl"
               />
