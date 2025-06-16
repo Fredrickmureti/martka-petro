@@ -5,70 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
+import { useCareers } from '@/hooks/useCareers';
 
 const Careers = () => {
-  const jobs = [
-    {
-      title: 'Senior Petroleum Engineer',
-      department: 'Engineering',
-      location: 'Houston, TX',
-      type: 'Full-time',
-      salary: '$95,000 - $120,000',
-      experience: '5+ years',
-      description: 'Lead complex fuel infrastructure projects and provide technical expertise for advanced petroleum systems.',
-      requirements: ['Bachelor\'s in Petroleum/Chemical Engineering', '5+ years fuel infrastructure experience', 'Professional Engineering license preferred', 'Project management skills'],
-    },
-    {
-      title: 'Field Service Technician',
-      department: 'Operations',
-      location: 'Dallas, TX',
-      type: 'Full-time',
-      salary: '$55,000 - $70,000',
-      experience: '2+ years',
-      description: 'Perform installation, maintenance, and repair of fuel dispensers and related equipment.',
-      requirements: ['Technical certification or equivalent experience', 'Experience with fuel equipment', 'Valid driver\'s license', 'Ability to work in various weather conditions'],
-    },
-    {
-      title: 'Project Manager',
-      department: 'Project Management',
-      location: 'Austin, TX',
-      type: 'Full-time',
-      salary: '$80,000 - $100,000',
-      experience: '3+ years',
-      description: 'Oversee fuel station construction projects from planning through completion, ensuring quality and timeline adherence.',
-      requirements: ['Bachelor\'s degree preferred', 'PMP certification a plus', '3+ years construction project management', 'Strong communication skills'],
-    },
-    {
-      title: 'Sales Representative',
-      department: 'Sales',
-      location: 'San Antonio, TX',
-      type: 'Full-time',
-      salary: '$60,000 - $90,000 + Commission',
-      experience: '2+ years',
-      description: 'Develop new business relationships and manage existing accounts in the petroleum industry.',
-      requirements: ['Sales experience in B2B environment', 'Knowledge of petroleum industry preferred', 'Strong relationship building skills', 'Travel required'],
-    },
-    {
-      title: 'Environmental Compliance Specialist',
-      department: 'Compliance',
-      location: 'Houston, TX',
-      type: 'Full-time',
-      salary: '$65,000 - $85,000',
-      experience: '3+ years',
-      description: 'Ensure all projects meet environmental regulations and maintain compliance documentation.',
-      requirements: ['Environmental Science or related degree', 'Knowledge of EPA regulations', 'Experience with environmental compliance', 'Attention to detail'],
-    },
-    {
-      title: 'Software Developer',
-      department: 'Technology',
-      location: 'Remote',
-      type: 'Full-time',
-      salary: '$75,000 - $95,000',
-      experience: '3+ years',
-      description: 'Develop and maintain fuel management software systems and IoT solutions.',
-      requirements: ['Computer Science degree or equivalent', 'Experience with React/Node.js', 'IoT/embedded systems knowledge a plus', 'Problem-solving skills'],
-    },
-  ];
+  const { data: jobs = [], isLoading } = useCareers();
 
   const benefits = [
     {
@@ -101,6 +41,16 @@ const Careers = () => {
     'Diverse and inclusive workplace',
     'Strong community involvement and volunteer programs',
   ];
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="pt-32 pb-16 text-center">
+          <div className="text-xl">Loading careers...</div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -161,30 +111,38 @@ const Careers = () => {
           </div>
           
           <div className="space-y-6 max-w-5xl mx-auto">
-            {jobs.map((job, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+            {jobs.map((job) => (
+              <Card key={job.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                       <CardTitle className="text-xl mb-2">{job.title}</CardTitle>
                       <div className="flex flex-wrap gap-2">
-                        <Badge variant="outline">{job.department}</Badge>
-                        <Badge variant="outline" className="text-blue-600">
-                          <MapPin size={12} className="mr-1" />
-                          {job.location}
-                        </Badge>
-                        <Badge variant="outline">
-                          <Clock size={12} className="mr-1" />
-                          {job.type}
-                        </Badge>
-                        <Badge variant="outline">
-                          <Briefcase size={12} className="mr-1" />
-                          {job.experience}
-                        </Badge>
+                        {job.department && <Badge variant="outline">{job.department}</Badge>}
+                        {job.location && (
+                          <Badge variant="outline" className="text-blue-600">
+                            <MapPin size={12} className="mr-1" />
+                            {job.location}
+                          </Badge>
+                        )}
+                        {job.type && (
+                          <Badge variant="outline">
+                            <Clock size={12} className="mr-1" />
+                            {job.type}
+                          </Badge>
+                        )}
+                        {job.experience_required && (
+                          <Badge variant="outline">
+                            <Briefcase size={12} className="mr-1" />
+                            {job.experience_required}
+                          </Badge>
+                        )}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold text-blue-600 mb-2">{job.salary}</div>
+                      {job.salary_range && (
+                        <div className="text-lg font-bold text-blue-600 mb-2">{job.salary_range}</div>
+                      )}
                       <Button className="bg-gradient-to-r from-blue-600 to-blue-700">
                         Apply Now
                       </Button>
@@ -192,18 +150,22 @@ const Careers = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground mb-4">{job.description}</p>
-                  <div>
-                    <h4 className="font-semibold mb-2">Requirements:</h4>
-                    <ul className="space-y-1">
-                      {job.requirements.map((req, reqIndex) => (
-                        <li key={reqIndex} className="text-sm text-muted-foreground flex items-start">
-                          <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 mr-2 flex-shrink-0" />
-                          {req}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {job.description && (
+                    <p className="text-muted-foreground mb-4">{job.description}</p>
+                  )}
+                  {job.requirements && (
+                    <div>
+                      <h4 className="font-semibold mb-2">Requirements:</h4>
+                      <ul className="space-y-1">
+                        {(job.requirements as string[]).map((req, reqIndex) => (
+                          <li key={reqIndex} className="text-sm text-muted-foreground flex items-start">
+                            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 mr-2 flex-shrink-0" />
+                            {req}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

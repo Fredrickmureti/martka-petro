@@ -15,7 +15,8 @@ export const useHeaderContent = () => {
 
       if (error) throw new Error(error.message);
       return data;
-    }
+    },
+    refetchInterval: 30000, // Refetch every 30 seconds to ensure updates are visible
   });
 };
 
@@ -31,7 +32,8 @@ export const useFooterContent = () => {
 
       if (error) throw new Error(error.message);
       return data;
-    }
+    },
+    refetchInterval: 30000,
   });
 };
 
@@ -47,7 +49,8 @@ export const useAboutContent = () => {
 
       if (error) throw new Error(error.message);
       return data;
-    }
+    },
+    refetchInterval: 30000,
   });
 };
 
@@ -66,6 +69,8 @@ export const useUpdateHeaderContent = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['headerContent'] });
+      // Force refetch to ensure immediate updates
+      queryClient.refetchQueries({ queryKey: ['headerContent'] });
     }
   });
 };
@@ -85,6 +90,7 @@ export const useUpdateFooterContent = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['footerContent'] });
+      queryClient.refetchQueries({ queryKey: ['footerContent'] });
     }
   });
 };
@@ -104,6 +110,7 @@ export const useUpdateAboutContent = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['aboutContent'] });
+      queryClient.refetchQueries({ queryKey: ['aboutContent'] });
     }
   });
 };

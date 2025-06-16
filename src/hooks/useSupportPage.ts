@@ -22,7 +22,8 @@ export const useSupportPageContent = () => {
                 }
                 return acc;
             }, {} as Record<string, Tables<'support_page_content'>>);
-        }
+        },
+        refetchInterval: 30000,
     });
 };
 
@@ -38,7 +39,8 @@ export const useSupportFaqs = () => {
 
             if (error) throw new Error(error.message);
             return data;
-        }
+        },
+        refetchInterval: 30000,
     });
 };
 
@@ -54,7 +56,8 @@ export const useSupportDownloads = () => {
 
             if (error) throw new Error(error.message);
             return data;
-        }
+        },
+        refetchInterval: 30000,
     });
 };
 
@@ -70,6 +73,7 @@ export const useSupportOptions = () => {
 
             if (error) throw new Error(error.message);
             return data;
-        }
+        },
+        refetchInterval: 30000,
     });
 };

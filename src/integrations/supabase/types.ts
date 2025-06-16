@@ -47,31 +47,43 @@ export type Database = {
           created_at: string
           department: string | null
           description: string | null
+          experience_required: string | null
           id: number
           is_active: boolean | null
           location: string | null
+          requirements: Json | null
+          salary_range: string | null
           title: string
           type: string | null
+          updated_at: string | null
         }
         Insert: {
           created_at?: string
           department?: string | null
           description?: string | null
+          experience_required?: string | null
           id?: number
           is_active?: boolean | null
           location?: string | null
+          requirements?: Json | null
+          salary_range?: string | null
           title: string
           type?: string | null
+          updated_at?: string | null
         }
         Update: {
           created_at?: string
           department?: string | null
           description?: string | null
+          experience_required?: string | null
           id?: number
           is_active?: boolean | null
           location?: string | null
+          requirements?: Json | null
+          salary_range?: string | null
           title?: string
           type?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
