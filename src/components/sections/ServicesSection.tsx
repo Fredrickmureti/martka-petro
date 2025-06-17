@@ -11,17 +11,16 @@ interface ServicesSectionProps {
 const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesContent, servicesBackground }) => {
   return (
     <section 
-      className="py-20 relative" 
+      className="py-20 relative bg-fixed-optimized" 
       style={{ 
         backgroundImage: `linear-gradient(rgba(248, 250, 252, ${servicesBackground.overlay_opacity || 0.9}), rgba(241, 245, 249, ${servicesBackground.overlay_opacity || 0.9})), url("${servicesBackground.image_url || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b'}")`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
+        backgroundPosition: 'center'
       }}
     >
       <div className="absolute inset-0 bg-muted/30 dark:bg-background/80"></div>
       <div className="container mx-auto px-6 relative">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 animate-fade-in-up">
           <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full text-sm font-semibold">
             {servicesContent.badge || "Our Services"}
           </Badge>
@@ -34,7 +33,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesContent, serv
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <Card className="bg-card border border-border text-card-foreground shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 cursor-pointer group">
+          <Card className="bg-card border border-border text-card-foreground shadow-xl hover-lift cursor-pointer group animate-fade-in-up stagger-1">
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-foreground group-hover:text-blue-600 transition-colors duration-300">
                 {servicesContent.service1Title || "Equipment Installation"}
@@ -47,7 +46,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesContent, serv
             </CardContent>
           </Card>
 
-          <Card className="bg-card border border-border text-card-foreground shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 cursor-pointer group">
+          <Card className="bg-card border border-border text-card-foreground shadow-xl hover-lift cursor-pointer group animate-fade-in-up stagger-2">
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-foreground group-hover:text-blue-600 transition-colors duration-300">
                 {servicesContent.service2Title || "Maintenance & Support"}
@@ -60,7 +59,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ servicesContent, serv
             </CardContent>
           </Card>
 
-          <Card className="bg-card border border-border text-card-foreground shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105 cursor-pointer group">
+          <Card className="bg-card border border-border text-card-foreground shadow-xl hover-lift cursor-pointer group animate-fade-in-up stagger-3">
             <CardHeader>
               <CardTitle className="text-xl font-semibold text-foreground group-hover:text-blue-600 transition-colors duration-300">
                 {servicesContent.service3Title || "Consulting Services"}

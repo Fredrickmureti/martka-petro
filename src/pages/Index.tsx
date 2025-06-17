@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import PopularProducts from '@/components/sections/PopularProducts';
@@ -185,43 +186,45 @@ const Index: React.FC = () => {
 
   return (
     <Layout>
-      <HeroSection heroContent={heroContent} heroBackground={heroBackground} />
-      <SectionSeparator />
-      
-      <StatsSection statsContent={statsContent} />
-      <SectionSeparator />
-      
-      <ServicesSection servicesContent={servicesContent} servicesBackground={servicesBackground} />
-      <SectionSeparator />
-      
-      {/* Products Section with Background */}
-      <div 
-        className="relative"
-        style={{
-          backgroundImage: `linear-gradient(rgba(255, 255, 255, ${projectsBackground.overlay_opacity || 0.95}), rgba(255, 255, 255, ${projectsBackground.overlay_opacity || 0.95})), url("${projectsBackground.image_url || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c'}")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
-      >
-        <div className="absolute inset-0 bg-background/50 dark:bg-background/90"></div>
-        <div className="relative">
-          <PopularProducts />
+      <div className="smooth-scroll-container">
+        <HeroSection heroContent={heroContent} heroBackground={heroBackground} />
+        <SectionSeparator />
+        
+        <StatsSection statsContent={statsContent} />
+        <SectionSeparator />
+        
+        <ServicesSection servicesContent={servicesContent} servicesBackground={servicesBackground} />
+        <SectionSeparator />
+        
+        {/* Products Section with Background */}
+        <div 
+          className="relative bg-fixed-optimized"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255, 255, 255, ${projectsBackground.overlay_opacity || 0.95}), rgba(255, 255, 255, ${projectsBackground.overlay_opacity || 0.95})), url("${projectsBackground.image_url || 'https://images.unsplash.com/photo-1519389950473-47ba0277781c'}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          <div className="absolute inset-0 bg-background/50 dark:bg-background/90"></div>
+          <div className="relative">
+            <PopularProducts />
+          </div>
         </div>
-      </div>
-      <SectionSeparator />
-      
-      {/* Projects Section */}
-      <div>
-        <ProjectsOverview />
-      </div>
-      <SectionSeparator />
-      
-      <AboutSection aboutContent={aboutContent} aboutBackground={aboutBackground} />
-      <SectionSeparator />
-      
-      <CTASection />
+        <SectionSeparator />
+        
+        {/* Projects Section */}
+        <div>
+          <ProjectsOverview />
+        </div>
+        <SectionSeparator />
+        
+        <AboutSection aboutContent={aboutContent} aboutBackground={aboutBackground} />
+        <SectionSeparator />
+        
+        <CTASection />
 
-      <WhatsAppButton />
+        <WhatsAppButton />
+      </div>
     </Layout>
   );
 };

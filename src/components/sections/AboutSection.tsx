@@ -10,17 +10,16 @@ interface AboutSectionProps {
 const AboutSection: React.FC<AboutSectionProps> = ({ aboutContent, aboutBackground }) => {
   return (
     <section 
-      className="py-20 text-white relative" 
+      className="py-20 text-white relative bg-fixed-optimized" 
       style={{ 
         backgroundImage: `linear-gradient(rgba(15, 23, 42, ${aboutBackground.overlay_opacity || 0.8}), rgba(30, 64, 175, ${aboutBackground.overlay_opacity || 0.8})), url("${aboutBackground.image_url || 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05'}")`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
+        backgroundPosition: 'center'
       }}
     >
       <div className="container mx-auto px-6 relative">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
+          <div className="animate-fade-in-left">
             <h2 className="text-4xl font-bold mb-6">
               {aboutContent.title || "About Martka Petroleum"}
             </h2>
@@ -38,11 +37,12 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutContent, aboutBackgrou
               </div>
             </div>
           </div>
-          <div>
+          <div className="animate-fade-in-right">
             <img
               src={aboutContent.image || "/placeholder.svg"}
               alt="About Our Company"
-              className="rounded-2xl shadow-2xl"
+              className="rounded-2xl shadow-2xl hover-lift"
+              loading="lazy"
             />
           </div>
         </div>

@@ -18,43 +18,42 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heroContent, heroBackground }
 
   return (
     <section 
-      className="relative pt-32 pb-20 text-white overflow-hidden"
+      className="relative pt-32 pb-20 text-white overflow-hidden bg-fixed-optimized"
       style={{
         backgroundImage: `linear-gradient(rgba(15, 23, 42, ${heroBackground.overlay_opacity || 0.7}), rgba(30, 64, 175, ${heroBackground.overlay_opacity || 0.7})), url("${heroBackground.image_url || 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81'}")`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed'
+        backgroundPosition: 'center'
       }}
     >
-      {/* Floating geometric shapes */}
+      {/* Floating geometric shapes - optimized */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-20 h-20 bg-blue-400/10 rounded-full blur-xl animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
-        <div className="absolute top-40 right-20 w-16 h-16 bg-cyan-400/10 rounded-lg blur-lg animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
-        <div className="absolute bottom-40 left-20 w-12 h-12 bg-blue-300/10 rounded-full blur-lg animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
+        <div className="absolute top-20 left-10 w-20 h-20 bg-blue-400/10 rounded-full blur-xl animate-float-gentle" style={{ animationDelay: '0s', animationDuration: '3s' }}></div>
+        <div className="absolute top-40 right-20 w-16 h-16 bg-cyan-400/10 rounded-lg blur-lg animate-float-gentle" style={{ animationDelay: '1s', animationDuration: '4s' }}></div>
+        <div className="absolute bottom-40 left-20 w-12 h-12 bg-blue-300/10 rounded-full blur-lg animate-float-gentle" style={{ animationDelay: '2s', animationDuration: '5s' }}></div>
       </div>
       
       <div className="container mx-auto px-6 relative">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight transition-all duration-700">
+          <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight transition-all duration-700 animate-fade-in-up">
             {heroTitle.split(' ').slice(0, -2).join(' ')} 
             <span className="block bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
               {heroTitle.split(' ').slice(-2).join(' ')}
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed">
+          <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed animate-fade-in-up stagger-1">
             {heroSubtitle}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <div className="transform hover:scale-110 transition-all duration-300">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center animate-fade-in-up stagger-2">
+            <div className="transform hover:scale-105 transition-all duration-300">
               <WhatsAppButton 
                 messageType="quote"
                 variant="inline"
                 className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 text-lg font-semibold shadow-2xl transition-all duration-300"
               />
             </div>
-            <div className="transform hover:scale-110 transition-all duration-300">
+            <div className="transform hover:scale-105 transition-all duration-300">
               <Button 
                 size="lg" 
                 variant="outline" 
