@@ -6,8 +6,19 @@ import { useFooterContent, useHeaderContent } from '@/hooks/useContentManagement
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const { data: footerContent } = useFooterContent();
-  const { data: headerContent } = useHeaderContent();
+  const { data: footerContent, refetch: refetchFooter } = useFooterContent();
+  const { data: headerContent, refetch: refetchHeader } = useHeaderContent();
+
+  // Refetch data when component mounts or when window gains focus
+  React.useEffect(() => {
+    const handleFocus = () => {
+      refetchFooter();
+      refetchHeader();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [refetchFooter, refetchHeader]);
 
   // Use database content or fallback to defaults
   const companyName = headerContent?.company_name || 'Martka Petroleum';

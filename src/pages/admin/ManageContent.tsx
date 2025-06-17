@@ -9,10 +9,12 @@ import {
   useUpdateFooterContent,
   useUpdateAboutContent,
   useAddFooterSection,
-  useAddAboutSection
+  useAddAboutSection,
+  useDeleteFooterSection,
+  useDeleteAboutSection
 } from '@/hooks/useContentManagement';
 import { HeaderContentManager } from './components/content/HeaderContentManager';
-import { UserFriendlyContentEditor } from './components/content/UserFriendlyContentEditor';
+import { EnhancedContentEditor } from './components/content/EnhancedContentEditor';
 
 const ManageContent = () => {
   const { toast } = useToast();
@@ -25,6 +27,8 @@ const ManageContent = () => {
   const updateAboutMutation = useUpdateAboutContent();
   const addFooterSectionMutation = useAddFooterSection();
   const addAboutSectionMutation = useAddAboutSection();
+  const deleteFooterSectionMutation = useDeleteFooterSection();
+  const deleteAboutSectionMutation = useDeleteAboutSection();
 
   const handleUpdateFooterSection = async (sectionId: number, data: any) => {
     try {
@@ -67,11 +71,67 @@ const ManageContent = () => {
   };
 
   const handleAddFooterSection = async (data: any) => {
-    await addFooterSectionMutation.mutateAsync(data);
+    try {
+      await addFooterSectionMutation.mutateAsync(data);
+      toast({
+        title: 'Success',
+        description: 'Footer section added successfully!',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to add footer section',
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleAddAboutSection = async (data: any) => {
-    await addAboutSectionMutation.mutateAsync(data);
+    try {
+      await addAboutSectionMutation.mutateAsync(data);
+      toast({
+        title: 'Success',
+        description: 'About section added successfully!',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to add about section',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteFooterSection = async (sectionId: number) => {
+    try {
+      await deleteFooterSectionMutation.mutateAsync(sectionId);
+      toast({
+        title: 'Success',
+        description: 'Footer section deleted successfully!',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete footer section',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDeleteAboutSection = async (sectionId: number) => {
+    try {
+      await deleteAboutSectionMutation.mutateAsync(sectionId);
+      toast({
+        title: 'Success',
+        description: 'About section deleted successfully!',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to delete about section',
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -107,26 +167,28 @@ const ManageContent = () => {
         </TabsContent>
 
         <TabsContent value="footer">
-          <UserFriendlyContentEditor
+          <EnhancedContentEditor
             title="Footer Sections"
-            description="Manage footer content sections with an easy-to-use interface. Add links, text content, and contact information without needing technical knowledge."
+            description="Manage footer content sections including company info, quick links, services, and contact information. You can add, edit, and delete sections as needed."
             sections={footerContent || []}
             isLoading={isLoadingFooter}
             onUpdateSection={handleUpdateFooterSection}
             onAddSection={handleAddFooterSection}
-            isUpdating={updateFooterMutation.isPending}
+            onDeleteSection={handleDeleteFooterSection}
+            isUpdating={updateFooterMutation.isPending || addFooterSectionMutation.isPending || deleteFooterSectionMutation.isPending}
           />
         </TabsContent>
 
         <TabsContent value="about">
-          <UserFriendlyContentEditor
+          <EnhancedContentEditor
             title="About Page Sections"
-            description="Manage about page content sections with an easy-to-use interface. Add links, text content, and contact information without needing technical knowledge."
+            description="Manage about page content sections. Create and organize content sections to tell your company's story effectively."
             sections={aboutContent || []}
             isLoading={isLoadingAbout}
             onUpdateSection={handleUpdateAboutSection}
             onAddSection={handleAddAboutSection}
-            isUpdating={updateAboutMutation.isPending}
+            onDeleteSection={handleDeleteAboutSection}
+            isUpdating={updateAboutMutation.isPending || addAboutSectionMutation.isPending || deleteAboutSectionMutation.isPending}
           />
         </TabsContent>
       </Tabs>
