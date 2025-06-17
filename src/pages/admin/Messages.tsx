@@ -19,74 +19,79 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { useState } from 'react';
 
 const AdminMessages = () => {
   const { data: messages, isLoading, error } = useAdminMessages();
   const updateStatusMutation = useUpdateMessageStatus();
   const deleteMessageMutation = useDeleteMessage();
+  const [messageToDelete, setMessageToDelete] = useState<number | null>(null);
 
   const handleToggleRead = (id: number, is_read: boolean) => {
     updateStatusMutation.mutate({ id, is_read: !is_read });
   };
 
-  const handleDelete = (id: number) => {
-    deleteMessageMutation.mutate(id);
+  const handleDelete = () => {
+    if (messageToDelete) {
+      deleteMessageMutation.mutate(messageToDelete);
+      setMessageToDelete(null);
+    }
   };
   
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Contact Messages</CardTitle>
-        <CardDescription>View and manage messages from the contact form.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {isLoading && (
-          <div className="space-y-2">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        )}
-        {error && <p className="text-red-500">{error.message}</p>}
-        {!isLoading && !error && (
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">Status</TableHead>
-                  <TableHead>From</TableHead>
-                  <TableHead>Message</TableHead>
-                  <TableHead className="w-[180px]">Received</TableHead>
-                  <TableHead className="w-[50px] text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {messages?.length === 0 && (
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Contact Messages</CardTitle>
+          <CardDescription>View and manage messages from the contact form.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {isLoading && (
+            <div className="space-y-2">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          )}
+          {error && <p className="text-red-500">{error.message}</p>}
+          {!isLoading && !error && (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">No messages yet.</TableCell>
+                    <TableHead className="w-[100px]">Status</TableHead>
+                    <TableHead>From</TableHead>
+                    <TableHead>Message</TableHead>
+                    <TableHead className="w-[180px]">Received</TableHead>
+                    <TableHead className="w-[50px] text-right">Actions</TableHead>
                   </TableRow>
-                )}
-                {messages?.map((message) => (
-                  <TableRow key={message.id} data-state={!message.is_read ? 'selected' : ''}>
-                    <TableCell>
-                      <Badge variant={message.is_read ? 'secondary' : 'default'}>
-                        {message.is_read ? 'Read' : 'Unread'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className={!message.is_read ? 'font-medium' : ''}>
-                      <div>{message.name}</div>
-                      <div className="text-xs text-muted-foreground">{message.email}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className={!message.is_read ? 'font-medium' : ''}>{message.message?.substring(0, 60)}{message.message && message.message.length > 60 ? '...' : ''}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {message.company && `From: ${message.company}`}
-                        {message.subject && ` | Subject: ${message.subject}`}
-                      </div>
-                    </TableCell>
-                    <TableCell>{format(new Date(message.created_at), 'MMM d, yyyy h:mm a')}</TableCell>
-                    <TableCell className="text-right">
-                      <AlertDialog>
+                </TableHeader>
+                <TableBody>
+                  {messages?.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center">No messages yet.</TableCell>
+                    </TableRow>
+                  )}
+                  {messages?.map((message) => (
+                    <TableRow key={message.id} data-state={!message.is_read ? 'selected' : ''}>
+                      <TableCell>
+                        <Badge variant={message.is_read ? 'secondary' : 'default'}>
+                          {message.is_read ? 'Read' : 'Unread'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className={!message.is_read ? 'font-medium' : ''}>
+                        <div>{message.name}</div>
+                        <div className="text-xs text-muted-foreground">{message.email}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className={!message.is_read ? 'font-medium' : ''}>{message.message?.substring(0, 60)}{message.message && message.message.length > 60 ? '...' : ''}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {message.company && `From: ${message.company}`}
+                          {message.subject && ` | Subject: ${message.subject}`}
+                        </div>
+                      </TableCell>
+                      <TableCell>{format(new Date(message.created_at), 'MMM d, yyyy h:mm a')}</TableCell>
+                      <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -99,43 +104,47 @@ const AdminMessages = () => {
                               {updateStatusMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (message.is_read ? <Mail className="mr-2 h-4 w-4" /> : <CheckCircle className="mr-2 h-4 w-4" />)}
                               <span>{message.is_read ? 'Mark as Unread' : 'Mark as Read'}</span>
                             </DropdownMenuItem>
-                            <AlertDialogTrigger asChild>
-                              <DropdownMenuItem className="text-red-500" onSelect={(e) => e.preventDefault()}>
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                <span>Delete</span>
-                              </DropdownMenuItem>
-                            </AlertDialogTrigger>
+                            <DropdownMenuItem 
+                              className="text-red-500" 
+                              onClick={() => setMessageToDelete(message.id)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              <span>Delete</span>
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the message.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(message.id)}
-                              disabled={deleteMessageMutation.isPending}
-                              className="bg-red-500 hover:bg-red-600"
-                            >
-                              {deleteMessageMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <AlertDialog open={!!messageToDelete} onOpenChange={() => setMessageToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Message</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this message? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleteMessageMutation.isPending}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              {deleteMessageMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 
