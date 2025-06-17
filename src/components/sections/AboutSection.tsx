@@ -43,7 +43,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutBackground }) => {
 
   // Find the main about section
   const mainSection = aboutContent?.find(section => section.section_key === 'main_about') || aboutContent?.[0];
-  const content = mainSection?.content || {};
+  const content = (mainSection?.content as any) || {};
 
   return (
     <section 
@@ -61,7 +61,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ aboutBackground }) => {
               {mainSection?.title || "About Martka Petroleum"}
             </h2>
             <p className="text-slate-300 text-lg leading-relaxed mb-8">
-              {content.description || mainSection?.description || "We are a leading provider of petroleum infrastructure solutions with years of experience in the industry. Our commitment to quality and innovation drives us to deliver exceptional results for our clients worldwide."}
+              {content.description || "We are a leading provider of petroleum infrastructure solutions with years of experience in the industry. Our commitment to quality and innovation drives us to deliver exceptional results for our clients worldwide."}
             </p>
             
             {/* Stats Section */}

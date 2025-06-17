@@ -141,7 +141,10 @@ export const ContentPreview = ({ sectionKey, title, description, content, isActi
               className="w-full h-full object-cover rounded-lg"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
-                e.currentTarget.nextElementSibling!.style.display = 'flex';
+                const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                if (nextElement) {
+                  nextElement.style.display = 'flex';
+                }
               }}
             />
             <div className="hidden w-full h-full bg-slate-100 rounded-lg items-center justify-center">

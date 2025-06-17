@@ -157,7 +157,6 @@ const Index: React.FC = () => {
 
   const heroContent = pageContent?.hero || {};
   const servicesContent = pageContent?.services || {};
-  const aboutContent = pageContent?.about || {};
   
   // Use database stats with fallbacks
   const statsContent = {
@@ -218,7 +217,7 @@ const Index: React.FC = () => {
         </div>
         <SectionSeparator />
         
-        <AboutSection aboutContent={aboutContent} aboutBackground={aboutBackground} />
+        <AboutSection aboutBackground={aboutBackground} />
         <SectionSeparator />
         
         <CTASection />
