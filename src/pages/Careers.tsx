@@ -1,21 +1,14 @@
 import React, { useRef } from 'react';
-import { MapPin, Clock, DollarSign, Users, Award, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
 import WhatsAppButton from '@/components/common/WhatsAppButton';
 import { useCareers } from '@/hooks/useCareers';
 import { useCareersContent, useCareersCards } from '@/hooks/useCareersManagement';
 import { Skeleton } from '@/components/ui/skeleton';
-
-const iconMap: { [key: string]: React.ElementType } = {
-  DollarSign,
-  Award,
-  Clock,
-  Users,
-  Briefcase,
-};
+import { CareersHero } from './components/careers/CareersHero';
+import { CareersBenefits } from './components/careers/CareersBenefits';
+import { CareersPositions } from './components/careers/CareersPositions';
+import { MapPin, Clock, DollarSign, Users, Award, Briefcase } from 'lucide-react';
 
 const Careers = () => {
   const { data: jobs = [], isLoading: isLoadingJobs } = useCareers();
@@ -60,192 +53,25 @@ const Careers = () => {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-to-br from-slate-900 to-blue-900 text-white">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            {isLoadingContent ? (
-              <>
-                <Skeleton className="h-16 w-3/4 mx-auto mb-6 bg-slate-700" />
-                <Skeleton className="h-6 w-full mx-auto bg-slate-700" />
-              </>
-            ) : (
-              <>
-                <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                  {heroContent?.title?.split(' ').slice(0, -1).join(' ')}
-                  <span className="block text-blue-400">{heroContent?.title?.split(' ').slice(-1)[0]}</span>
-                </h1>
-                <p className="text-xl text-slate-300 mb-8">
-                  {heroContent?.description}
-                </p>
-              </>
-            )}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                className="bg-blue-600 hover:bg-blue-700"
-                onClick={scrollToOpenPositions}
-              >
-                View Open Positions
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white"
-                onClick={scrollToCompanyCulture}
-              >
-                Learn About Culture
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CareersHero
+        heroContent={heroContent}
+        isLoading={isLoadingContent}
+        onViewPositions={scrollToOpenPositions}
+        onLearnCulture={scrollToCompanyCulture}
+      />
 
-      {/* Benefits */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            {isLoadingContent ? (
-              <>
-                <Skeleton className="h-9 w-80 mx-auto mb-4" />
-                <Skeleton className="h-6 w-96 mx-auto" />
-              </>
-            ) : (
-              <>
-                <h2 className="text-3xl font-bold mb-4">{whyWorkContent?.title}</h2>
-                <p className="text-muted-foreground">{whyWorkContent?.description}</p>
-              </>
-            )}
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {isLoadingCards ? Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="text-center">
-                <CardContent className="p-6">
-                  <Skeleton className="h-48 w-full" />
-                </CardContent>
-              </Card>
-            )) : benefitCards.map((benefit, index) => {
-              const IconComponent = benefit.icon ? iconMap[benefit.icon] || Users : Users;
-              return (
-                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <IconComponent size={32} className="text-white" />
-                    </div>
-                    <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
-                    <p className="text-muted-foreground text-sm">{benefit.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      <CareersBenefits
+        whyWorkContent={whyWorkContent}
+        benefitCards={benefitCards}
+        isLoadingContent={isLoadingContent}
+        isLoadingCards={isLoadingCards}
+      />
 
-      {/* Open Positions */}
-      <section ref={openPositionsRef} className="py-16 bg-slate-50" id="open-positions">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Open Positions</h2>
-            <p className="text-muted-foreground">Find your next opportunity with our growing team</p>
-          </div>
-          
-          <div className="space-y-6 max-w-5xl mx-auto">
-            {isLoadingJobs ? Array.from({ length: 3 }).map((_, i) => (
-              <Card key={i}>
-                <CardContent className="p-6">
-                  <Skeleton className="h-32 w-full" />
-                </CardContent>
-              </Card>
-            )) : jobs.length > 0 ? jobs.map((job) => (
-              <Card key={job.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                      <CardTitle className="text-xl mb-2">{job.title}</CardTitle>
-                      <div className="flex flex-wrap gap-2">
-                        {job.department && <Badge variant="outline">{job.department}</Badge>}
-                        {job.location && (
-                          <Badge variant="outline" className="text-blue-600">
-                            <MapPin size={12} className="mr-1" />
-                            {job.location}
-                          </Badge>
-                        )}
-                        {job.type && (
-                          <Badge variant="outline">
-                            <Clock size={12} className="mr-1" />
-                            {job.type}
-                          </Badge>
-                        )}
-                        {job.experience_required && (
-                          <Badge variant="outline">
-                            <Briefcase size={12} className="mr-1" />
-                            {job.experience_required}
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      {job.salary_range && (
-                        <div className="text-lg font-bold text-blue-600 mb-2">{job.salary_range}</div>
-                      )}
-                      <WhatsAppButton 
-                        messageType="careers"
-                        variant="inline"
-                        className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
-                      />
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {job.description && (
-                    <p className="text-muted-foreground mb-4">{job.description}</p>
-                  )}
-                  {job.requirements && (
-                    <div>
-                      <h4 className="font-semibold mb-2">Requirements:</h4>
-                      <ul className="space-y-1">
-                        {(job.requirements as string[]).map((req, reqIndex) => (
-                          <li key={reqIndex} className="text-sm text-muted-foreground flex items-start">
-                            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2 mr-2 flex-shrink-0" />
-                            {req}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )) : (
-              <Card className="text-center py-16">
-                <CardContent>
-                  <div className="max-w-md mx-auto">
-                    <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Briefcase className="w-12 h-12 text-blue-600" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">No Open Positions Right Now</h3>
-                    <p className="text-gray-600 mb-6">
-                      We're not actively hiring at the moment, but we're always interested in connecting with talented professionals. 
-                      Feel free to reach out and introduce yourself!
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                      <WhatsAppButton 
-                        messageType="careers"
-                        variant="inline"
-                        className="bg-green-500 hover:bg-green-600"
-                      />
-                      <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
-                        Email Your Resume
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </div>
-      </section>
+      <CareersPositions
+        jobs={jobs}
+        isLoadingJobs={isLoadingJobs}
+        openPositionsRef={openPositionsRef}
+      />
 
       {/* Company Culture */}
       <section id="company-culture" className="py-16 bg-background">
