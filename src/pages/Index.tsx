@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import PopularProducts from '@/components/sections/PopularProducts';
@@ -12,8 +11,116 @@ import CTASection from '@/components/sections/CTASection';
 import SectionSeparator from '@/components/common/SectionSeparator';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useSEO } from '@/hooks/useSEO';
 
 const Index: React.FC = () => {
+  // SEO optimization for home page
+  useSEO({
+    title: 'Martka Petroleum - Leading Petroleum Equipment & Fuel Station Construction Company in Kenya',
+    description: 'Martka Petroleum is Kenya\'s premier petroleum equipment supplier specializing in fuel dispensers (manual & digital), underground storage tanks, fuel pipeline systems, automation systems, calibration services, and turnkey fuel station construction.',
+    keywords: [
+      'petroleum equipment suppliers Kenya',
+      'fuel station construction company',
+      'fuel dispensers Kenya',
+      'digital fuel pump',
+      'manual fuel dispensers',
+      'diesel tank installation',
+      'underground fuel storage tanks',
+      'above ground storage tanks',
+      'fuel pipeline contractors',
+      'calibration of fuel dispensers',
+      'fuel automation system providers',
+      'petroleum infrastructure company',
+      'martka petroleum',
+      'marka petroleum',
+      'martka petro',
+      'marka petro',
+      'martka fuel systems',
+      'maka petro',
+      'martka fuel pumps',
+      'martka petrol machines',
+      'fuel management systems',
+      'pump island installation',
+      'canopy installations',
+      'turnkey fuel stations',
+      'petroleum site infrastructure',
+      'fuel equipment maintenance'
+    ],
+    type: 'website',
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'Martka Petroleum',
+      alternateName: ['Marka Petroleum', 'Martka Petro', 'Marka Petro'],
+      description: 'Leading petroleum equipment supplier and fuel station construction company in Kenya',
+      url: 'https://martka-petroleum.com',
+      logo: 'https://martka-petroleum.com/logo.png',
+      contactPoint: {
+        '@type': 'ContactPoint',
+        telephone: '+254-700-000-000',
+        contactType: 'customer service',
+        areaServed: 'KE',
+        availableLanguage: ['English', 'Swahili']
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressCountry: 'KE',
+        addressRegion: 'Nairobi'
+      },
+      sameAs: [
+        'https://www.facebook.com/martkapetroleum',
+        'https://www.linkedin.com/company/martka-petroleum',
+        'https://twitter.com/martkapetroleum'
+      ],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Petroleum Equipment & Services',
+        itemListElement: [
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Fuel Dispensing Pumps',
+              description: 'Manual and digital fuel dispensers for petrol stations'
+            }
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Product',
+              name: 'Underground Storage Tanks',
+              description: 'Underground and above-ground fuel storage tank systems'
+            }
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Fuel Station Construction',
+              description: 'Turnkey construction of complete fuel stations'
+            }
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Fuel Pipeline Installation',
+              description: 'Fuel pipeline systems and installations'
+            }
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'Equipment Calibration',
+              description: 'Calibration and maintenance of fuel equipment'
+            }
+          }
+        ]
+      }
+    }
+  });
+
   const { data: pageContent } = useQuery({
     queryKey: ['pageContent', 'home'],
     queryFn: async () => {

@@ -13,6 +13,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fetchProducts } from '@/lib/products';
+import { useSEO } from '@/hooks/useSEO';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 const fetchCategories = async (): Promise<Tables<'product_categories'>[]> => {
     const { data, error } = await supabase.from('product_categories').select('*');
@@ -26,13 +28,45 @@ const mapSupabaseCategoryToAppCategory = (c: Tables<'product_categories'>): Prod
     slug: c.slug,
     description: c.description || '',
     icon: c.icon || '',
-    productCount: 0, // This would require another query to calculate
+    productCount: 0,
 });
-
 
 const Products = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [compareProducts, setCompareProducts] = useState<Product[]>([]);
+
+  // SEO optimization for products page
+  useSEO({
+    title: 'Petroleum Equipment & Products - Fuel Dispensers, Storage Tanks | Martka Petroleum',
+    description: 'Browse our comprehensive range of petroleum equipment including fuel dispensers (manual & digital), underground storage tanks, fuel pipeline systems, automation systems, and more. Quality petroleum products from Martka Petroleum.',
+    keywords: [
+      'petroleum equipment Kenya',
+      'fuel dispensers',
+      'digital fuel pumps',
+      'manual fuel dispensers',
+      'underground storage tanks',
+      'above ground fuel tanks',
+      'fuel pipeline systems',
+      'fuel automation systems',
+      'petroleum products',
+      'fuel station equipment',
+      'martka petroleum products',
+      'diesel dispensers',
+      'petrol pumps',
+      'fuel management systems',
+      'petroleum infrastructure equipment'
+    ],
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Petroleum Equipment & Products',
+      description: 'Complete range of petroleum equipment and fuel station products',
+      provider: {
+        '@type': 'Organization',
+        name: 'Martka Petroleum'
+      }
+    }
+  });
 
   const { data: products, isLoading: isLoadingProducts } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
   const { data: rawCategories, isLoading: isLoadingCategories } = useQuery({ queryKey: ['productCategories'], queryFn: fetchCategories });
@@ -69,9 +103,16 @@ const Products = () => {
   
   const isLoading = isLoadingProducts || isLoadingCategories;
 
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Products' }
+  ];
+
   return (
     <Layout>
       <div className="container mx-auto px-6 pb-12">
+        <Breadcrumbs items={breadcrumbItems} className="mb-8" />
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Products & Equipment</h1>

@@ -15,6 +15,8 @@ import ProjectQuickFacts from '@/components/projects/detail/ProjectQuickFacts';
 import ProjectCaseStudy from '@/components/projects/detail/ProjectCaseStudy';
 import ProjectTeam from '@/components/projects/detail/ProjectTeam';
 import ProjectTestimonial from '@/components/projects/detail/ProjectTestimonial';
+import { useSEO } from '@/hooks/useSEO';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -23,6 +25,60 @@ const ProjectDetail = () => {
     queryKey: ['project', slug],
     queryFn: () => (slug ? fetchPublicProjectBySlug(slug) : null),
     enabled: !!slug,
+  });
+
+  // SEO optimization for project page
+  useSEO({
+    title: project ? `${project.title} - ${project.location} | Martka Petroleum Projects` : 'Loading Project...',
+    description: project ? `${project.description} - ${project.status} project in ${project.location} by Martka Petroleum. Category: ${project.category}. Year: ${project.year}.` : 'Loading project details...',
+    keywords: project ? [
+      project.title.toLowerCase(),
+      project.location.toLowerCase(),
+      project.category.toLowerCase(),
+      'martka petroleum projects',
+      'fuel station construction',
+      'petroleum infrastructure',
+      ...project.tags.map(tag => tag.toLowerCase()),
+      `${project.category} projects Kenya`,
+      'petroleum engineering Kenya'
+    ] : [],
+    type: 'article',
+    image: project?.images.find(img => img.type === 'hero')?.url || project?.images[0]?.url,
+    url: `/projects/${slug}`,
+    structuredData: project ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: project.title,
+      description: project.description,
+      image: project.images.map(img => img.url),
+      author: {
+        '@type': 'Organization',
+        name: 'Martka Petroleum'
+      },
+      publisher: {
+        '@type': 'Organization',
+        name: 'Martka Petroleum',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://martka-petroleum.com/logo.png'
+        }
+      },
+      datePublished: `${project.year}-01-01`,
+      dateModified: `${project.year}-12-31`,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `https://martka-petroleum.com/projects/${slug}`
+      },
+      about: {
+        '@type': 'Thing',
+        name: project.category,
+        description: `${project.category} project in ${project.location}`
+      },
+      locationCreated: {
+        '@type': 'Place',
+        name: project.location
+      }
+    } : undefined
   });
 
   if (isLoading) {
@@ -49,8 +105,19 @@ const ProjectDetail = () => {
     );
   }
 
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Projects', href: '/projects' },
+    { label: project.category, href: `/projects?category=${project.category}` },
+    { label: project.title }
+  ];
+
   return (
     <Layout>
+      <div className="container mx-auto px-6 py-8">
+        <Breadcrumbs items={breadcrumbItems} className="mb-8" />
+      </div>
+
       <ProjectHero project={project} />
 
       <ProjectQuickFacts project={project} />

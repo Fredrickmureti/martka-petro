@@ -9,9 +9,39 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchPublicProjects } from '@/lib/projects';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Project } from '@/types/project';
+import { useSEO } from '@/hooks/useSEO';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 const Projects = () => {
   const [activeFilter, setActiveFilter] = useState('all');
+
+  // SEO optimization for projects page
+  useSEO({
+    title: 'Petroleum Infrastructure Projects - Fuel Station Construction | Martka Petroleum',
+    description: 'Explore our portfolio of successful petroleum infrastructure projects including fuel station construction, pipeline installations, storage tank systems, and turnkey petroleum facilities across Kenya and East Africa.',
+    keywords: [
+      'petroleum infrastructure projects',
+      'fuel station construction projects',
+      'pipeline installation projects',
+      'storage tank projects',
+      'turnkey fuel stations',
+      'petroleum engineering projects',
+      'martka petroleum projects',
+      'fuel infrastructure Kenya',
+      'petroleum construction company',
+      'fuel station developers'
+    ],
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Petroleum Infrastructure Projects',
+      description: 'Portfolio of successful petroleum infrastructure and fuel station construction projects',
+      provider: {
+        '@type': 'Organization',
+        name: 'Martka Petroleum'
+      }
+    }
+  });
 
   const { data: projects, isLoading } = useQuery<Project[]>({
     queryKey: ['publicProjects'],
@@ -57,11 +87,17 @@ const Projects = () => {
     </div>
   );
 
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Projects' }
+  ];
+
   return (
     <Layout>
       {/* Hero Section */}
       <section className="pt-32 pb-16 bg-gradient-to-br from-slate-900 to-blue-900 text-white">
         <div className="container mx-auto px-6">
+          <Breadcrumbs items={breadcrumbItems} className="mb-8 text-white [&_a]:text-blue-200 [&_a:hover]:text-white" />
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               Our Project
@@ -106,7 +142,7 @@ const Projects = () => {
                     <div className="relative">
                       <img 
                         src={heroImage?.url || '/placeholder.svg'} 
-                        alt={project.title}
+                        alt={`${project.title} - ${project.category} project by Martka Petroleum`}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute top-4 left-4">

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, Star, ShoppingCart, Download, Share, Heart } from 'lucide-react';
@@ -11,6 +10,8 @@ import WhatsAppButton from '@/components/common/WhatsAppButton';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProductById, fetchProducts } from '@/lib/products';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSEO } from '@/hooks/useSEO';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +27,65 @@ const ProductDetail = () => {
     queryKey: ['products'],
     queryFn: fetchProducts,
     enabled: !!product,
+  });
+
+  // SEO optimization for product page
+  useSEO({
+    title: product ? `${product.name} - ${product.category.name} | Martka Petroleum` : 'Loading Product...',
+    description: product ? `${product.description} - High-quality ${product.category.name.toLowerCase()} from Martka Petroleum. Price: ${product.price}. Contact us for expert installation and support.` : 'Loading product details...',
+    keywords: product ? [
+      product.name.toLowerCase(),
+      product.category.name.toLowerCase(),
+      'martka petroleum',
+      'petroleum equipment Kenya',
+      'fuel equipment',
+      product.manufacturer?.toLowerCase() || '',
+      ...product.features.map(f => f.toLowerCase()),
+      'buy ' + product.name.toLowerCase(),
+      product.name.toLowerCase() + ' price',
+      product.name.toLowerCase() + ' Kenya'
+    ] : [],
+    type: 'product',
+    image: product?.image,
+    url: `/products/${id}`,
+    structuredData: product ? {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.name,
+      description: product.description,
+      image: product.gallery.length > 0 ? product.gallery : [product.image],
+      brand: {
+        '@type': 'Brand',
+        name: product.manufacturer || 'Martka Petroleum'
+      },
+      manufacturer: {
+        '@type': 'Organization',
+        name: product.manufacturer || 'Martka Petroleum'
+      },
+      category: product.category.name,
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'KES',
+        price: product.price.replace(/[^\d.-]/g, '') || 'Contact for price',
+        availability: product.inStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        seller: {
+          '@type': 'Organization',
+          name: 'Martka Petroleum'
+        }
+      },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: product.rating,
+        bestRating: 5,
+        worstRating: 1,
+        ratingCount: 1
+      },
+      additionalProperty: Object.entries(product.specifications).map(([key, value]) => ({
+        '@type': 'PropertyValue',
+        name: key,
+        value: value
+      }))
+    } : undefined
   });
 
   if (isLoadingProduct) {
@@ -69,6 +129,13 @@ const ProductDetail = () => {
     .filter(p => p.id !== product.id && p.category.id === product.category.id)
     .slice(0, 3);
 
+  const breadcrumbItems = [
+    { label: 'Home', href: '/' },
+    { label: 'Products', href: '/products' },
+    { label: product.category.name, href: `/products?category=${product.category.slug}` },
+    { label: product.name }
+  ];
+
   return (
     <Layout>
       <WhatsAppButton 
@@ -76,15 +143,7 @@ const ProductDetail = () => {
       />
       
       <div className="container mx-auto px-6 py-12">
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-8">
-          <Link to="/products" className="hover:text-foreground">Products</Link>
-          <span>/</span>
-          <Link to={`/products?category=${product.category.slug}`} className="hover:text-foreground">
-            {product.category.name}
-          </Link>
-          <span>/</span>
-          <span className="text-foreground">{product.name}</span>
-        </div>
+        <Breadcrumbs items={breadcrumbItems} className="mb-8" />
 
         <Link to="/products">
           <Button variant="outline" className="mb-6">
@@ -98,7 +157,7 @@ const ProductDetail = () => {
             <div className="aspect-square rounded-lg overflow-hidden bg-slate-100">
               <img 
                 src={product.gallery[selectedImage] || product.image} 
-                alt={product.name}
+                alt={`${product.name} - ${product.category.name} from Martka Petroleum`}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -115,7 +174,7 @@ const ProductDetail = () => {
                   >
                     <img 
                       src={image} 
-                      alt={`${product.name} ${index + 1}`}
+                      alt={`${product.name} view ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -270,19 +329,19 @@ const ProductDetail = () => {
           <section>
             <h2 className="text-2xl font-bold mb-6">Related Products</h2>
             <div className="grid md:grid-cols-3 gap-6">
-              {relatedProducts.map(product => (
-                <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              {relatedProducts.map(relatedProduct => (
+                <Card key={relatedProduct.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <img 
-                    src={product.image} 
-                    alt={product.name}
+                    src={relatedProduct.image} 
+                    alt={`${relatedProduct.name} - ${relatedProduct.category.name}`}
                     className="w-full h-48 object-cover"
                   />
                   <CardContent className="p-4">
-                    <h3 className="font-bold mb-2 line-clamp-1">{product.name}</h3>
-                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{product.description}</p>
+                    <h3 className="font-bold mb-2 line-clamp-1">{relatedProduct.name}</h3>
+                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{relatedProduct.description}</p>
                     <div className="flex justify-between items-center">
-                      <span className="font-semibold text-blue-600">{product.price}</span>
-                      <Link to={`/products/${product.id}`}>
+                      <span className="font-semibold text-blue-600">{relatedProduct.price}</span>
+                      <Link to={`/products/${relatedProduct.id}`}>
                         <Button variant="outline" size="sm">View</Button>
                       </Link>
                     </div>
