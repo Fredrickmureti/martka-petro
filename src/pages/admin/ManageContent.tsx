@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Image, Edit } from 'lucide-react';
+import { Settings, Image, Edit, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { 
   useFooterContent, 
@@ -11,10 +11,13 @@ import {
   useAddFooterSection,
   useAddAboutSection,
   useDeleteFooterSection,
-  useDeleteAboutSection
+  useDeleteAboutSection,
+  useSupportPageContent,
+  useUpdateSupportPageContent
 } from '@/hooks/useContentManagement';
 import { HeaderContentManager } from './components/content/HeaderContentManager';
 import { UserFriendlyContentManager } from './components/content/UserFriendlyContentManager';
+import ContentSectionCard from './components/ContentSectionCard';
 
 const ManageContent = () => {
   const { toast } = useToast();
@@ -22,9 +25,11 @@ const ManageContent = () => {
 
   const { data: footerContent, isLoading: isLoadingFooter } = useFooterContent();
   const { data: aboutContent, isLoading: isLoadingAbout } = useAboutContent();
+  const { data: supportContent, isLoading: isLoadingSupport } = useSupportPageContent();
 
   const updateFooterMutation = useUpdateFooterContent();
   const updateAboutMutation = useUpdateAboutContent();
+  const updateSupportMutation = useUpdateSupportPageContent();
   const addFooterSectionMutation = useAddFooterSection();
   const addAboutSectionMutation = useAddAboutSection();
   const deleteFooterSectionMutation = useDeleteFooterSection();
@@ -65,6 +70,26 @@ const ManageContent = () => {
       toast({
         title: 'Error',
         description: 'Failed to update about section',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleUpdateSupportSection = async (sectionKey: string, data: any) => {
+    try {
+      await updateSupportMutation.mutateAsync({
+        sectionKey,
+        data
+      });
+      
+      toast({
+        title: 'Success',
+        description: 'Support section updated successfully! Changes will appear on the site immediately.',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to update support section',
         variant: 'destructive',
       });
     }
@@ -142,12 +167,12 @@ const ManageContent = () => {
             <Settings className="h-8 w-8 text-blue-600" />
             Manage Website Content
           </h1>
-          <p className="text-muted-foreground">Update header, footer, and about page content. Changes reflect immediately on the website.</p>
+          <p className="text-muted-foreground">Update header, footer, about page, and support content. Changes reflect immediately on the website.</p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="header" className="flex items-center gap-2">
             <Image className="h-4 w-4" />
             Header & Logo
@@ -159,6 +184,10 @@ const ManageContent = () => {
           <TabsTrigger value="about" className="flex items-center gap-2">
             <Edit className="h-4 w-4" />
             About Page
+          </TabsTrigger>
+          <TabsTrigger value="support" className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Support Page
           </TabsTrigger>
         </TabsList>
 
@@ -190,6 +219,38 @@ const ManageContent = () => {
             onDeleteSection={handleDeleteAboutSection}
             isUpdating={updateAboutMutation.isPending || addAboutSectionMutation.isPending || deleteAboutSectionMutation.isPending}
           />
+        </TabsContent>
+
+        <TabsContent value="support">
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Support Page Content</h2>
+              <p className="text-muted-foreground">
+                Manage support page sections with beautiful previews. See exactly how your content will appear on the website.
+              </p>
+            </div>
+            
+            {isLoadingSupport ? (
+              <div>Loading support content...</div>
+            ) : (
+              <div className="space-y-8">
+                {supportContent && Object.entries(supportContent).map(([key, section]: [string, any]) => (
+                  <ContentSectionCard
+                    key={section.id}
+                    section={{
+                      id: section.id,
+                      title: section.title,
+                      section_key: section.section_key,
+                      content: section.content,
+                      is_active: section.is_active
+                    }}
+                    onUpdate={(id, data) => handleUpdateSupportSection(section.section_key, data)}
+                    isUpdating={updateSupportMutation.isPending}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </>

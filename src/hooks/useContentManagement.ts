@@ -16,9 +16,9 @@ export const useHeaderContent = () => {
       if (error) throw new Error(error.message);
       return data;
     },
-    staleTime: 0, // Always fetch fresh data
+    staleTime: 0,
     refetchOnWindowFocus: true,
-    refetchInterval: 30000, // Refetch every 30 seconds to ensure updates are visible
+    refetchInterval: 30000,
   });
 };
 
@@ -35,7 +35,7 @@ export const useFooterContent = () => {
       if (error) throw new Error(error.message);
       return data;
     },
-    staleTime: 0, // Always fetch fresh data
+    staleTime: 0,
     refetchOnWindowFocus: true,
     refetchInterval: 30000,
   });
@@ -54,7 +54,32 @@ export const useAboutContent = () => {
       if (error) throw new Error(error.message);
       return data;
     },
-    staleTime: 0, // Always fetch fresh data
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchInterval: 30000,
+  });
+};
+
+// Support page content hook
+export const useSupportPageContent = () => {
+  return useQuery({
+    queryKey: ['supportPageContent'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('support_page_content')
+        .select('*');
+
+      if (error) throw new Error(error.message);
+      
+      // Transform array to object for easier access
+      const contentObj: any = {};
+      data.forEach(item => {
+        contentObj[item.section_key] = item;
+      });
+      
+      return contentObj;
+    },
+    staleTime: 0,
     refetchOnWindowFocus: true,
     refetchInterval: 30000,
   });
@@ -74,12 +99,8 @@ export const useUpdateHeaderContent = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      // Clear all related caches
       queryClient.invalidateQueries({ queryKey: ['headerContent'] });
-      queryClient.invalidateQueries({ queryKey: ['footerContent'] });
-      // Force immediate refetch
       queryClient.refetchQueries({ queryKey: ['headerContent'] });
-      queryClient.refetchQueries({ queryKey: ['footerContent'] });
     }
   });
 };
@@ -98,13 +119,8 @@ export const useUpdateFooterContent = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      // Clear all caches and force refetch
       queryClient.invalidateQueries({ queryKey: ['footerContent'] });
-      queryClient.invalidateQueries({ queryKey: ['headerContent'] });
       queryClient.refetchQueries({ queryKey: ['footerContent'] });
-      queryClient.refetchQueries({ queryKey: ['headerContent'] });
-      // Clear browser cache for footer
-      queryClient.removeQueries({ queryKey: ['footerContent'] });
     }
   });
 };
@@ -129,6 +145,33 @@ export const useUpdateAboutContent = () => {
   });
 };
 
+// Update support page content mutation
+export const useUpdateSupportPageContent = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ sectionKey, data }: { sectionKey: string; data: any }) => {
+      const { error } = await supabase
+        .from('support_page_content')
+        .upsert({
+          section_key: sectionKey,
+          title: data.title,
+          description: data.description,
+          content: data.content,
+          is_active: data.is_active
+        }, {
+          onConflict: 'section_key'
+        });
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supportPageContent'] });
+      queryClient.refetchQueries({ queryKey: ['supportPageContent'] });
+    }
+  });
+};
+
 // Add new footer section mutation
 export const useAddFooterSection = () => {
   const queryClient = useQueryClient();
@@ -144,7 +187,6 @@ export const useAddFooterSection = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['footerContent'] });
       queryClient.refetchQueries({ queryKey: ['footerContent'] });
-      queryClient.removeQueries({ queryKey: ['footerContent'] });
     }
   });
 };
