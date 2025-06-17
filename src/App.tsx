@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { SEOLayout } from "@/components/layout/SEOLayout";
+import AppLoader from "@/components/common/AppLoader";
+import { useAppLoading } from "@/hooks/useAppLoading";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -48,6 +50,12 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const { isLoading } = useAppLoading();
+
+  if (isLoading) {
+    return <AppLoader />;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">

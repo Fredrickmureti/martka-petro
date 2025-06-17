@@ -265,6 +265,28 @@
   }
 }
 
+/* Loader-specific animations */
+@keyframes scale-x {
+  0% {
+    transform: scaleX(0);
+  }
+  50% {
+    transform: scaleX(0.8);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 /* Enhanced Animation Classes */
 .animate-fade-in-up {
   animation: fadeInUp 0.8s ease-out;
@@ -296,6 +318,12 @@
 
 .animate-pulse-3d {
   animation: pulse3d 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
 }
 
 /* Enhanced Hover Effects */
