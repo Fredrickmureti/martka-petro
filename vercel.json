@@ -1,15 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/admin-login",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/admin/:path*",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/(.*)",
+      "source": "/((?!assets/|favicon.ico|robots.txt|placeholder.svg).*)",
       "destination": "/index.html"
     }
   ]
