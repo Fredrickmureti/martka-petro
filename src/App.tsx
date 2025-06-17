@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 
 // Admin routes
 import AdminAuth from "./pages/admin/Auth";
+import AdminLayout from "./pages/admin/Layout";
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminProducts from "./pages/admin/Products";
 import AdminProjects from "./pages/admin/Projects";
@@ -77,25 +78,30 @@ function App() {
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
                 
-                {/* Admin routes */}
+                {/* Admin auth routes (outside of AdminLayout) */}
                 <Route path="/admin" element={<AdminAuth />} />
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/products" element={<AdminProducts />} />
-                <Route path="/admin/projects" element={<AdminProjects />} />
-                <Route path="/admin/projects/new" element={<AdminProjectForm />} />
-                <Route path="/admin/projects/:id/edit" element={<AdminProjectForm />} />
-                <Route path="/admin/services" element={<AdminServices />} />
-                <Route path="/admin/messages" element={<AdminMessages />} />
-                <Route path="/admin/users" element={<AdminUsers />} />
-                <Route path="/admin/documents" element={<AdminDocuments />} />
-                <Route path="/admin/support" element={<AdminSupport />} />
-                <Route path="/admin/careers" element={<AdminCareers />} />
-                <Route path="/admin/locations" element={<AdminLocations />} />
-                <Route path="/admin/content" element={<AdminManageContent />} />
-                <Route path="/admin/stats" element={<AdminManageStats />} />
-                <Route path="/admin/manage-documents" element={<AdminManageDocuments />} />
-                <Route path="/admin/manage-support" element={<AdminManageSupport />} />
-                <Route path="/admin/manage-careers" element={<AdminManageCareers />} />
+                <Route path="/admin/login" element={<AdminAuth />} />
+                
+                {/* Admin routes (wrapped in AdminLayout) */}
+                <Route path="/admin/*" element={<AdminLayout />}>
+                  <Route path="dashboard" element={<AdminDashboard />} />
+                  <Route path="products" element={<AdminProducts />} />
+                  <Route path="projects" element={<AdminProjects />} />
+                  <Route path="projects/new" element={<AdminProjectForm />} />
+                  <Route path="projects/:id/edit" element={<AdminProjectForm />} />
+                  <Route path="services" element={<AdminServices />} />
+                  <Route path="messages" element={<AdminMessages />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="documents" element={<AdminDocuments />} />
+                  <Route path="support" element={<AdminSupport />} />
+                  <Route path="careers" element={<AdminCareers />} />
+                  <Route path="locations" element={<AdminLocations />} />
+                  <Route path="manage-content" element={<AdminManageContent />} />
+                  <Route path="manage-stats" element={<AdminManageStats />} />
+                  <Route path="manage-documents" element={<AdminManageDocuments />} />
+                  <Route path="manage-support" element={<AdminManageSupport />} />
+                  <Route path="manage-careers" element={<AdminManageCareers />} />
+                </Route>
                 
                 {/* 404 route */}
                 <Route path="*" element={<NotFound />} />

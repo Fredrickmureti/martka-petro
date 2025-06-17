@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import AppSidebar from './components/AppSidebar';
 import { Loader2 } from 'lucide-react';
@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
