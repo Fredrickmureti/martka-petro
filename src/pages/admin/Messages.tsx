@@ -80,9 +80,8 @@ const AdminMessages = () => {
                     <TableCell>
                       <div className={!message.is_read ? 'font-medium' : ''}>{message.message?.substring(0, 60)}{message.message && message.message.length > 60 ? '...' : ''}</div>
                       <div className="text-xs text-muted-foreground">
-                        {message.company && `From: ${message.company} `}
-                        {/* @ts-ignore */}
-                        {message.services?.name && `| Service: ${message.services.name}`}
+                        {message.company && `From: ${message.company}`}
+                        {message.subject && ` | Subject: ${message.subject}`}
                       </div>
                     </TableCell>
                     <TableCell>{format(new Date(message.created_at), 'MMM d, yyyy h:mm a')}</TableCell>
@@ -141,4 +140,3 @@ const AdminMessages = () => {
 };
 
 export default AdminMessages;
-

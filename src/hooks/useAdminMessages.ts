@@ -9,10 +9,7 @@ export const useAdminMessages = () => {
         queryFn: async () => {
             const { data, error } = await supabase
                 .from('contact_messages')
-                .select(`
-                    *,
-                    services (name)
-                `)
+                .select('*')
                 .order('created_at', { ascending: false });
             if (error) throw new Error(error.message);
             return data;

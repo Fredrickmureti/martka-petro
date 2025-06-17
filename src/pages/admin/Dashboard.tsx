@@ -198,7 +198,7 @@ const AdminDashboard = () => {
                                 <div className="text-xs text-muted-foreground">Create new product</div>
                             </button>
                             <button 
-                                onClick={() => navigate('/admin/projects/form')}
+                                onClick={() => navigate('/admin/projects/new')}
                                 className="p-4 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow text-left hover:bg-slate-50 dark:hover:bg-slate-700"
                             >
                                 <div className="font-medium text-sm">New Project</div>
