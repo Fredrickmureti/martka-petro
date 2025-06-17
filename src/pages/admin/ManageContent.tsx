@@ -14,7 +14,7 @@ import {
   useDeleteAboutSection
 } from '@/hooks/useContentManagement';
 import { HeaderContentManager } from './components/content/HeaderContentManager';
-import { EnhancedContentEditor } from './components/content/EnhancedContentEditor';
+import { UserFriendlyContentManager } from './components/content/UserFriendlyContentManager';
 
 const ManageContent = () => {
   const { toast } = useToast();
@@ -167,9 +167,9 @@ const ManageContent = () => {
         </TabsContent>
 
         <TabsContent value="footer">
-          <EnhancedContentEditor
+          <UserFriendlyContentManager
             title="Footer Sections"
-            description="Manage footer content sections including company info, quick links, services, and contact information. You can add, edit, and delete sections as needed."
+            description="Manage footer content sections including company info, quick links, services, and contact information. Use the intuitive forms or switch to JSON mode for advanced editing."
             sections={footerContent || []}
             isLoading={isLoadingFooter}
             onUpdateSection={handleUpdateFooterSection}
@@ -180,9 +180,9 @@ const ManageContent = () => {
         </TabsContent>
 
         <TabsContent value="about">
-          <EnhancedContentEditor
+          <UserFriendlyContentManager
             title="About Page Sections"
-            description="Manage about page content sections. Create and organize content sections to tell your company's story effectively."
+            description="Manage about page content sections. Create and organize content sections to tell your company's story effectively using easy-to-use forms."
             sections={aboutContent || []}
             isLoading={isLoadingAbout}
             onUpdateSection={handleUpdateAboutSection}
