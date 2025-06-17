@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,8 +37,11 @@ const Products = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [compareProducts, setCompareProducts] = useState<Product[]>([]);
 
-  // SEO optimization for products page
-  const structuredData = {
+  const { data: products, isLoading: isLoadingProducts } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
+  const { data: rawCategories, isLoading: isLoadingCategories } = useQuery({ queryKey: ['productCategories'], queryFn: fetchCategories });
+
+  // SEO optimization for products page - moved after products data fetch
+  const structuredData = useMemo(() => ({
     ...generateOrganizationSchema(),
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
@@ -53,10 +57,7 @@ const Products = () => {
         }
       }))
     }
-  };
-
-  const { data: products, isLoading: isLoadingProducts } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
-  const { data: rawCategories, isLoading: isLoadingCategories } = useQuery({ queryKey: ['productCategories'], queryFn: fetchCategories });
+  }), [products]);
 
   const categories = useMemo(() => (rawCategories || []).map(mapSupabaseCategoryToAppCategory), [rawCategories]);
   
