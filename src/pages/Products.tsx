@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,8 +12,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { fetchProducts } from '@/lib/products';
-import { useSEO } from '@/hooks/useSEO';
+import { SEOMeta } from '@/components/seo/SEOMeta';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs';
+import { getKeywordsForPage } from '@/utils/seoKeywords';
+import { generateOrganizationSchema } from '@/utils/structuredData';
 
 const fetchCategories = async (): Promise<Tables<'product_categories'>[]> => {
     const { data, error } = await supabase.from('product_categories').select('*');
@@ -36,37 +37,23 @@ const Products = () => {
   const [compareProducts, setCompareProducts] = useState<Product[]>([]);
 
   // SEO optimization for products page
-  useSEO({
-    title: 'Petroleum Equipment & Products - Fuel Dispensers, Storage Tanks | Martka Petroleum',
-    description: 'Browse our comprehensive range of petroleum equipment including fuel dispensers (manual & digital), underground storage tanks, fuel pipeline systems, automation systems, and more. Quality petroleum products from Martka Petroleum.',
-    keywords: [
-      'petroleum equipment Kenya',
-      'fuel dispensers',
-      'digital fuel pumps',
-      'manual fuel dispensers',
-      'underground storage tanks',
-      'above ground fuel tanks',
-      'fuel pipeline systems',
-      'fuel automation systems',
-      'petroleum products',
-      'fuel station equipment',
-      'martka petroleum products',
-      'diesel dispensers',
-      'petrol pumps',
-      'fuel management systems',
-      'petroleum infrastructure equipment'
-    ],
-    structuredData: {
-      '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
+  const structuredData = {
+    ...generateOrganizationSchema(),
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
       name: 'Petroleum Equipment & Products',
-      description: 'Complete range of petroleum equipment and fuel station products',
-      provider: {
-        '@type': 'Organization',
-        name: 'Martka Petroleum'
-      }
+      itemListElement: (products || []).slice(0, 10).map(product => ({
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Product',
+          name: product.name,
+          description: product.description,
+          image: product.image,
+          category: product.category.name
+        }
+      }))
     }
-  });
+  };
 
   const { data: products, isLoading: isLoadingProducts } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
   const { data: rawCategories, isLoading: isLoadingCategories } = useQuery({ queryKey: ['productCategories'], queryFn: fetchCategories });
@@ -110,6 +97,14 @@ const Products = () => {
 
   return (
     <Layout>
+      <SEOMeta
+        title="Petroleum Equipment & Products - Fuel Dispensers, Storage Tanks | Martka Petroleum"
+        description="Browse our comprehensive range of petroleum equipment including fuel dispensers (manual & digital), underground storage tanks, fuel pipeline systems, automation systems, and more. Quality petroleum products from Martka Petroleum Kenya."
+        keywords={getKeywordsForPage('products')}
+        canonicalUrl="https://martka-petroleum.com/products"
+        structuredData={structuredData}
+      />
+      
       <div className="container mx-auto px-6 pb-12">
         <Breadcrumbs items={breadcrumbItems} className="mb-8" />
 
