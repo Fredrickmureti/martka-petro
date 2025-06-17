@@ -2,8 +2,10 @@
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import { useSupportPageContent, useSupportFaqs, useSupportDownloads, useSupportOptions } from '@/hooks/useSupportPage';
+import { useSupportContentSections } from '@/hooks/useSupportContentSections';
 import { useDocuments } from '@/hooks/useDocuments';
 import { SupportHero } from './Support/components/SupportHero';
+import { SupportContentSections } from './Support/components/SupportContentSections';
 import { SupportOptions } from './Support/components/SupportOptions';
 import { SupportFAQ } from './Support/components/SupportFAQ';
 import { SupportDownloads } from './Support/components/SupportDownloads';
@@ -16,6 +18,7 @@ const Support = () => {
   const { data: downloads, isLoading: isLoadingDownloads } = useSupportDownloads();
   const { data: supportOptions, isLoading: isLoadingSupportOptions } = useSupportOptions();
   const { data: documents, isLoading: isLoadingDocuments } = useDocuments();
+  const { data: contentSections, isLoading: isLoadingContentSections } = useSupportContentSections();
   
   const heroContent = content?.hero;
   const helpContent = content?.help_section;
@@ -23,13 +26,9 @@ const Support = () => {
   const downloadsContent = content?.downloads_section;
   const emergencyContent = content?.emergency_section;
   const contactContent = content?.contact_section;
-  const resourcesContent = content?.resources_section;
-  const communityContent = content?.community_section;
   
   const emergencyData = emergencyContent?.content as { phone?: string, email_text?: string, button_text?: string };
   const contactData = contactContent?.content as { subtitle?: string, phone?: string, email?: string, hours?: string };
-  const resourcesData = resourcesContent?.content as { subtitle?: string, features?: string[] };
-  const communityData = communityContent?.content as { subtitle?: string, forum_url?: string, events_url?: string, newsletter_url?: string };
 
   const handleSupportAction = (option: any) => {
     if (option.action_type === 'phone' && option.action_url) {
@@ -51,6 +50,14 @@ const Support = () => {
     <Layout>
       <SupportHero heroContent={heroContent} isLoading={isLoadingContent} />
       
+      {/* Section Separator */}
+      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+
+      <SupportContentSections 
+        sections={contentSections}
+        isLoading={isLoadingContentSections}
+      />
+
       {/* Section Separator */}
       <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
 
@@ -89,10 +96,7 @@ const Support = () => {
 
       <SupportContact 
         contactContent={contactContent}
-        resourcesContent={resourcesContent}
         contactData={contactData}
-        resourcesData={resourcesData}
-        communityData={communityData}
         isLoadingContent={isLoadingContent}
       />
 

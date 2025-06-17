@@ -734,6 +734,48 @@ export type Database = {
         }
         Relationships: []
       }
+      support_content_sections: {
+        Row: {
+          background_color: string | null
+          content: string | null
+          created_at: string | null
+          icon: string | null
+          id: number
+          is_active: boolean | null
+          section_type: string | null
+          sort_order: number | null
+          text_color: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          background_color?: string | null
+          content?: string | null
+          created_at?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean | null
+          section_type?: string | null
+          sort_order?: number | null
+          text_color?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          background_color?: string | null
+          content?: string | null
+          created_at?: string | null
+          icon?: string | null
+          id?: number
+          is_active?: boolean | null
+          section_type?: string | null
+          sort_order?: number | null
+          text_color?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       support_downloads: {
         Row: {
           created_at: string
