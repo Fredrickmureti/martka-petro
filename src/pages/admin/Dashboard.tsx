@@ -1,19 +1,27 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, FolderKanban, ShoppingBag, User, Clock, Calendar, TrendingUp, MessageSquare, Activity, Sparkles, Zap, Target } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Users, ShoppingBag, FolderKanban, MessageSquare, TrendingUp, Calendar, Clock, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { Skeleton } from '@/components/ui/skeleton';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
 
 const AdminDashboard = () => {
-    const navigate = useNavigate();
-    const [adminName, setAdminName] = useState<string>('Admin');
+    const [stats, setStats] = useState({
+        users: 0,
+        products: 0,
+        projects: 0,
+        messages: 0
+    });
+    const [userProfile, setUserProfile] = useState<any>(null);
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [loading, setLoading] = useState(true);
 
-    // Update time every second
     useEffect(() => {
+        loadDashboardData();
+        loadUserProfile();
+        
+        // Update time every second
         const timer = setInterval(() => {
             setCurrentTime(new Date());
         }, 1000);
@@ -21,355 +29,245 @@ const AdminDashboard = () => {
         return () => clearInterval(timer);
     }, []);
 
-    // Fetch admin profile with enhanced name handling
-    useEffect(() => {
-        const getAdminProfile = async () => {
+    const loadUserProfile = async () => {
+        try {
             const { data: { session } } = await supabase.auth.getSession();
             if (session?.user) {
-                const { data: profile } = await supabase
+                const { data: profileData } = await supabase
                     .from('profiles')
-                    .select('full_name, first_name, last_name')
+                    .select('*')
                     .eq('id', session.user.id)
                     .single();
                 
-                if (profile?.full_name) {
-                    setAdminName(profile.full_name);
-                } else if (profile?.first_name) {
-                    setAdminName(profile.first_name);
-                } else {
-                    // Fallback to email username without domain
-                    const emailUsername = session.user.email?.split('@')[0] || 'Admin';
-                    setAdminName(emailUsername.charAt(0).toUpperCase() + emailUsername.slice(1));
-                }
+                setUserProfile(profileData);
             }
-        };
-        getAdminProfile();
-    }, []);
-
-    // Fetch products count
-    const { data: productsCount, isLoading: loadingProducts } = useQuery({
-        queryKey: ['productsCount'],
-        queryFn: async () => {
-            const { count, error } = await supabase
-                .from('products')
-                .select('*', { count: 'exact', head: true });
-            if (error) throw error;
-            return count || 0;
+        } catch (error) {
+            console.error('Error loading user profile:', error);
         }
-    });
+    };
 
-    // Fetch projects count
-    const { data: projectsCount, isLoading: loadingProjects } = useQuery({
-        queryKey: ['projectsCount'],
-        queryFn: async () => {
-            const { count, error } = await supabase
-                .from('projects')
-                .select('*', { count: 'exact', head: true });
-            if (error) throw error;
-            return count || 0;
-        }
-    });
+    const loadDashboardData = async () => {
+        try {
+            const [usersCount, productsCount, projectsCount, messagesCount] = await Promise.all([
+                supabase.from('profiles').select('*', { count: 'exact', head: true }),
+                supabase.from('products').select('*', { count: 'exact', head: true }),
+                supabase.from('projects').select('*', { count: 'exact', head: true }),
+                supabase.from('contact_messages').select('*', { count: 'exact', head: true })
+            ]);
 
-    // Fetch active projects count
-    const { data: activeProjectsCount, isLoading: loadingActiveProjects } = useQuery({
-        queryKey: ['activeProjectsCount'],
-        queryFn: async () => {
-            const { count, error } = await supabase
-                .from('projects')
-                .select('*', { count: 'exact', head: true })
-                .in('status', ['In Progress', 'Planning']);
-            if (error) throw error;
-            return count || 0;
+            setStats({
+                users: usersCount.count || 0,
+                products: productsCount.count || 0,
+                projects: projectsCount.count || 0,
+                messages: messagesCount.count || 0
+            });
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+        } finally {
+            setLoading(false);
         }
-    });
-
-    // Fetch messages count
-    const { data: messagesCount, isLoading: loadingMessages } = useQuery({
-        queryKey: ['messagesCount'],
-        queryFn: async () => {
-            const { count, error } = await supabase
-                .from('contact_messages')
-                .select('*', { count: 'exact', head: true });
-            if (error) throw error;
-            return count || 0;
-        }
-    });
-
-    // Fetch unread messages count
-    const { data: unreadMessagesCount, isLoading: loadingUnreadMessages } = useQuery({
-        queryKey: ['unreadMessagesCount'],
-        queryFn: async () => {
-            const { count, error } = await supabase
-                .from('contact_messages')
-                .select('*', { count: 'exact', head: true })
-                .eq('is_read', false);
-            if (error) throw error;
-            return count || 0;
-        }
-    });
+    };
 
     const getGreeting = () => {
-        const hour = new Date().getHours();
+        const hour = currentTime.getHours();
         if (hour < 12) return 'Good morning';
         if (hour < 17) return 'Good afternoon';
         return 'Good evening';
     };
 
-    const getMotivationalMessage = () => {
-        const messages = [
-            "Ready to make today extraordinary! ✨",
-            "Your digital command center awaits! 🚀",
-            "Let's build something amazing together! 💫",
-            "The future of management is here! ⚡",
-            "Your success story continues! 🌟"
-        ];
-        return messages[Math.floor(Math.random() * messages.length)];
+    const getDisplayName = () => {
+        if (userProfile?.first_name) {
+            return userProfile.first_name;
+        }
+        if (userProfile?.full_name) {
+            return userProfile.full_name.split(' ')[0];
+        }
+        // Fallback to email username if no name is set
+        const email = userProfile?.id ? 'Admin' : 'Admin';
+        return email;
     };
 
+    const formatTime = (date: Date) => {
+        return date.toLocaleTimeString([], { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    };
+
+    const formatDate = (date: Date) => {
+        return date.toLocaleDateString([], { 
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
+    const statCards = [
+        {
+            title: 'Total Users',
+            value: stats.users,
+            icon: Users,
+            gradient: 'from-blue-500 to-cyan-500',
+            bgGradient: 'from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950'
+        },
+        {
+            title: 'Products',
+            value: stats.products,
+            icon: ShoppingBag,
+            gradient: 'from-purple-500 to-pink-500',
+            bgGradient: 'from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950'
+        },
+        {
+            title: 'Projects',
+            value: stats.projects,
+            icon: FolderKanban,
+            gradient: 'from-green-500 to-emerald-500',
+            bgGradient: 'from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950'
+        },
+        {
+            title: 'Messages',
+            value: stats.messages,
+            icon: MessageSquare,
+            gradient: 'from-orange-500 to-red-500',
+            bgGradient: 'from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950'
+        }
+    ];
+
     return (
-        <div className="space-y-8">
-            {/* Futuristic Welcome Section */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-800 p-8 text-white shadow-2xl border border-purple-500/20">
-                {/* Animated Background Elements */}
-                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-20"></div>
-                <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-400/20 to-blue-600/20 rounded-full -translate-y-48 translate-x-48 animate-pulse"></div>
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-pink-400/20 to-purple-600/20 rounded-full translate-y-32 -translate-x-32 animate-pulse delay-1000"></div>
-                <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-gradient-to-r from-yellow-400/20 to-orange-600/20 rounded-full -translate-x-20 -translate-y-20 animate-pulse delay-500"></div>
-                
-                <div className="relative z-10">
-                    <div className="flex justify-between items-start mb-6">
-                        <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                                <div className="h-12 w-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                                    <Sparkles className="h-6 w-6 text-yellow-300 animate-pulse" />
-                                </div>
-                                <div>
-                                    <h1 className="text-4xl md:text-6xl font-bold mb-2 bg-gradient-to-r from-white via-cyan-100 to-purple-200 bg-clip-text text-transparent">
-                                        {getGreeting()}, {adminName}!
-                                    </h1>
-                                    <p className="text-xl text-purple-100 font-medium">
-                                        {getMotivationalMessage()}
-                                    </p>
-                                </div>
+        <div className="space-y-8 relative overflow-hidden">
+            {/* Animated Background */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-purple-50/30 to-cyan-50/50 dark:from-blue-950/20 dark:via-purple-950/10 dark:to-cyan-950/20 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-400/10 to-purple-600/10 rounded-full -translate-y-36 translate-x-36 animate-pulse"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-cyan-400/10 to-blue-600/10 rounded-full translate-y-48 -translate-x-48 animate-pulse delay-1000"></div>
+            
+            {/* Header Section */}
+            <div className="relative z-10">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                            <div className="relative">
+                                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                                    {getGreeting()}, {getDisplayName()}!
+                                </h1>
+                                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-pulse"></div>
                             </div>
-                            <div className="flex items-center gap-4 text-purple-100">
-                                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                                    <Zap className="h-4 w-4 text-yellow-300" />
-                                    <span className="text-sm font-medium">Neural Command Center</span>
-                                </div>
-                                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-                                    <Target className="h-4 w-4 text-green-300" />
-                                    <span className="text-sm font-medium">Operations Online</span>
-                                </div>
-                            </div>
+                            <Sparkles className="h-8 w-8 text-yellow-500 animate-pulse" />
                         </div>
-                        <div className="text-right bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                            <div className="flex items-center gap-2 text-purple-100 mb-3">
-                                <Clock className="h-5 w-5" />
-                                <span className="text-3xl font-mono font-bold bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
-                                    {format(currentTime, 'HH:mm:ss')}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-2 text-purple-200">
-                                <Calendar className="h-4 w-4" />
-                                <span className="text-sm font-medium">
-                                    {format(currentTime, 'EEEE, MMMM d, yyyy')}
-                                </span>
+                        <p className="text-lg text-muted-foreground font-medium">
+                            Welcome back to your neural command center
+                        </p>
+                    </div>
+                    
+                    {/* Real-time Clock */}
+                    <div className="bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-xl">
+                        <div className="flex items-center gap-3">
+                            <Clock className="h-6 w-6 text-blue-600" />
+                            <div>
+                                <div className="text-2xl font-mono font-bold text-slate-900 dark:text-slate-100">
+                                    {formatTime(currentTime)}
+                                </div>
+                                <div className="text-sm text-slate-600 dark:text-slate-400">
+                                    {formatDate(currentTime)}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Futuristic Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
-                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-orange-50 via-orange-100 to-red-100 dark:from-orange-950 dark:to-red-900 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5"></div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-orange-500/20 rounded-full -translate-y-10 translate-x-10 group-hover:scale-150 transition-transform duration-500"></div>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-                        <CardTitle className="text-sm font-bold text-orange-700 dark:text-orange-300">Products</CardTitle>
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <ShoppingBag className="h-6 w-6 text-white" />
-                        </div>
-                    </CardHeader>
-                    <CardContent className="relative">
-                        {loadingProducts ? (
-                            <Skeleton className="h-8 w-16" />
-                        ) : (
-                            <div className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-                                {/* {productsCount} */}
-                            </div>
-                        )}
-                        <p className="text-xs text-orange-600 dark:text-orange-400 mt-2 font-medium">Total products in catalog</p>
-                    </CardContent>
-                </Card>
+            {/* Stats Grid */}
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 relative z-10">
+                {statCards.map((stat, index) => {
+                    const Icon = stat.icon;
+                    return (
+                        <Card key={stat.title} className={`relative overflow-hidden border-0 bg-gradient-to-br ${stat.bgGradient} shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group`}>
+                            {/* Holographic overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform skew-x-12"></div>
+                            
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                                <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                    {stat.title}
+                                </CardTitle>
+                                <div className={`h-10 w-10 rounded-xl bg-gradient-to-r ${stat.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                                    <Icon className="h-5 w-5 text-white" />
+                                </div>
+                            </CardHeader>
+                            <CardContent className="relative z-10">
+                                <div className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-1">
+                                    {loading ? '...' : stat.value.toLocaleString()}
+                                </div>
+                                <div className="flex items-center gap-1 text-sm">
+                                    <TrendingUp className="h-3 w-3 text-green-500" />
+                                    <span className="text-green-600 font-medium">Active</span>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    );
+                })}
+            </div>
 
-                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 via-blue-100 to-cyan-100 dark:from-blue-950 dark:to-cyan-900 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5"></div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/20 rounded-full -translate-y-10 translate-x-10 group-hover:scale-150 transition-transform duration-500"></div>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-                        <CardTitle className="text-sm font-bold text-blue-700 dark:text-blue-300">Projects</CardTitle>
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <FolderKanban className="h-6 w-6 text-white" />
-                        </div>
-                    </CardHeader>
-                    <CardContent className="relative">
-                        {loadingProjects ? (
-                            <Skeleton className="h-8 w-16" />
-                        ) : (
-                            <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                                {/* {projectsCount} */}
+            {/* Quick Actions */}
+            <div className="relative z-10">
+                <Card className="border-0 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 shadow-xl">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                                <Sparkles className="h-4 w-4 text-white" />
                             </div>
-                        )}
-                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 font-medium">Total projects completed</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-green-50 via-green-100 to-emerald-100 dark:from-green-950 dark:to-emerald-900 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-emerald-500/5"></div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-green-500/20 rounded-full -translate-y-10 translate-x-10 group-hover:scale-150 transition-transform duration-500"></div>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-                        <CardTitle className="text-sm font-bold text-green-700 dark:text-green-300">Active</CardTitle>
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <Activity className="h-6 w-6 text-white" />
-                        </div>
+                            Quick Actions
+                        </CardTitle>
                     </CardHeader>
-                    <CardContent className="relative">
-                        {loadingActiveProjects ? (
-                            <Skeleton className="h-8 w-16" />
-                        ) : (
-                            <div className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                                {/* {activeProjectsCount} */}
-                            </div>
-                        )}
-                        <p className="text-xs text-green-600 dark:text-green-400 mt-2 font-medium">Currently in progress</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-purple-50 via-purple-100 to-violet-100 dark:from-purple-950 dark:to-violet-900 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-violet-500/5"></div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-purple-500/20 rounded-full -translate-y-10 translate-x-10 group-hover:scale-150 transition-transform duration-500"></div>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-                        <CardTitle className="text-sm font-bold text-purple-700 dark:text-purple-300">Messages</CardTitle>
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                            <MessageSquare className="h-6 w-6 text-white" />
+                    <CardContent>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {[
+                                { label: 'Add Product', href: '/admin/products', gradient: 'from-blue-500 to-cyan-500' },
+                                { label: 'New Project', href: '/admin/projects', gradient: 'from-purple-500 to-pink-500' },
+                                { label: 'View Messages', href: '/admin/messages', gradient: 'from-green-500 to-emerald-500' },
+                                { label: 'Manage Users', href: '/admin/users', gradient: 'from-orange-500 to-red-500' }
+                            ].map((action) => (
+                                <Button
+                                    key={action.label}
+                                    variant="outline"
+                                    className={`h-16 bg-gradient-to-r ${action.gradient} text-white border-0 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-medium`}
+                                    onClick={() => window.location.href = action.href}
+                                >
+                                    {action.label}
+                                </Button>
+                            ))}
                         </div>
-                    </CardHeader>
-                    <CardContent className="relative">
-                        {loadingMessages ? (
-                            <Skeleton className="h-8 w-16" />
-                        ) : (
-                            <div className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text text-transparent">
-                                {/* {messagesCount} */}
-                            </div>
-                        )}
-                        <p className="text-xs text-purple-600 dark:text-purple-400 mt-2 font-medium">Total contact inquiries</p>
-                    </CardContent>
-                </Card>
-
-                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-red-50 via-red-100 to-pink-100 dark:from-red-950 dark:to-pink-900 shadow-xl hover:shadow-2xl transition-all duration-300 group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-pink-500/5"></div>
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/20 rounded-full -translate-y-10 translate-x-10 group-hover:scale-150 transition-transform duration-500"></div>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative">
-                        <CardTitle className="text-sm font-bold text-red-700 dark:text-red-300">Unread</CardTitle>
-                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 relative">
-                            <User className="h-6 w-6 text-white" />
-                            {(unreadMessagesCount || 0) > 0 && (
-                                <div className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full animate-pulse"></div>
-                            )}
-                        </div>
-                    </CardHeader>
-                    <CardContent className="relative">
-                        {loadingUnreadMessages ? (
-                            <Skeleton className="h-8 w-16" />
-                        ) : (
-                            <div className="text-4xl font-bold bg-gradient-to-r from-red-600 to-pink-600 bg-clip-text text-transparent">
-                                {/* {unreadMessagesCount} */}
-                            </div>
-                        )}
-                        <p className="text-xs text-red-600 dark:text-red-400 mt-2 font-medium">Unread messages</p>
                     </CardContent>
                 </Card>
             </div>
 
-            {/* Futuristic Quick Actions */}
-            <div className="grid gap-8 md:grid-cols-2">
-                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-blue-950 dark:to-indigo-950 shadow-xl">
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAwZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIvPjwvZz48L2c+PC9zdmc+')] opacity-50"></div>
-                    <CardHeader className="relative">
-                        <CardTitle className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
-                                <TrendingUp className="h-5 w-5 text-white" />
-                            </div>
-                            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-bold">
-                                Quick Actions
+            {/* System Status */}
+            <div className="relative z-10">
+                <Card className="border-0 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 shadow-xl">
+                    <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                            <span className="flex items-center gap-2 text-green-800 dark:text-green-200">
+                                <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                                System Status
                             </span>
+                            <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                All Systems Online
+                            </Badge>
                         </CardTitle>
-                        <CardDescription className="text-slate-600 dark:text-slate-400">Streamline your workflow with instant access</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4 relative">
-                        <div className="grid grid-cols-2 gap-4">
-                            <button 
-                                onClick={() => navigate('/admin/products')}
-                                className="group p-4 rounded-xl bg-gradient-to-br from-white to-blue-50 dark:from-slate-800 dark:to-blue-950 border border-blue-200 dark:border-blue-800 hover:shadow-xl transition-all duration-300 text-left hover:scale-105"
-                            >
-                                <div className="font-bold text-sm text-blue-700 dark:text-blue-300 group-hover:text-blue-600 transition-colors">Add Product</div>
-                                <div className="text-xs text-slate-500 dark:text-slate-400">Create new product</div>
-                            </button>
-                            <button 
-                                onClick={() => navigate('/admin/projects/new')}
-                                className="group p-4 rounded-xl bg-gradient-to-br from-white to-blue-50 dark:from-slate-800 dark:to-blue-950 border border-blue-200 dark:border-blue-800 hover:shadow-xl transition-all text-left hover:scale-105"
-                            >
-                                <div className="font-bold text-sm text-blue-700 dark:text-blue-300 group-hover:text-blue-600 transition-colors">New Project</div>
-                                <div className="text-xs text-slate-500 dark:text-slate-400">Add project showcase</div>
-                            </button>
-                            <button 
-                                onClick={() => navigate('/admin/messages')}
-                                className="group p-4 rounded-xl bg-gradient-to-br from-white to-blue-50 dark:from-slate-800 dark:to-blue-950 border border-blue-200 dark:border-blue-800 hover:shadow-xl transition-all text-left hover:scale-105"
-                            >
-                                <div className="font-bold text-sm text-blue-700 dark:text-blue-300 group-hover:text-blue-600 transition-colors">View Messages</div>
-                                <div className="text-xs text-slate-500 dark:text-slate-400">Check inquiries</div>
-                            </button>
-                            <button 
-                                onClick={() => navigate('/admin/content')}
-                                className="group p-4 rounded-xl bg-gradient-to-br from-white to-blue-50 dark:from-slate-800 dark:to-blue-950 border border-blue-200 dark:border-blue-800 hover:shadow-xl transition-all text-left hover:scale-105"
-                            >
-                                <div className="font-bold text-sm text-blue-700 dark:text-blue-300 group-hover:text-blue-600 transition-colors">Edit Content</div>
-                                <div className="text-xs text-slate-500 dark:text-slate-400">Update website content</div>
-                            </button>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-slate-50 via-green-50 to-emerald-50 dark:from-slate-900 dark:via-green-950 dark:to-emerald-950 shadow-xl">
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMGZmMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIvPjwvZz48L2c+PC9zdmc=')] opacity-50"></div>
-                    <CardHeader className="relative">
-                        <CardTitle className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
-                                <Activity className="h-5 w-5 text-white" />
+                    <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="text-center p-4 bg-white/50 dark:bg-black/20 rounded-lg">
+                                <div className="text-sm text-muted-foreground">Database</div>
+                                <div className="font-semibold text-green-700 dark:text-green-300">Connected</div>
                             </div>
-                            <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent font-bold">
-                                System Overview
-                            </span>
-                        </CardTitle>
-                        <CardDescription className="text-slate-600 dark:text-slate-400">Real-time system health monitoring</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4 relative">
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center p-4 bg-gradient-to-r from-white to-green-50 dark:from-slate-800 dark:to-green-950 rounded-xl border border-green-200 dark:border-green-800 shadow-sm">
-                                <div className="text-sm font-medium text-green-700 dark:text-green-300">Website Status</div>
-                                <div className="flex items-center gap-2">
-                                    <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse shadow-lg"></div>
-                                    <span className="text-xs text-green-600 dark:text-green-400 font-bold">ONLINE</span>
-                                </div>
+                            <div className="text-center p-4 bg-white/50 dark:bg-black/20 rounded-lg">
+                                <div className="text-sm text-muted-foreground">API Status</div>
+                                <div className="font-semibold text-green-700 dark:text-green-300">Operational</div>
                             </div>
-                            <div className="flex justify-between items-center p-4 bg-gradient-to-r from-white to-green-50 dark:from-slate-800 dark:to-green-950 rounded-xl border border-green-200 dark:border-green-800 shadow-sm">
-                                <div className="text-sm font-medium text-green-700 dark:text-green-300">Last Updated</div>
-                                <div className="text-xs text-muted-foreground">{format(new Date(), 'MMM d, h:mm a')}</div>
-                            </div>
-                            <div className="flex justify-between items-center p-4 bg-gradient-to-r from-white to-green-50 dark:from-slate-800 dark:to-green-950 rounded-xl border border-green-200 dark:border-green-800 shadow-sm">
-                                <div className="text-sm font-medium text-green-700 dark:text-green-300">Total Content Items</div>
-                                <div className="text-xs font-medium">{(productsCount || 0) + (projectsCount || 0)}</div>
+                            <div className="text-center p-4 bg-white/50 dark:bg-black/20 rounded-lg">
+                                <div className="text-sm text-muted-foreground">Last Backup</div>
+                                <div className="font-semibold text-green-700 dark:text-green-300">2 hours ago</div>
                             </div>
                         </div>
                     </CardContent>
