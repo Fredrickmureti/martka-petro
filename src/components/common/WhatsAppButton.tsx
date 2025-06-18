@@ -9,13 +9,15 @@ interface WhatsAppButtonProps {
   className?: string;
   variant?: 'fixed' | 'inline';
   messageType?: 'general' | 'quote' | 'careers';
+  children?: React.ReactNode;
 }
 
 const WhatsAppButton = ({ 
   message,
   className = "",
   variant = "fixed",
-  messageType = "general"
+  messageType = "general",
+  children
 }: WhatsAppButtonProps) => {
   const { data: contact } = useCompanyContact();
 
@@ -65,7 +67,7 @@ const WhatsAppButton = ({
       disabled={!contact?.phone}
     >
       <MessageCircle className="mr-2" size={18} />
-      WhatsApp
+      {children || "WhatsApp"}
     </Button>
   );
 };
