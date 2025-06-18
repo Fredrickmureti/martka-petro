@@ -8,7 +8,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProductFormValues } from './productFormSchema';
 import { JsonEditor } from './JsonEditor';
@@ -66,17 +65,16 @@ export const ProductFormTabs = ({ control }: ProductFormTabsProps) => {
       <TabsContent value="specifications" className="mt-4">
         <FormField control={control} name="specifications" render={({ field }) => (
           <FormItem>
-            <FormLabel>Technical Specifications</FormLabel>
             <FormControl>
-              <Textarea 
-                {...field} 
-                value={field.value ?? ''} 
-                rows={8} 
-                placeholder='{"Dimensions": "10 x 5 x 3 inches", "Weight": "2.5 kg", "Material": "Stainless Steel"}' 
-                className="font-mono text-sm"
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="specifications"
+                label="Technical Specifications"
+                placeholder='{"Dimensions": "10 x 5 x 3 inches", "Weight": "2.5 kg", "Material": "Stainless Steel"}'
               />
             </FormControl>
-            <FormDescription>Technical specifications as key-value pairs in JSON format.</FormDescription>
+            <FormDescription>Add technical specifications using the form above, or switch to JSON mode for advanced editing.</FormDescription>
             <FormMessage />
           </FormItem>
         )} />
