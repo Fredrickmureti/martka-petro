@@ -15,6 +15,7 @@ export interface Product {
   manufacturer: string;
   warranty: string;
   documents: Document[];
+  videos: VideoItem[];
 }
 
 export interface ProductCategory {
@@ -30,6 +31,12 @@ export interface Document {
   name: string;
   type: 'datasheet' | 'manual' | 'warranty' | 'certification';
   url: string;
+}
+
+export interface VideoItem {
+  url: string;
+  alt: string;
+  type?: 'video' | 'youtube' | 'vimeo';
 }
 
 export interface ProductFilter {

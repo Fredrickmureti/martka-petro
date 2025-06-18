@@ -1,7 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
-import { Product, Document } from '@/types/product';
+import { Product, Document, VideoItem } from '@/types/product';
 
 export type SupabaseProduct = Tables<'products'> & {
   product_categories: Tables<'product_categories'> | null;
@@ -30,7 +30,7 @@ export const mapSupabaseProductToAppProduct = (p: SupabaseProduct): Product => (
     manufacturer: p.manufacturer || 'Unknown',
     warranty: p.warranty || 'N/A',
     documents: (p.documents as unknown as Document[]) || [],
-    videos: ((p as any).videos as any[]) || [],
+    videos: ((p as any).videos as VideoItem[]) || [],
 });
 
 export const fetchProducts = async (): Promise<Product[]> => {
