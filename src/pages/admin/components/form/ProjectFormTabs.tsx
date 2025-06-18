@@ -19,8 +19,9 @@ interface ProjectFormTabsProps {
 export const ProjectFormTabs = ({ control }: ProjectFormTabsProps) => {
   return (
     <Tabs defaultValue="gallery" className="pt-4">
-      <TabsList className="grid w-full grid-cols-6">
+      <TabsList className="grid w-full grid-cols-7">
         <TabsTrigger value="gallery">Gallery</TabsTrigger>
+        <TabsTrigger value="videos">Videos</TabsTrigger>
         <TabsTrigger value="specifications">Specs</TabsTrigger>
         <TabsTrigger value="timeline">Timeline</TabsTrigger>
         <TabsTrigger value="team">Team</TabsTrigger>
@@ -41,6 +42,24 @@ export const ProjectFormTabs = ({ control }: ProjectFormTabsProps) => {
               />
             </FormControl>
             <FormDescription>Add project images with descriptions.</FormDescription>
+            <FormMessage />
+          </FormItem>
+        )} />
+      </TabsContent>
+
+      <TabsContent value="videos" className="mt-4">
+        <FormField control={control} name="project_videos" render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="videos"
+                label="Project Videos"
+                placeholder='[{"url": "https://youtube.com/watch?v=...", "alt": "Project walkthrough", "type": "youtube"}]'
+              />
+            </FormControl>
+            <FormDescription>Add project videos from YouTube, Vimeo, or upload direct video files.</FormDescription>
             <FormMessage />
           </FormItem>
         )} />

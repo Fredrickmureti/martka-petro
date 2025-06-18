@@ -30,6 +30,7 @@ export const mapSupabaseProductToAppProduct = (p: SupabaseProduct): Product => (
     manufacturer: p.manufacturer || 'Unknown',
     warranty: p.warranty || 'N/A',
     documents: (p.documents as unknown as Document[]) || [],
+    videos: ((p as any).videos as any[]) || [],
 });
 
 export const fetchProducts = async (): Promise<Product[]> => {

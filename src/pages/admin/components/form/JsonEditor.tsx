@@ -6,11 +6,12 @@ import { ArrayEditor } from './json-editor/ArrayEditor';
 import { DocumentsEditor } from './json-editor/DocumentsEditor';
 import { GalleryImagesEditor } from './json-editor/GalleryImagesEditor';
 import { SpecificationsEditor } from './json-editor/SpecificationsEditor';
+import { VideoEditor } from './json-editor/VideoEditor';
 
 interface JsonEditorProps {
   value: string;
   onChange: (value: string) => void;
-  type: 'array' | 'object' | 'documents' | 'gallery_images' | 'specifications';
+  type: 'array' | 'object' | 'documents' | 'gallery_images' | 'specifications' | 'videos';
   label: string;
   placeholder?: string;
 }
@@ -82,6 +83,9 @@ export const JsonEditor = ({ value, onChange, type, label, placeholder }: JsonEd
           break;
         case 'gallery_images':
           newItem = { url: '', alt: '' };
+          break;
+        case 'videos':
+          newItem = { url: '', alt: '', type: 'video' };
           break;
         default:
           newItem = {};
@@ -165,6 +169,14 @@ export const JsonEditor = ({ value, onChange, type, label, placeholder }: JsonEd
               items={items}
               onUpdateItem={updateItem}
               onRemoveItem={removeItem}
+            />
+          )}
+          {type === 'videos' && (
+            <VideoEditor
+              items={items}
+              onUpdateItem={updateItem}
+              onRemoveItem={removeItem}
+              onAddItem={addItem}
             />
           )}
           {type === 'specifications' && (

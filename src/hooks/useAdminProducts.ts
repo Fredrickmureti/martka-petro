@@ -53,13 +53,14 @@ export const useAdminProducts = () => {
 
     const createProductMutation = useMutation({
         mutationFn: async (productData: ProductFormValues) => {
-          const { features, gallery, specifications, documents, ...rest } = productData;
+          const { features, gallery, videos, specifications, documents, ...rest } = productData;
           
           const payload = { 
             ...rest,
             name: rest.name || '',
             features: parseJson(features),
             gallery: parseJson(gallery),
+            videos: parseJson(videos),
             specifications: parseJson(specifications),
             documents: parseJson(documents),
           };
@@ -78,11 +79,12 @@ export const useAdminProducts = () => {
 
     const updateProductMutation = useMutation({
         mutationFn: async ({ id, data }: { id: number; data: ProductFormValues }) => {
-            const { features, gallery, specifications, documents, ...rest } = data;
+            const { features, gallery, videos, specifications, documents, ...rest } = data;
             const payload = {
                 ...rest,
                 features: parseJson(features),
                 gallery: parseJson(gallery),
+                videos: parseJson(videos),
                 specifications: parseJson(specifications),
                 documents: parseJson(documents),
             };

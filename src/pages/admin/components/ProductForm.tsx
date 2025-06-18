@@ -37,6 +37,7 @@ export function ProductForm({ onSubmit, product, categories, isSubmitting }: Pro
       warranty: product?.warranty ?? null,
       features: stringify(product?.features),
       gallery: stringify(product?.gallery),
+      videos: stringify((product as any)?.videos),
       specifications: stringify(product?.specifications),
       documents: stringify(product?.documents),
     },
@@ -59,6 +60,7 @@ export function ProductForm({ onSubmit, product, categories, isSubmitting }: Pro
       warranty: product?.warranty ?? null,
       features: stringify(product?.features),
       gallery: stringify(product?.gallery),
+      videos: stringify((product as any)?.videos),
       specifications: stringify(product?.specifications),
       documents: stringify(product?.documents),
     });

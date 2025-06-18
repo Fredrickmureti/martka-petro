@@ -19,9 +19,10 @@ type ProductFormTabsProps = {
 export const ProductFormTabs = ({ control }: ProductFormTabsProps) => {
   return (
     <Tabs defaultValue="features" className="pt-4">
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-5">
         <TabsTrigger value="features">Features</TabsTrigger>
         <TabsTrigger value="gallery">Gallery</TabsTrigger>
+        <TabsTrigger value="videos">Videos</TabsTrigger>
         <TabsTrigger value="specifications">Specifications</TabsTrigger>
         <TabsTrigger value="documents">Documents</TabsTrigger>
       </TabsList>
@@ -51,12 +52,30 @@ export const ProductFormTabs = ({ control }: ProductFormTabsProps) => {
               <JsonEditor
                 value={field.value || ''}
                 onChange={field.onChange}
-                type="array"
+                type="gallery_images"
                 label="Gallery Images"
-                placeholder='["https://example.com/image1.jpg", "https://example.com/image2.jpg"]'
+                placeholder='[{"url": "https://example.com/image1.jpg", "alt": "Product image 1"}]'
               />
             </FormControl>
             <FormDescription>Add URLs of product images for the gallery.</FormDescription>
+            <FormMessage />
+          </FormItem>
+        )} />
+      </TabsContent>
+
+      <TabsContent value="videos" className="mt-4">
+        <FormField control={control} name="videos" render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="videos"
+                label="Product Videos"
+                placeholder='[{"url": "https://youtube.com/watch?v=...", "alt": "Product demo", "type": "youtube"}]'
+              />
+            </FormControl>
+            <FormDescription>Add product videos from YouTube, Vimeo, or upload direct video files.</FormDescription>
             <FormMessage />
           </FormItem>
         )} />

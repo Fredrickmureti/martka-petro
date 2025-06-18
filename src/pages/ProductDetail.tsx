@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { ArrowLeft, Star, ShoppingCart, Download, Share, Heart } from 'lucide-react';
@@ -7,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Layout from '@/components/layout/Layout';
 import WhatsAppButton from '@/components/common/WhatsAppButton';
+import ProductVideoGallery from '@/components/products/ProductVideoGallery';
 import { useQuery } from '@tanstack/react-query';
 import { fetchProductById, fetchProducts } from '@/lib/products';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -88,6 +90,16 @@ const ProductDetail = () => {
     } : undefined
   });
 
+  const handleRequestQuote = () => {
+    const message = `Hello! I'm interested in the ${product?.name}. Could you provide me with a quote and more information about this product?`;
+    
+    // Get phone number from contact info (you might need to adjust this based on your contact data structure)
+    const phone = '+254700000000'; // Replace with actual phone number from your contact data
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phone.replace(/[\s\-\(\)]/g, '')}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   if (isLoadingProduct) {
     return (
       <Layout>
@@ -135,6 +147,19 @@ const ProductDetail = () => {
     { label: product.category.name, href: `/products?category=${product.category.slug}` },
     { label: product.name }
   ];
+
+  // Parse videos from product data
+  const productVideos = (() => {
+    try {
+      const videosData = (product as any).videos;
+      if (typeof videosData === 'string') {
+        return JSON.parse(videosData);
+      }
+      return videosData || [];
+    } catch {
+      return [];
+    }
+  })();
 
   return (
     <Layout>
@@ -206,7 +231,7 @@ const ProductDetail = () => {
             </div>
 
             <div className="flex space-x-4">
-              <Button size="lg" className="flex-1">
+              <Button size="lg" className="flex-1" onClick={handleRequestQuote}>
                 <ShoppingCart className="mr-2" size={20} />
                 Request Quote
               </Button>
@@ -236,8 +261,9 @@ const ProductDetail = () => {
         </div>
 
         <Tabs defaultValue="features" className="mb-12">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="features">Features</TabsTrigger>
+            <TabsTrigger value="videos">Videos</TabsTrigger>
             <TabsTrigger value="specifications">Specifications</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
             <TabsTrigger value="support">Support</TabsTrigger>
@@ -257,6 +283,21 @@ const ProductDetail = () => {
                     </div>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="videos" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Videos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {productVideos.length > 0 ? (
+                  <ProductVideoGallery videos={productVideos} />
+                ) : (
+                  <p className="text-muted-foreground text-center py-8">No videos available for this product.</p>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

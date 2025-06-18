@@ -30,6 +30,7 @@ export const productFormSchema = z.object({
   warranty: z.string().nullable(),
   features: jsonString,
   gallery: jsonString,
+  videos: jsonString,
   specifications: jsonString,
   documents: jsonString,
 });
