@@ -16,6 +16,7 @@ import { ContentManagementHeader } from './components/content/ContentManagementH
 import { ContentLoadingState } from './components/content/ContentLoadingState';
 import { ContentErrorState } from './components/content/ContentErrorState';
 import { ContentManagementTabs } from './components/content/ContentManagementTabs';
+import { cn } from '@/lib/utils';
 
 const ManageContent = () => {
   const { toast } = useToast();
@@ -40,13 +41,13 @@ const ManageContent = () => {
       });
       
       toast({
-        title: 'Success',
-        description: 'Footer section updated successfully! Changes will appear on the site immediately.',
+        title: 'Neural Network Updated',
+        description: 'Footer section synchronized successfully! Changes propagated across all nodes.',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update footer section',
+        title: 'System Error',
+        description: 'Failed to update footer section. Neural network disruption detected.',
         variant: 'destructive',
       });
     }
@@ -60,13 +61,13 @@ const ManageContent = () => {
       });
       
       toast({
-        title: 'Success',
-        description: 'About section updated successfully! Changes will appear on the site immediately.',
+        title: 'Data Matrix Synchronized',
+        description: 'About section updated successfully! Information cascade initiated.',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update about section',
+        title: 'System Error',
+        description: 'Failed to update about section. Database connection unstable.',
         variant: 'destructive',
       });
     }
@@ -80,13 +81,13 @@ const ManageContent = () => {
       });
       
       toast({
-        title: 'Success',
-        description: 'Support section updated successfully! Changes will appear on the site immediately.',
+        title: 'Support Protocol Updated',
+        description: 'Support section modified successfully! System protocols refreshed.',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to update support section',
+        title: 'Protocol Error',
+        description: 'Failed to update support section. System maintenance required.',
         variant: 'destructive',
       });
     }
@@ -96,13 +97,13 @@ const ManageContent = () => {
     try {
       await addFooterSectionMutation.mutateAsync(data);
       toast({
-        title: 'Success',
-        description: 'Footer section added successfully!',
+        title: 'New Node Created',
+        description: 'Footer section added to neural network successfully!',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to add footer section',
+        title: 'Creation Failed',
+        description: 'Failed to add footer section. Network capacity exceeded.',
         variant: 'destructive',
       });
     }
@@ -112,13 +113,13 @@ const ManageContent = () => {
     try {
       await addAboutSectionMutation.mutateAsync(data);
       toast({
-        title: 'Success',
-        description: 'About section added successfully!',
+        title: 'Matrix Expanded',
+        description: 'About section integrated into data structure successfully!',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to add about section',
+        title: 'Integration Error',
+        description: 'Failed to add about section. Data matrix overflow detected.',
         variant: 'destructive',
       });
     }
@@ -128,13 +129,13 @@ const ManageContent = () => {
     try {
       await deleteFooterSectionMutation.mutateAsync(sectionId);
       toast({
-        title: 'Success',
-        description: 'Footer section deleted successfully!',
+        title: 'Node Removed',
+        description: 'Footer section deleted from neural network. System recalibrated.',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete footer section',
+        title: 'Deletion Error',
+        description: 'Failed to delete footer section. Network protection protocol active.',
         variant: 'destructive',
       });
     }
@@ -144,13 +145,13 @@ const ManageContent = () => {
     try {
       await deleteAboutSectionMutation.mutateAsync(sectionId);
       toast({
-        title: 'Success',
-        description: 'About section deleted successfully!',
+        title: 'Data Purged',
+        description: 'About section removed from matrix. Memory banks optimized.',
       });
     } catch (error) {
       toast({
-        title: 'Error',
-        description: 'Failed to delete about section',
+        title: 'Purge Failed',
+        description: 'Failed to delete about section. Critical data protection engaged.',
         variant: 'destructive',
       });
     }
@@ -180,26 +181,66 @@ const ManageContent = () => {
                      deleteAboutSectionMutation.isPending;
 
   return (
-    <div className="space-y-6">
-      <ContentManagementHeader 
-        title="Manage Website Content"
-        description="Update header, footer, about page, and support content. Changes reflect immediately on the website."
-      />
+    <div className={cn(
+      "min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800",
+      "relative overflow-hidden"
+    )}>
+      {/* Neural network background */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10" />
+        {[...Array(20)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute bg-blue-400/20 rounded-full animate-pulse"
+            style={{
+              width: `${Math.random() * 4 + 1}px`,
+              height: `${Math.random() * 4 + 1}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${i * 0.2}s`,
+              animationDuration: `${Math.random() * 3 + 2}s`
+            }}
+          />
+        ))}
+      </div>
+      
+      {/* Connection lines */}
+      <div className="absolute inset-0 opacity-10">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute bg-gradient-to-r from-transparent via-blue-400/30 to-transparent h-px"
+            style={{
+              left: '0%',
+              right: '0%',
+              top: `${(i + 1) * 12}%`,
+              transform: `rotate(${Math.random() * 6 - 3}deg)`
+            }}
+          />
+        ))}
+      </div>
 
-      <ContentManagementTabs
-        footerContent={footerContent}
-        aboutContent={aboutContent}
-        supportContent={supportContent}
-        onUpdateFooterSection={handleUpdateFooterSection}
-        onUpdateAboutSection={handleUpdateAboutSection}
-        onUpdateSupportSection={handleUpdateSupportSection}
-        onAddFooterSection={handleAddFooterSection}
-        onAddAboutSection={handleAddAboutSection}
-        onDeleteFooterSection={handleDeleteFooterSection}
-        onDeleteAboutSection={handleDeleteAboutSection}
-        isUpdating={isUpdating}
-        updateSupportMutation={updateSupportMutation}
-      />
+      <div className="relative z-10 space-y-8 p-6">
+        <ContentManagementHeader 
+          title="Neural Content Matrix"
+          description="Advanced content management system. Real-time synchronization across all network nodes."
+        />
+
+        <ContentManagementTabs
+          footerContent={footerContent}
+          aboutContent={aboutContent}
+          supportContent={supportContent}
+          onUpdateFooterSection={handleUpdateFooterSection}
+          onUpdateAboutSection={handleUpdateAboutSection}
+          onUpdateSupportSection={handleUpdateSupportSection}
+          onAddFooterSection={handleAddFooterSection}
+          onAddAboutSection={handleAddAboutSection}
+          onDeleteFooterSection={handleDeleteFooterSection}
+          onDeleteAboutSection={handleDeleteAboutSection}
+          isUpdating={isUpdating}
+          updateSupportMutation={updateSupportMutation}
+        />
+      </div>
     </div>
   );
 };
