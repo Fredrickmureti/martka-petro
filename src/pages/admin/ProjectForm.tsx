@@ -8,13 +8,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { fetchProjectById, createProject, updateProject } from '@/lib/projects';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { ProjectImagePreview } from './components/ProjectImagePreview';
 import { ImageUploadField } from './components/form/ImageUploadField';
-import { ProjectFormBasicFields } from './components/form/project-form/ProjectFormBasicFields';
-import { ProjectFormArrayFields } from './components/form/project-form/ProjectFormArrayFields';
 
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -24,11 +25,7 @@ const projectSchema = z.object({
   year: z.coerce.number().optional(),
   status: z.enum(['Completed', 'In Progress', 'Ongoing', 'Planning']),
   category: z.enum(['construction', 'installation', 'maintenance', 'infrastructure']),
-  tags: z.array(z.object({ value: z.string() })).optional(),
   hero_image_url: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  gallery_images: z.array(z.object({ url: z.string().url('Must be a valid URL'), alt: z.string() })).optional(),
-  specifications: z.array(z.object({ name: z.string(), value: z.string() })).optional(),
-  timeline: z.array(z.object({ date: z.string(), description: z.string(), status: z.enum(['completed', 'in_progress', 'planned']) })).optional(),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -48,15 +45,17 @@ const AdminProjectForm = () => {
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
-      tags: [],
-      gallery_images: [],
-      specifications: [],
-      timeline: [],
+      title: '',
+      slug: '',
+      description: '',
+      location: '',
+      status: 'Planning',
+      category: 'construction',
+      hero_image_url: '',
     },
   });
 
   const watchedHeroImage = form.watch('hero_image_url');
-  const watchedGalleryImages = form.watch('gallery_images');
 
   useEffect(() => {
     if (project) {
@@ -64,16 +63,12 @@ const AdminProjectForm = () => {
       form.reset({
         title: p.name ?? '',
         slug: p.slug ?? '',
-        description: p.description ?? undefined,
-        location: p.location ?? undefined,
+        description: p.description ?? '',
+        location: p.location ?? '',
         year: p.year ?? undefined,
-        status: p.status as ProjectFormValues['status'] | undefined,
-        category: p.category as ProjectFormValues['category'] | undefined,
+        status: p.status as ProjectFormValues['status'] ?? 'Planning',
+        category: p.category as ProjectFormValues['category'] ?? 'construction',
         hero_image_url: p.hero_image_url ?? '',
-        tags: (p.tags || []).map((t: string) => ({ value: t })),
-        gallery_images: (p.gallery_images as ProjectFormValues['gallery_images']) || [],
-        specifications: (p.specifications as ProjectFormValues['specifications']) || [],
-        timeline: (p.timeline as ProjectFormValues['timeline']) || [],
       });
     }
   }, [project, form]);
@@ -84,7 +79,6 @@ const AdminProjectForm = () => {
       const payload = {
         ...restData,
         name: title,
-        tags: data.tags?.map(t => t.value),
       };
       return projectId ? updateProject(projectId, payload as any) : createProject(payload as any);
     },
@@ -102,7 +96,13 @@ const AdminProjectForm = () => {
     mutation.mutate(data);
   };
   
-  if (isLoading) return <div className="flex justify-center items-center py-16"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-16">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
@@ -114,8 +114,96 @@ const AdminProjectForm = () => {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <ProjectFormBasicFields control={form.control} />
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <FormField name="title" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField name="slug" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
+                
+                <FormField name="description" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <FormField name="location" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl>
+                        <Input {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField name="year" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Year</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} value={field.value ?? ''} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField name="status" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Planning">Planning</SelectItem>
+                          <SelectItem value="In Progress">In Progress</SelectItem>
+                          <SelectItem value="Ongoing">Ongoing</SelectItem>
+                          <SelectItem value="Completed">Completed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField name="category" control={form.control} render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="construction">Construction</SelectItem>
+                          <SelectItem value="installation">Installation</SelectItem>
+                          <SelectItem value="maintenance">Maintenance</SelectItem>
+                          <SelectItem value="infrastructure">Infrastructure</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </div>
 
                 <FormField name="hero_image_url" control={form.control} render={({ field }) => (
                   <ImageUploadField
@@ -127,10 +215,10 @@ const AdminProjectForm = () => {
                   />
                 )} />
 
-                <ProjectFormArrayFields control={form.control} />
-
                 <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => navigate('/admin/projects')}>Cancel</Button>
+                  <Button type="button" variant="outline" onClick={() => navigate('/admin/projects')}>
+                    Cancel
+                  </Button>
                   <Button type="submit" disabled={mutation.isPending}>
                     {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {projectId ? 'Update' : 'Create'} Project
@@ -145,7 +233,7 @@ const AdminProjectForm = () => {
       <div className="lg:sticky lg:top-4 lg:h-fit">
         <ProjectImagePreview
           heroImageUrl={watchedHeroImage || ''}
-          galleryImagesJson={JSON.stringify(watchedGalleryImages || [])}
+          galleryImagesJson=""
         />
       </div>
     </div>
