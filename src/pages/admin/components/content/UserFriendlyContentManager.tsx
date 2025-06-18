@@ -3,13 +3,15 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Edit3, Code, Settings, Plus } from 'lucide-react';
 import { CompanyInfoEditor } from './editors/CompanyInfoEditor';
 import { QuickLinksEditor } from './editors/QuickLinksEditor';
 import { ServicesListEditor } from './editors/ServicesListEditor';
 import { ContactInfoEditor } from './editors/ContactInfoEditor';
+import { AboutMainEditor } from './editors/AboutMainEditor';
+import { GenericTextEditor } from './editors/GenericTextEditor';
 import { RawJsonEditor } from '../form/json-editor/RawJsonEditor';
+import { cn } from '@/lib/utils';
 
 interface ContentSection {
   id: number;
@@ -56,7 +58,7 @@ export const UserFriendlyContentManager = ({
               const content = JSON.parse(value);
               onUpdateSection(section.id, { content });
             } catch (error) {
-              // Handle JSON parse error
+              console.error('Invalid JSON:', error);
             }
           }}
         />
@@ -67,6 +69,7 @@ export const UserFriendlyContentManager = ({
       onUpdateSection(section.id, { content: data });
     };
 
+    // Form view - different editors based on section type
     switch (section.section_key) {
       case 'company_info':
         return (
@@ -100,19 +103,33 @@ export const UserFriendlyContentManager = ({
             isLoading={isUpdating}
           />
         );
+      case 'main_about':
+      case 'about_main':
+        return (
+          <AboutMainEditor
+            data={section.content || {}}
+            onSave={handleSave}
+            isLoading={isUpdating}
+          />
+        );
+      case 'mission':
+      case 'vision':
+      case 'values':
+      case 'history':
+      case 'team':
+        return (
+          <GenericTextEditor
+            data={section.content || {}}
+            onSave={handleSave}
+            isLoading={isUpdating}
+          />
+        );
       default:
         return (
-          <RawJsonEditor
-            label="Content (JSON)"
-            value={JSON.stringify(section.content, null, 2)}
-            onChange={(value) => {
-              try {
-                const content = JSON.parse(value);
-                onUpdateSection(section.id, { content });
-              } catch (error) {
-                // Handle JSON parse error
-              }
-            }}
+          <GenericTextEditor
+            data={section.content || {}}
+            onSave={handleSave}
+            isLoading={isUpdating}
           />
         );
     }
@@ -126,7 +143,6 @@ export const UserFriendlyContentManager = ({
   };
 
   const addNewSection = () => {
-    // For simplicity, let's create a basic company_info section
     onAddSection({
       title: 'New Section',
       section_key: 'new_section',
@@ -137,39 +153,69 @@ export const UserFriendlyContentManager = ({
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">Loading content...</div>;
+    return (
+      <div className="text-center py-8">
+        <div className="animate-pulse">
+          <div className="h-4 bg-slate-700 rounded w-1/4 mx-auto mb-4"></div>
+          <div className="h-3 bg-slate-600 rounded w-1/2 mx-auto"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <Card className="border-t-4 border-t-blue-600">
-      <CardHeader>
+    <Card className={cn(
+      "border-t-4 border-t-blue-600 relative overflow-hidden",
+      "bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-sm shadow-2xl"
+    )}>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5" />
+      
+      <CardHeader className="relative z-10">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-white">
               <Settings className="h-5 w-5 text-blue-600" />
               {title}
             </CardTitle>
-            <p className="text-muted-foreground">{description}</p>
+            <p className="text-slate-400">{description}</p>
           </div>
-          <Button onClick={addNewSection} className="flex items-center gap-2">
+          <Button 
+            onClick={addNewSection} 
+            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          >
             <Plus className="h-4 w-4" />
             Add Section
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      
+      <CardContent className="relative z-10">
         <div className="space-y-6">
           {sections?.map((section) => (
-            <Card key={section.id} className="relative">
-              <CardHeader className="pb-3">
+            <Card key={section.id} className={cn(
+              "relative overflow-hidden border-0 bg-gradient-to-br from-slate-900/60 to-slate-800/60",
+              "backdrop-blur-sm hover:shadow-xl transition-all duration-300"
+            )}>
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/3 to-purple-500/3" />
+              
+              <CardHeader className="pb-3 relative z-10">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg">{section.title || section.section_key}</CardTitle>
+                    <CardTitle className="text-lg text-white">{section.title || section.section_key}</CardTitle>
                     <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs bg-slate-800/50 border-blue-400/30 text-blue-300">
+                        <Code className="w-3 h-3 mr-1" />
                         {section.section_key}
                       </Badge>
-                      <Badge variant={section.is_active ? 'default' : 'secondary'} className="text-xs">
+                      <Badge 
+                        variant={section.is_active ? 'default' : 'secondary'} 
+                        className={cn(
+                          "text-xs",
+                          section.is_active 
+                            ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white" 
+                            : "bg-slate-600 text-slate-300"
+                        )}
+                      >
                         {section.is_active ? 'Active' : 'Inactive'}
                       </Badge>
                     </div>
@@ -179,6 +225,7 @@ export const UserFriendlyContentManager = ({
                       variant="outline"
                       size="sm"
                       onClick={() => toggleEditingMode(section.id)}
+                      className="bg-slate-800/50 border-slate-600 hover:bg-slate-700/50 text-slate-300 hover:text-white"
                     >
                       {editingMode[section.id] === 'json' ? (
                         <>
@@ -195,15 +242,17 @@ export const UserFriendlyContentManager = ({
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
+              
+              <CardContent className="relative z-10">
                 {getSectionEditor(section)}
               </CardContent>
             </Card>
           ))}
           
           {sections?.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              No sections found. Add your first section to get started.
+            <div className="text-center py-8 text-slate-400">
+              <Settings className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No sections found. Add your first section to get started.</p>
             </div>
           )}
         </div>
