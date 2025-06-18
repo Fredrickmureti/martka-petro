@@ -34,7 +34,7 @@ export const VideoEditor = ({
     urls.forEach(url => {
       const newItem: VideoItem = {
         url,
-        alt: newVideoAlt || 'Video',
+        alt: newVideoAlt || 'Project Video',
         type: 'video'
       };
       onAddItem();
@@ -57,7 +57,7 @@ export const VideoEditor = ({
 
       const newItem: VideoItem = {
         url: newVideoUrl,
-        alt: newVideoAlt || 'Video',
+        alt: newVideoAlt || 'Project Video',
         type: videoType
       };
       onAddItem();
@@ -67,6 +67,48 @@ export const VideoEditor = ({
       }, 0);
       setNewVideoUrl('');
       setNewVideoAlt('');
+    }
+  };
+
+  const getVideoPreview = (item: VideoItem) => {
+    if (item.type === 'youtube') {
+      const videoId = item.url.includes('watch?v=') 
+        ? item.url.split('watch?v=')[1]?.split('&')[0]
+        : item.url.split('/').pop();
+      return (
+        <iframe
+          width="300"
+          height="169"
+          src={`https://www.youtube.com/embed/${videoId}`}
+          className="rounded"
+          allowFullScreen
+          title={item.alt}
+        />
+      );
+    } else if (item.type === 'vimeo') {
+      const videoId = item.url.split('/').pop();
+      return (
+        <iframe
+          width="300"
+          height="169"
+          src={`https://player.vimeo.com/video/${videoId}`}
+          className="rounded"
+          allowFullScreen
+          title={item.alt}
+        />
+      );
+    } else {
+      return (
+        <video
+          width="300"
+          height="169"
+          controls
+          className="rounded"
+        >
+          <source src={item.url} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      );
     }
   };
 
@@ -108,33 +150,7 @@ export const VideoEditor = ({
               </div>
               {item.url && (
                 <div className="mt-2">
-                  {item.type === 'youtube' ? (
-                    <iframe
-                      width="300"
-                      height="169"
-                      src={item.url.replace('watch?v=', 'embed/')}
-                      className="rounded"
-                      allowFullScreen
-                    />
-                  ) : item.type === 'vimeo' ? (
-                    <iframe
-                      width="300"
-                      height="169"
-                      src={item.url.replace('vimeo.com/', 'player.vimeo.com/video/')}
-                      className="rounded"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <video
-                      width="300"
-                      height="169"
-                      controls
-                      className="rounded"
-                    >
-                      <source src={item.url} type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  )}
+                  {getVideoPreview(item)}
                 </div>
               )}
             </div>
@@ -166,7 +182,7 @@ export const VideoEditor = ({
                 <FileUpload
                   onUpload={handleUpload}
                   multiple={true}
-                  folder="videos"
+                  folder="project-videos"
                   accept="video/*"
                 />
               </div>

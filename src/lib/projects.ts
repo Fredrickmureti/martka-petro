@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 import { Project, ProjectImage, ProjectSpecification } from '@/types/project';
@@ -6,6 +7,7 @@ export type SupabaseProject = Tables<'projects'>;
 
 export const mapSupabaseProjectToAppProject = (p: any): Project => {
   const gallery = (p.gallery_images as { url: string; alt: string }[]) || [];
+  const videos = (p.project_videos as { url: string; alt: string; type?: string }[]) || [];
   
   const images: ProjectImage[] = p.hero_image_url 
     ? [{ url: p.hero_image_url, type: 'hero' as const, alt: p.name || 'Project hero image' }, ...gallery.map(img => ({ ...img, type: 'gallery' as const }))]
@@ -22,6 +24,7 @@ export const mapSupabaseProjectToAppProject = (p: any): Project => {
     category: (p.category as Project['category']) || 'construction',
     tags: (p.tags as string[]) || [],
     images: images,
+    videos: videos,
     specifications: (p.specifications as unknown as ProjectSpecification[]) || [],
     timeline: (p.timeline as unknown as Project['timeline']) || [],
     longDescription: p.long_description || '',

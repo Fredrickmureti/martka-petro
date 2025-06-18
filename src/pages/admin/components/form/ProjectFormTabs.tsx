@@ -8,7 +8,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { JsonEditor } from './JsonEditor';
 
@@ -19,13 +18,12 @@ interface ProjectFormTabsProps {
 export const ProjectFormTabs = ({ control }: ProjectFormTabsProps) => {
   return (
     <Tabs defaultValue="gallery" className="pt-4">
-      <TabsList className="grid w-full grid-cols-7">
+      <TabsList className="grid w-full grid-cols-6">
         <TabsTrigger value="gallery">Gallery</TabsTrigger>
         <TabsTrigger value="videos">Videos</TabsTrigger>
         <TabsTrigger value="specifications">Specs</TabsTrigger>
         <TabsTrigger value="timeline">Timeline</TabsTrigger>
         <TabsTrigger value="team">Team</TabsTrigger>
-        <TabsTrigger value="challenges">Challenges</TabsTrigger>
         <TabsTrigger value="results">Results</TabsTrigger>
       </TabsList>
       
@@ -59,7 +57,7 @@ export const ProjectFormTabs = ({ control }: ProjectFormTabsProps) => {
                 placeholder='[{"url": "https://youtube.com/watch?v=...", "alt": "Project walkthrough", "type": "youtube"}]'
               />
             </FormControl>
-            <FormDescription>Add project videos from YouTube, Vimeo, or upload direct video files.</FormDescription>
+            <FormDescription>Add project videos from YouTube, Vimeo, or upload direct video files to project-videos storage bucket.</FormDescription>
             <FormMessage />
           </FormItem>
         )} />
@@ -68,17 +66,16 @@ export const ProjectFormTabs = ({ control }: ProjectFormTabsProps) => {
       <TabsContent value="specifications" className="mt-4">
         <FormField control={control} name="specifications" render={({ field }) => (
           <FormItem>
-            <FormLabel>Project Specifications</FormLabel>
             <FormControl>
-              <Textarea 
-                {...field} 
-                value={field.value ?? ''} 
-                rows={6} 
-                placeholder='{"Area": "5000 sq ft", "Duration": "6 months", "Budget": "$500,000"}' 
-                className="font-mono text-sm"
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="specifications"
+                label="Project Specifications"
+                placeholder='{"Area": "5000 sq ft", "Duration": "6 months", "Budget": "$500,000"}'
               />
             </FormControl>
-            <FormDescription>Technical specifications and project details in JSON format.</FormDescription>
+            <FormDescription>Technical specifications and project details.</FormDescription>
             <FormMessage />
           </FormItem>
         )} />
@@ -89,15 +86,15 @@ export const ProjectFormTabs = ({ control }: ProjectFormTabsProps) => {
           <FormItem>
             <FormLabel>Project Timeline</FormLabel>
             <FormControl>
-              <Textarea 
-                {...field} 
-                value={field.value ?? ''} 
-                rows={6} 
-                placeholder='[{"phase": "Planning", "duration": "2 weeks", "status": "completed"}]' 
-                className="font-mono text-sm"
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="array"
+                label="Timeline Events"
+                placeholder='[{"phase": "Planning", "duration": "2 weeks", "status": "completed"}]'
               />
             </FormControl>
-            <FormDescription>Project phases and timeline in JSON format.</FormDescription>
+            <FormDescription>Project phases and timeline.</FormDescription>
             <FormMessage />
           </FormItem>
         )} />
@@ -108,34 +105,15 @@ export const ProjectFormTabs = ({ control }: ProjectFormTabsProps) => {
           <FormItem>
             <FormLabel>Team Members</FormLabel>
             <FormControl>
-              <Textarea 
-                {...field} 
-                value={field.value ?? ''} 
-                rows={6} 
-                placeholder='[{"name": "John Doe", "role": "Project Manager", "image": "url"}]' 
-                className="font-mono text-sm"
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="array"
+                label="Team Members"
+                placeholder='[{"name": "John Doe", "role": "Project Manager", "image": "url"}]'
               />
             </FormControl>
-            <FormDescription>Project team members in JSON format.</FormDescription>
-            <FormMessage />
-          </FormItem>
-        )} />
-      </TabsContent>
-      
-      <TabsContent value="challenges" className="mt-4">
-        <FormField control={control} name="challenges" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Project Challenges</FormLabel>
-            <FormControl>
-              <Textarea 
-                {...field} 
-                value={field.value ?? ''} 
-                rows={6} 
-                placeholder='[{"challenge": "Weather conditions", "solution": "Adjusted timeline"}]' 
-                className="font-mono text-sm"
-              />
-            </FormControl>
-            <FormDescription>Challenges faced and solutions in JSON format.</FormDescription>
+            <FormDescription>Project team members.</FormDescription>
             <FormMessage />
           </FormItem>
         )} />
@@ -146,15 +124,15 @@ export const ProjectFormTabs = ({ control }: ProjectFormTabsProps) => {
           <FormItem>
             <FormLabel>Project Results</FormLabel>
             <FormControl>
-              <Textarea 
-                {...field} 
-                value={field.value ?? ''} 
-                rows={6} 
-                placeholder='[{"metric": "Efficiency Increase", "value": "25%", "description": "Improved fuel dispensing speed"}]' 
-                className="font-mono text-sm"
+              <JsonEditor
+                value={field.value || ''}
+                onChange={field.onChange}
+                type="array"
+                label="Project Results"
+                placeholder='[{"metric": "Efficiency Increase", "value": "25%", "description": "Improved fuel dispensing speed"}]'
               />
             </FormControl>
-            <FormDescription>Project outcomes and achievements in JSON format.</FormDescription>
+            <FormDescription>Project outcomes and achievements.</FormDescription>
             <FormMessage />
           </FormItem>
         )} />

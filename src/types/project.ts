@@ -5,6 +5,12 @@ export interface ProjectImage {
   type: 'hero' | 'gallery' | 'technical' | 'progress';
 }
 
+export interface ProjectVideo {
+  url: string;
+  alt: string;
+  type?: 'video' | 'youtube' | 'vimeo';
+}
+
 export interface ProjectSpecification {
   name: string;
   value: string;
@@ -27,6 +33,7 @@ export interface Project {
   category: 'construction' | 'installation' | 'maintenance' | 'infrastructure';
   tags: string[];
   images: ProjectImage[];
+  videos?: ProjectVideo[];
   specifications: ProjectSpecification[];
   timeline: ProjectTimeline[];
   // Optional fields from mock data, not in Supabase

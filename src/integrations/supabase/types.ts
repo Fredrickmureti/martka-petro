@@ -633,6 +633,7 @@ export type Database = {
           location: string | null
           long_description: string | null
           name: string
+          project_videos: Json | null
           results: Json | null
           slug: string
           solutions: Json | null
@@ -660,6 +661,7 @@ export type Database = {
           location?: string | null
           long_description?: string | null
           name: string
+          project_videos?: Json | null
           results?: Json | null
           slug: string
           solutions?: Json | null
@@ -687,6 +689,7 @@ export type Database = {
           location?: string | null
           long_description?: string | null
           name?: string
+          project_videos?: Json | null
           results?: Json | null
           slug?: string
           solutions?: Json | null
