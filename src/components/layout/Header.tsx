@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/theme/ThemeToggle';
+import WhatsAppButton from '@/components/common/WhatsAppButton';
 import { useHeaderContent } from '@/hooks/useContentManagement';
 
 const Header = () => {
@@ -81,9 +82,13 @@ const Header = () => {
           {/* Actions */}
           <div className="hidden lg:flex items-center space-x-4">
             <ThemeToggle />
-            <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+            <WhatsAppButton 
+              messageType="quote"
+              variant="inline"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white"
+            >
               Get Quote
-            </Button>
+            </WhatsAppButton>
           </div>
 
           {/* Mobile Actions */}
@@ -116,9 +121,13 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              <Button className="bg-gradient-to-r from-blue-600 to-blue-700 w-fit">
+              <WhatsAppButton 
+                messageType="quote"
+                variant="inline"
+                className="bg-gradient-to-r from-blue-600 to-blue-700 w-fit text-white"
+              >
                 Get Quote
-              </Button>
+              </WhatsAppButton>
             </div>
           </div>
         )}
