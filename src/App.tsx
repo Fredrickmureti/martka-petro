@@ -88,8 +88,8 @@ function App() {
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="products" element={<AdminProducts />} />
                   <Route path="projects" element={<AdminProjects />} />
-                  <Route path="projects/new" element={<AdminProjectForm />} />
-                  <Route path="projects/:id/edit" element={<AdminProjectForm />} />
+                  <Route path="projects/form" element={<AdminProjectForm />} />
+                  <Route path="projects/form/:id" element={<AdminProjectForm />} />
                   <Route path="services" element={<AdminServices />} />
                   <Route path="messages" element={<AdminMessages />} />
                   <Route path="users" element={<AdminUsers />} />

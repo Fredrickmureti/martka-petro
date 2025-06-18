@@ -14,8 +14,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { fetchProjectById, createProject, updateProject } from '@/lib/projects';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { ProjectImagePreview } from './components/ProjectImagePreview';
-import { ImageUploadField } from './components/form/ImageUploadField';
 
 const projectSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -54,8 +52,6 @@ const AdminProjectForm = () => {
       hero_image_url: '',
     },
   });
-
-  const watchedHeroImage = form.watch('hero_image_url');
 
   useEffect(() => {
     if (project) {
@@ -105,137 +101,133 @@ const AdminProjectForm = () => {
   }
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div>
-        <Card>
-          <CardHeader>
-            <CardTitle>{projectId ? 'Edit Project' : 'Add New Project'}</CardTitle>
-            <CardDescription>Fill out the form to {projectId ? 'update the' : 'add a new'} project.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <FormField name="title" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input {...field} value={field.value ?? ''} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="slug" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Slug</FormLabel>
-                      <FormControl>
-                        <Input {...field} value={field.value ?? ''} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </div>
-                
-                <FormField name="description" control={form.control} render={({ field }) => (
+    <div className="max-w-4xl mx-auto p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>{projectId ? 'Edit Project' : 'Add New Project'}</CardTitle>
+          <CardDescription>Fill out the form to {projectId ? 'update the' : 'add a new'} project.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-4">
+                <FormField name="title" control={form.control} render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Textarea {...field} value={field.value ?? ''} />
+                      <Input {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )} />
-
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <FormField name="location" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <Input {...field} value={field.value ?? ''} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="year" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Year</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} value={field.value ?? ''} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="status" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Planning">Planning</SelectItem>
-                          <SelectItem value="In Progress">In Progress</SelectItem>
-                          <SelectItem value="Ongoing">Ongoing</SelectItem>
-                          <SelectItem value="Completed">Completed</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                  <FormField name="category" control={form.control} render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="construction">Construction</SelectItem>
-                          <SelectItem value="installation">Installation</SelectItem>
-                          <SelectItem value="maintenance">Maintenance</SelectItem>
-                          <SelectItem value="infrastructure">Infrastructure</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </div>
-
-                <FormField name="hero_image_url" control={form.control} render={({ field }) => (
-                  <ImageUploadField
-                    label="Hero Image"
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    description="Upload or provide URL for the project hero image"
-                    folder="projects"
-                  />
+                <FormField name="slug" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )} />
+              </div>
+              
+              <FormField name="description" control={form.control} render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} value={field.value ?? ''} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
 
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => navigate('/admin/projects')}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={mutation.isPending}>
-                    {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {projectId ? 'Update' : 'Create'} Project
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <div className="lg:sticky lg:top-4 lg:h-fit">
-        <ProjectImagePreview
-          heroImageUrl={watchedHeroImage || ''}
-          galleryImagesJson=""
-        />
-      </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <FormField name="location" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="year" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Year</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="status" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Planning">Planning</SelectItem>
+                        <SelectItem value="In Progress">In Progress</SelectItem>
+                        <SelectItem value="Ongoing">Ongoing</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField name="category" control={form.control} render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="construction">Construction</SelectItem>
+                        <SelectItem value="installation">Installation</SelectItem>
+                        <SelectItem value="maintenance">Maintenance</SelectItem>
+                        <SelectItem value="infrastructure">Infrastructure</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
+
+              <FormField name="hero_image_url" control={form.control} render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hero Image URL</FormLabel>
+                  <FormControl>
+                    <Input 
+                      {...field} 
+                      value={field.value ?? ''} 
+                      placeholder="https://example.com/image.jpg"
+                      type="url"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => navigate('/admin/projects')}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={mutation.isPending}>
+                  {mutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {projectId ? 'Update' : 'Create'} Project
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
