@@ -542,6 +542,7 @@ export type Database = {
           price: string | null
           rating: number | null
           specifications: Json | null
+          videos: Json | null
           warranty: string | null
         }
         Insert: {
@@ -560,6 +561,7 @@ export type Database = {
           price?: string | null
           rating?: number | null
           specifications?: Json | null
+          videos?: Json | null
           warranty?: string | null
         }
         Update: {
@@ -578,6 +580,7 @@ export type Database = {
           price?: string | null
           rating?: number | null
           specifications?: Json | null
+          videos?: Json | null
           warranty?: string | null
         }
         Relationships: [
