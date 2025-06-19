@@ -1,13 +1,22 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
-import { Project, ProjectImage, ProjectSpecification } from '@/types/project';
+import { Project, ProjectImage, ProjectSpecification, ProjectVideo } from '@/types/project';
 
 export type SupabaseProject = Tables<'projects'>;
 
 export const mapSupabaseProjectToAppProject = (p: any): Project => {
   const gallery = (p.gallery_images as { url: string; alt: string }[]) || [];
-  const videos = (p.project_videos as { url: string; alt: string; type?: string }[]) || [];
+  const rawVideos = (p.project_videos as { url: string; alt: string; type?: string }[]) || [];
+  
+  // Map videos with proper type validation
+  const videos: ProjectVideo[] = rawVideos.map(video => ({
+    url: video.url,
+    alt: video.alt,
+    type: (video.type === 'youtube' || video.type === 'vimeo' || video.type === 'video') 
+      ? video.type 
+      : 'video' as const
+  }));
   
   const images: ProjectImage[] = p.hero_image_url 
     ? [{ url: p.hero_image_url, type: 'hero' as const, alt: p.name || 'Project hero image' }, ...gallery.map(img => ({ ...img, type: 'gallery' as const }))]
